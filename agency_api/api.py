@@ -1,6 +1,7 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from knox.models import AuthToken
 from .serializers import EducationTypeSerializer
 from .models import EducationType
 
