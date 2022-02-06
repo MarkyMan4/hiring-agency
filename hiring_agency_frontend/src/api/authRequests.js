@@ -1,14 +1,5 @@
 import axios from 'axios';
 
-/*
-POST http://127.0.0.1:8000/api/auth/login
-body: 
-{
-    "username": "Person1",
-    "password": "abc123$"
-}
-*/
-
 const baseUrl = 'http://127.0.0.1:8000/';
 
 export const login = async (username, password) => {
@@ -19,6 +10,32 @@ export const login = async (username, password) => {
     };
 
     return axios.post(url, body)
+        .then(res => res.data)
+        .catch(err => console.log(err));
+}
+
+export const getUser = async (token) => {
+    let url = baseUrl + 'api/auth/user';
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.get(url, config)
+        .then(res => res.data)
+        .catch(err => console.log(err));
+}
+
+export const logout = async (token) => {
+    let url = baseUrl + 'api/auth/logout';
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.post(url, {}, config)
         .then(res => res.data)
         .catch(err => console.log(err));
 }
