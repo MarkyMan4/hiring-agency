@@ -1,6 +1,9 @@
+import string
+import secrets
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from django.contrib.auth.models import update_last_login
+from django.contrib.auth import authenticate
 from knox.models import AuthToken
 from ..serializers import StaffMemberSerializer
 from .auth_serializers import UserSerializer, RegisterStaffMemberSerializer, LoginSerializer
@@ -13,7 +16,7 @@ class RegisterStaffViewSet(generics.GenericAPIView):
     def post(self, request):
         # should return some kind of error response if any values are missing
         # or the front end could enforce this
-        generated_password = 'abc123$'
+        generated_password = self.gen_rand_pass()
 
         user_data = {
             'first_name': request.data['first_name'],
@@ -45,6 +48,16 @@ class RegisterStaffViewSet(generics.GenericAPIView):
             'initialPassword': generated_password,
             'token': AuthToken.objects.create(user)[1]
         })
+    
+    def gen_rand_pass(self):
+        specials = '~!@#$%^&*+'
+        alphabet = string.ascii_letters+string.digits+specials
+        while True:
+            password = ''.join(secrets.choice(alphabet) for i in range(10))
+            #TODO fix error where special may not be contained in password
+            if(any(p in specials for p in password) and (len(password) >= 5)):
+                return password
+
 
 # for logging in
 class LoginAPI(generics.GenericAPIView):
@@ -84,6 +97,25 @@ class ChangePasswordAPI(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = UserSerializer
 
+    # POST /api/auth/change_password
+    # user must be logged in
+    # verify that they correctly entered their old password
+    # then set the new password
     def post(self, request):
-        pass
+        response = {}
+        username = self.request.user.username
+        old_pass = request.data['old_pass']
+        new_pass = request.data['new_pass']
 
+        user = authenticate(username=username, password=old_pass)
+
+        if user:
+            user.set_password(new_pass)
+            user.save()
+            return Response()
+        else:
+            response = {
+                'error': 'old password is incorrect'
+            }
+
+            return Response(response)
