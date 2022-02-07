@@ -1,9 +1,9 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from knox.models import AuthToken
-from .serializers import EducationTypeSerializer, SecurityQuestionSerializer
-from .models import EducationType, SecurityQuestion
+from .serializers import EducationTypeSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer
+from .models import EducationType, SecurityQuestion, SecurityQuestionAnswer
 
 class EducationTypeViewSet(viewsets.ModelViewSet):
     serializer_class = EducationTypeSerializer
@@ -28,3 +28,29 @@ class SecurityQuestionViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(security_questions, many=True)
         
         return Response(serializer.data)
+
+class SecurityQuestionAnswerViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = SecurityQuestionAnswerSerializer
+    http_method_names = ['get', 'post']
+
+    # GET /api/securityquestionanswers
+    def list(self, request):
+        security_questions = SecurityQuestionAnswer.objects.filter(user_id=self.request.user.id)
+        serializer = self.get_serializer(security_questions, many=True)
+        
+        return Response(serializer.data)
+
+    # POST /api/securityquestionanswers
+    def create(self, request):
+        data = request.data
+        data['user'] = self.request.user.id
+
+        print(data)
+
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

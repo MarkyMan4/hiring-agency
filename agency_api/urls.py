@@ -2,11 +2,12 @@ from django.urls import path, include
 from rest_framework import routers
 from knox import views as knox_views
 from .auth.auth_api import RegisterStaffViewSet, LoginAPI, UserAPI, ChangePasswordAPI
-from .api import EducationTypeViewSet, SecurityQuestionViewSet
+from .api import EducationTypeViewSet, SecurityQuestionViewSet, SecurityQuestionAnswerViewSet
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register('api/educationtypes', EducationTypeViewSet, 'education-type')
 router.register('api/securityquestions', SecurityQuestionViewSet, 'security-questions')
+router.register('api/securityquestionanswers', SecurityQuestionAnswerViewSet, 'security-question-answers')
 
 urlpatterns = [
     path('', include(router.urls)),
