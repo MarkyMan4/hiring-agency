@@ -4,6 +4,7 @@ import Login from './components/login';
 import Home from './components/home';
 import NavMenu from './components/navMenu';
 import ChangePassword from './components/changePassword';
+import SetSecurityQuestions from './components/setSecurityQuestions';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
             <Route path="/" element={ <Home /> } />
             <Route path="/login" element={ <Login /> } />
             <Route path="/change_password" element={ <ChangePassword /> } />
+            <Route path="/set_security_questions" element={ <SetSecurityQuestions /> } />
           </Routes>
         </Router>
       </div>
