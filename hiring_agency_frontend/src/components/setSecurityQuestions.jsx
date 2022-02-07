@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { setSecurityQuestion } from '../api/authRequests';
 import { getSecurityQuestionOptions } from '../api/staticDataRequests';
+import { getAuthToken } from '../utils/storage';
 
 // when a user first logs in, they must select security questions and enter their answers
 function SetSecurityQuestions() {
+    let navigate = useNavigate();
     const [options, setOptions] = useState([]);
-    const [question1, setQuestion1] = useState();
-    const [question2, setQuestion2] = useState();
-    const [question3, setQuestion3] = useState();
+    const [question1, setQuestion1] = useState(1);
+    const [question2, setQuestion2] = useState(1);
+    const [question3, setQuestion3] = useState(1);
     const [answer1, setAnswer1] = useState();
     const [answer2, setAnswer2] = useState();
     const [answer3, setAnswer3] = useState();
+    const [message, setMessage] = useState('');
 
     useEffect(() => {
         getSecurityQuestionOptions()
@@ -42,7 +47,21 @@ function SetSecurityQuestions() {
     }
 
     const handleSubmitClicked = () => {
-        
+        // do some validation
+        if(question1 === question2 || question1 === question3 || question2 === question3) {
+            setMessage('please select three distinct questions');
+        }
+        else {
+            setMessage('');
+
+            // save each question
+            setSecurityQuestion(getAuthToken(), question1, answer1);
+            setSecurityQuestion(getAuthToken(), question2, answer2);
+            setSecurityQuestion(getAuthToken(), question3, answer3);
+
+            // then redirect user to home page
+            navigate('/');
+        }
     }
 
     return (
@@ -72,6 +91,8 @@ function SetSecurityQuestions() {
             <input placeholder="enter your answer here" onChange={ handleAnswer3Input } className="form-control w-25 mt-2"></input><br />
 
             <button onClick={ handleSubmitClicked } className="btn btn-success mt-3">Submit</button>
+
+            <div className="mt-3">{ message }</div>
         </div>
     );
 }

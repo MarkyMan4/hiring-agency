@@ -58,3 +58,22 @@ export const changePassword = async (token, oldPassword, newPassword) => {
         .then(res => res.data)
         .catch(err => console.log(err));
 }
+
+export const setSecurityQuestion = async (token, questionId, answer) => {
+    let url = baseUrl + 'api/securityquestionanswers';
+
+    let body = {
+        question: questionId,
+        answer: answer
+    };
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.post(url, body, config)
+        .then(res => res.data)
+        .catch(err => console.log(err));
+}

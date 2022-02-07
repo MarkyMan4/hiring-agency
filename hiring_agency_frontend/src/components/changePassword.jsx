@@ -44,6 +44,9 @@ function ChangePassword() {
                         setMessage(res.error);
                     else
                         setMessage('password successfully changed');
+
+                        if(query.get('info') === 'firstlogin')
+                            navigate('/set_security_questions');
                 })
                 .catch(err => console.log(err));
         }
