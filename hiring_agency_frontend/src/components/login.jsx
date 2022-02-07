@@ -18,7 +18,13 @@ function Login() {
         login(username, password)
             .then(res => {
                 setAuthToken(res.token);
-                window.location.reload();
+
+                if(res.isFirstLogin) {
+                    navigate('/change_password?info=firstlogin');
+                    window.location.reload();
+                }
+                else
+                    window.location.reload();
             })
             .catch(err => console.log(err));
     }

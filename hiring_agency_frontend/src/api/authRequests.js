@@ -39,3 +39,22 @@ export const logout = async (token) => {
         .then(res => res.data)
         .catch(err => console.log(err));
 }
+
+export const changePassword = async (token, oldPassword, newPassword) => {
+    let url = baseUrl + 'api/auth/change_password';
+
+    let body = {
+        old_pass: oldPassword,
+        new_pass: newPassword
+    };
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.post(url, body, config)
+        .then(res => res.data)
+        .catch(err => console.log(err));
+}
