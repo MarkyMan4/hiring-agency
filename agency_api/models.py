@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # static data tables
 class EducationType(models.Model):
@@ -85,5 +87,17 @@ class ServiceEntry(models.Model):
     start_time = models.TimeField(null=False)
     end_time = models.TimeField(null=False)
 
-class LockedAccount(models.model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+class AccountStatus(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='status')
+    is_locked = models.BooleanField(null=False)
+
+# when a user is created, automatically create an AccountStatus record
+# to tell whether the account is locked
+@receiver(post_save, sender=User)
+def create_account_status(sender, instance, created, **kwargs):
+    if created:
+        AccountStatus.objects.create(user=instance, is_locked=False)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.accountstatus.save()

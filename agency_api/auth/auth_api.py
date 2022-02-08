@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate
 from knox.models import AuthToken
 from ..serializers import StaffMemberSerializer
 from .auth_serializers import UserSerializer, RegisterStaffMemberSerializer, LoginSerializer
+from ..models import AccountStatus
 
 
 # registering staff member, this can only be done by an administrator
@@ -85,13 +86,17 @@ class LoginAPI(generics.GenericAPIView):
         })
 
 # retrieve info for the currently logged in user
-class UserAPI(generics.RetrieveAPIView):
+class UserAPI(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
-
     serializer_class = UserSerializer
 
-    def get_object(self):
-        return self.request.user
+    def get(self, request):
+        user = self.request.user
+        serializer = self.get_serializer(user)
+        data = serializer.data
+        data['is_locked'] = AccountStatus.objects.get(user_id=user.id).is_locked
+
+        return Response(data)
 
 class ChangePasswordAPI(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
