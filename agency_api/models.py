@@ -84,3 +84,6 @@ class ServiceEntry(models.Model):
     billing_account = models.ForeignKey(BillingAccount, on_delete=models.CASCADE)
     start_time = models.TimeField(null=False)
     end_time = models.TimeField(null=False)
+
+class LockedAccount(models.model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)

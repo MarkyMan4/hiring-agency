@@ -46,8 +46,6 @@ class SecurityQuestionAnswerViewSet(viewsets.ModelViewSet):
         data = request.data
         data['user'] = self.request.user.id
 
-        print(data)
-
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
