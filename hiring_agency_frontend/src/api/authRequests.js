@@ -91,3 +91,17 @@ export const getSecurityQuestionsForUser = async (token) => {
         .then(res => res.data)
         .catch(err => console.log('Failed to retrieve security questions'));
 }
+
+export const lockAccount = async (token) => {
+    let url = baseUrl + 'api/auth/lock_user';
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.post(url, {}, config)
+        .then(res => res.data)
+        .catch(err => console.log('Failed to lock user account'));
+}

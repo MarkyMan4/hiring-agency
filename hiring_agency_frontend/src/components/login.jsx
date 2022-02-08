@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getSecurityQuestionsForUser, login } from "../api/authRequests";
+import { getSecurityQuestionsForUser, getUser, lockAccount, login } from "../api/authRequests";
 import { setAuthToken } from "../utils/storage";
 import { isUserLoggedIn } from "../utils/storage";
 import { useNavigate } from 'react-router-dom';
@@ -9,11 +9,12 @@ function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [loginMessage, setLoginMessage] = useState('');
     const [allSecurityQuestions, setAllSecurityQuestions] = useState([]);
     const [securityQuestion, setSecurityQuestion] = useState({});
     const [securityQuestionAnswer, setSecurityQuestionAnswer] = useState('');
     const [securityQuestionMessage, setSecurityQuestionMessage] = useState('');
-    // store the auth token in state after authenticating, we'll save it to local storage afte they answer a security questions
+    // store the auth token in state after authenticating, we'll save it to local storage after they answer a security questions
     const [token, setToken] = useState(''); 
 
     useEffect(() => {
@@ -36,25 +37,38 @@ function Login() {
         if(allSecurityQuestions) {
             const randIndx = Math.floor(Math.random() * allSecurityQuestions.length);
             setSecurityQuestion(allSecurityQuestions[randIndx]);
-            // console.log(allSecurityQuestions[randIndx]);
         }
     }, [allSecurityQuestions]);
     
     const loginClicked = () => {
         login(username, password)
             .then(res => {
-                // setAuthToken(res.token);
+                let tkn = res.token;
 
                 if(res.isFirstLogin) {
+                    setAuthToken(res.token);
                     navigate('/change_password?info=firstlogin');
                     window.location.reload();
                 }
                 else {
                     setIsAuthenticated(true);
-                    setToken(res.token);
+
+                    // check if the account is locked, if it is, stop here
+                    getUser(res.token)
+                        .then(res => {
+                            if(res.is_locked) {
+                                setAuthToken(tkn); // auth token needs to be in local storage to determine account is locked
+                                window.location.reload();
+                            }
+                            else {
+                                // otherwise set the token, this will trigger the use effect to get security questions
+                                setToken(tkn);
+                            }
+                        })
+                        .catch(err => console.log(err));
                 }
             })
-            .catch(err => console.log(err));
+            .catch(err => setLoginMessage('Incorrect credentials'));
     }
 
     const usernameChanged = (event) => {
@@ -75,7 +89,16 @@ function Login() {
         if(securityQuestionAnswer !== securityQuestion.answer) {
             setSecurityQuestionMessage('That is the incorrect answer');
             const newQuestionSet = allSecurityQuestions.filter(q => q.question !== securityQuestion.question);
-            setAllSecurityQuestions(newQuestionSet);
+
+            // if they failed to answer any of their security questions, lock their account
+            if(newQuestionSet.length === 0) {
+                lockAccount(token);
+                setAuthToken(token); // auth token needs to be in local storage to determine account is locked
+                window.location.reload();
+            }
+            else {
+                setAllSecurityQuestions(newQuestionSet);
+            }
         }
         else {
             // save the token to local storage and refresh the page
@@ -94,9 +117,9 @@ function Login() {
                     <h3 className="mt-2">Security Question</h3>
                     <hr />
                     <label className="mt-3">{ securityQuestion ? securityQuestion.question_name : '' }</label><br />
-                    <input onChange={ answerChanged } placeholder="enter your answer here" className="mt-2 mb-3"></input><br />
+                    <input value={ securityQuestionAnswer } onChange={ answerChanged } placeholder="enter your answer here" className="mt-2 mb-3"></input><br />
                     <button onClick={ handleAnswerSubmitted } className="btn btn-success mt-3 mb-3">Submit</button>
-                    <div className="mt-2 mb-2">{ securityQuestionMessage }</div>
+                    <div className="mt-2 mb-2 text-danger">{ securityQuestionMessage }</div>
                 </div>
             )
         }
@@ -110,6 +133,7 @@ function Login() {
                     <label className="mt-3">Password</label><br />
                     <input type="password" onChange={passwordChanged}></input><br />
                     <button className="btn btn-outline-success mt-5 mb-4" onClick={loginClicked}>Login</button>
+                    <div className="mt-2 mb-2 text-danger">{ loginMessage }</div>
                 </div>
             );
         }
