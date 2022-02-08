@@ -88,7 +88,7 @@ class ServiceEntry(models.Model):
     end_time = models.TimeField(null=False)
 
 class AccountStatus(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='status')
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_locked = models.BooleanField(null=False)
 
 # when a user is created, automatically create an AccountStatus record

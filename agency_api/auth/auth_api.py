@@ -98,6 +98,19 @@ class UserAPI(generics.GenericAPIView):
 
         return Response(data)
 
+class LockUserAPI(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserSerializer
+
+    # POST /api/auth/lock_user
+    def post(self, request):
+        user = self.request.user
+        status = AccountStatus.objects.get(user_id=user.id)
+        status.is_locked = True
+        status.save()
+
+        return Response()
+
 class ChangePasswordAPI(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = UserSerializer
