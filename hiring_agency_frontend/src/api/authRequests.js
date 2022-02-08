@@ -11,7 +11,7 @@ export const login = async (username, password) => {
 
     return axios.post(url, body)
         .then(res => res.data)
-        .catch(err => console.log(err));
+        .catch(err => console.log('Failed to authentiate user'));
 }
 
 export const getUser = async (token) => {
@@ -24,7 +24,7 @@ export const getUser = async (token) => {
 
     return axios.get(url, config)
         .then(res => res.data)
-        .catch(err => console.log(err));
+        .catch(err => console.log('Failed to retrieve user'));
 }
 
 export const logout = async (token) => {
@@ -37,7 +37,7 @@ export const logout = async (token) => {
 
     return axios.post(url, {}, config)
         .then(res => res.data)
-        .catch(err => console.log(err));
+        .catch(err => console.log('Failed to logout'));
 }
 
 export const changePassword = async (token, oldPassword, newPassword) => {
@@ -56,7 +56,7 @@ export const changePassword = async (token, oldPassword, newPassword) => {
 
     return axios.post(url, body, config)
         .then(res => res.data)
-        .catch(err => console.log(err));
+        .catch(err => console.log('Failed to change password'));
 }
 
 export const setSecurityQuestion = async (token, questionId, answer) => {
@@ -75,5 +75,19 @@ export const setSecurityQuestion = async (token, questionId, answer) => {
 
     return axios.post(url, body, config)
         .then(res => res.data)
-        .catch(err => console.log(err));
+        .catch(err => console.log('Failed to set security question'));
+}
+
+export const getSecurityQuestionsForUser = async (token) => {
+    let url = baseUrl + 'api/securityquestionanswers';
+    
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.get(url, config)
+        .then(res => res.data)
+        .catch(err => console.log('Failed to retrieve security questions'));
 }
