@@ -17,6 +17,7 @@ function AddStaff() {
     const [phone, setPhone] = useState('');
     const [message, setMessage] = useState('');
     const [showPassword, setShowPassword] = useState('');
+    const [username, setUsername] = useState('');
 
     let query = useQuery();
 
@@ -63,6 +64,7 @@ function AddStaff() {
                     if(res.error)
                         setMessage(res.error);
                     else {
+                        setUsername(res.user.username);
                         setShowPassword(res.initialPassword);
                         setMessage('Add new staff success');
                     }
@@ -73,7 +75,6 @@ function AddStaff() {
     }
     return (
         <div>
-            <form id="AddStaff">
             <label>First name</label><br/>
             <input onChange={ handleFirstName } required></input><br/>
             <label>Last name</label><br/>
@@ -85,9 +86,9 @@ function AddStaff() {
             <label>Address</label><br/>
             <input onChange={ handleAddress }></input><br/>
             <button onClick={ addStaffCliked } className= "btn btn-success mt-2">Add Staff</button>
-            </form>
             <div className="mt-3">{ message }</div>
-            <div className="mt-4">{ showPassword === '' ? '' : 'The temporary password for this account is: ' + showPassword}</div>
+            <div className="mt-4">{ username === '' ? '' : 'The username for this account is: ' + username}</div>
+            <div className="mt-4">{ showPassword === '' ? '' : 'The initial password for this account is: ' + showPassword}</div>
         </div>
     );
 }
