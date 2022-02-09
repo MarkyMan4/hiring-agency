@@ -17,6 +17,7 @@ function AddStaff() {
     const[phone, setPhone] = useState('');
     const[isStaff, setIsStaff] = useState('');
     const[isActive, setIsActive] = useState('');
+    const [message, setMessage] = useState('');
 
     let query = useQuery();
 
@@ -40,28 +41,25 @@ function AddStaff() {
     const handlePhone = (event) =>{
         setPhone(event.target.value);
     }
-    const handleEmail = (event) =>{
-        setEmail(event.target.value);
-    }
 
     const addStaffCliked = () =>{ 
-        if(firstName==null){
+        if(!firstName || firstName.trim() === ''){
             setMessage('Please enter user`s first name')
         }
-        else if(LastName==null){
+        else if(!lastName || lastName.trim() === ''){
             setMessage('Please enter user`s last name')
         }
-        else if(email==null){
+        else if(!email || email.trim() === ''){
             setMessage('Please enter user`s email')
         }
-        else if(address==null){
+        else if(!address || address.trim() === ''){
             setMessage('Please enter user`s address')
         }
-        else if(phone==null){
+        else if(!phone || phone.trim() === ''){
             setMessage('Please enter user`s phone number')
         }
         else{
-            addNewStaff(firstName,lastName,email,phone,address)
+            addNewStaff(getAuthToken(), firstName, lastName, email, phone, address)
                 .then(res =>{
                     if(res.error)
                         setMessage(res.error);
@@ -74,11 +72,10 @@ function AddStaff() {
     }
     return (
         <div>
-            <div className="mb-4">{ topMessage }</div>
             <label>First name</label><br/>
-            <input onChange={ handleFirstName }></input><br/>
+            <input onChange={ handleFirstName } required></input><br/>
             <label>Last name</label><br/>
-            <input onChange={ handleLastName }></input><br/>
+            <input onChange={ handleLastName } required></input><br/>
             <label>Email</label><br/>
             <input onChange={ handleEmail } type="email"></input><br/>
             <label>Phone number</label><br/>

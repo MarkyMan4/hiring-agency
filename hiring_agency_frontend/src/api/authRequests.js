@@ -93,17 +93,23 @@ export const getSecurityQuestionsForUser = async (token) => {
 }
 
 
-export const addNewStaff = async(token) =>{
+export const addNewStaff = async(token, firstName, lastName, email, phone, address) =>{
     let url = baseUrl + 'api/auth/register_staff';
     let body = {
-        firstName: firstName,
-        lastName: lastName,
+        first_name: firstName,
+        last_name: lastName,
         email: email,
-        phone: phone,
+        phone_number: phone,
         address: address,
     }
 
-    return axios.post(url, config)
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.post(url, body, config)
         .then(res => res.data)
         .catch(err => console.log('Failed to add new staff'));
 
