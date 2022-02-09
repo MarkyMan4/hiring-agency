@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Nav, Navbar} from 'react-bootstrap';
-import { isUserLoggedIn, destroyAuthToken, getAuthToken } from "../utils/storage";
+import { isUserLoggedIn, destroyAuthToken, getAuthToken, isAdmin } from "../utils/storage";
 import { getUser, logout } from "../api/authRequests";
+import AddStaff from "./addStaff";
 
 function NavMenu() {
     const [username, setUsername] = useState('');
@@ -33,6 +34,12 @@ function NavMenu() {
         }
     }
 
+    const getAddStaff = () => {
+        if(isAdmin) {
+            return <Nav.Link className="nav-link" href="#/add_new_staff" >Add staff</Nav.Link>
+        }
+    }
+
     const getUserNameOrBlank = () => {
         if(isUserLoggedIn()) {
             return getUser(getAuthToken())
@@ -51,6 +58,7 @@ function NavMenu() {
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
                     <Nav.Link className="nav-link" href="#/">Home</Nav.Link>
+                    { getAddStaff() }
                     { getLoginOrLogoutButton() }
                 </Nav>
             </Navbar.Collapse>

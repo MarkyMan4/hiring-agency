@@ -21,3 +21,13 @@ export const isUserLoggedIn = () => {
 
     return false;
 }
+
+export const isAdmin = () => {
+    if(getAuthToken()) {
+        return getUser()
+            .then(res => true)
+            .catch(err => false);
+    }
+
+    return false;
+}
