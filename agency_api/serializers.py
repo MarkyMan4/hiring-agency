@@ -1,6 +1,11 @@
 from rest_framework import serializers
-from .models import EducationType, StaffMember, SecurityQuestion, SecurityQuestionAnswer
+from .models import EducationType, StaffMember, SecurityQuestion, SecurityQuestionAnswer, JobPosting
 
+
+class JobPostingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobPosting
+        fields = ('__all__')
 
 class StaffMemberSerializer(serializers.ModelSerializer):
     class Meta:
