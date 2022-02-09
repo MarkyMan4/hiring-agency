@@ -10,14 +10,13 @@ function useQuery() {
 function AddStaff() {
     let navigate = useNavigate();
 
-    const[firstName, setFirstName] = useState('');
-    const[lastName, setLastName] = useState('');
-    const[email, setEmail] = useState('');
-    const[address, setAddress] = useState('');
-    const[phone, setPhone] = useState('');
-    const[isStaff, setIsStaff] = useState('');
-    const[isActive, setIsActive] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [address, setAddress] = useState('');
+    const [phone, setPhone] = useState('');
     const [message, setMessage] = useState('');
+    const [showPassword, setShowPassword] = useState('');
 
     let query = useQuery();
 
@@ -63,15 +62,18 @@ function AddStaff() {
                 .then(res =>{
                     if(res.error)
                         setMessage(res.error);
-                    else
+                    else {
+                        setShowPassword(res.initialPassword);
                         setMessage('Add new staff success');
-
+                    }
+                        
                 })
                 .catch(err => console.log(err));
         }
     }
     return (
         <div>
+            <form id="AddStaff">
             <label>First name</label><br/>
             <input onChange={ handleFirstName } required></input><br/>
             <label>Last name</label><br/>
@@ -79,11 +81,13 @@ function AddStaff() {
             <label>Email</label><br/>
             <input onChange={ handleEmail } type="email"></input><br/>
             <label>Phone number</label><br/>
-            <input onChange={ handlePhone } type="number" maxLength={10} minLength={10}></input><br/>
+            <input onChange={ handlePhone } type="tel"  maxLength={10} minLength={10}></input><br/>
             <label>Address</label><br/>
             <input onChange={ handleAddress }></input><br/>
             <button onClick={ addStaffCliked } className= "btn btn-success mt-2">Add Staff</button>
+            </form>
             <div className="mt-3">{ message }</div>
+            <div className="mt-4">{ showPassword === '' ? '' : 'The temporary password for this account is: ' + showPassword}</div>
         </div>
     );
 }
