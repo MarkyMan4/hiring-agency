@@ -18,7 +18,7 @@ class SecurityQuestionSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 class SecurityQuestionAnswerSerializer(serializers.ModelSerializer):
-    question_name = serializers.CharField(source='question.question')
+    question_name = serializers.CharField(source='question.question', required=False)
 
     class Meta:
         model = SecurityQuestionAnswer
