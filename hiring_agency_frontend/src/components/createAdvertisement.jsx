@@ -52,7 +52,7 @@ function CreateAdvertisement() {
                         </select>
                     </div>
                     <div className="row mx-2">
-                        <label>Experiance Required</label>
+                        <label>Experience Required (Years)</label>
                         <input type="text" name="experiance" onChange={experienceChanged} required></input>
                     </div>
                     <div className="row mx-2">
