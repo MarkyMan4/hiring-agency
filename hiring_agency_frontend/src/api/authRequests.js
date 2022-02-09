@@ -91,3 +91,22 @@ export const getSecurityQuestionsForUser = async (token) => {
         .then(res => res.data)
         .catch(err => console.log('Failed to retrieve security questions'));
 }
+
+export const addNewStaff = async(token) =>{
+    let url = baseUrl + 'api/addnewstaff';
+    let body = {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        phone: phone,
+        address: address,
+    }
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+    return axios.get(url, config)
+        .then(res => res.data)
+        .catch(err => console.log('Failed to add new staff'));
+}
