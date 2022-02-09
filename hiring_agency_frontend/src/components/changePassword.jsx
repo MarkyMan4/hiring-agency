@@ -40,13 +40,15 @@ function ChangePassword() {
         else {
             changePassword(getAuthToken(), oldPassword, newPassword)
                 .then(res => {
+                    console.log(res);
                     if(res.error)
                         setMessage(res.error);
-                    else
+                    else {
                         setMessage('password successfully changed');
 
                         if(query.get('info') === 'firstlogin')
                             navigate('/set_security_questions');
+                    }
                 })
                 .catch(err => console.log(err));
         }
