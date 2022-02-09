@@ -71,6 +71,7 @@ class JobPosting(models.Model):
     service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE)
     education_type = models.ForeignKey(EducationType, on_delete=models.CASCADE)
     years_experience_required = models.IntegerField(null=False)
+    description = models.CharField(null=True, max_length= 500)
 
 class ServiceAssignment(models.Model):
     healthcare_professional = models.ForeignKey(HealthCareProfessional, on_delete=models.CASCADE)
