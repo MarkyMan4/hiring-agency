@@ -35,7 +35,7 @@ function NavMenu() {
     }
 
     const getAddStaff = () => {
-        if(isAdmin) {
+        if(isAdmin()) {
             return <Nav.Link className="nav-link" href="#/add_new_staff" >Add staff</Nav.Link>
         }
     }
