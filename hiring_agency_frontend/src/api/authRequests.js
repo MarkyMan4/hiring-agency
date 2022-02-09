@@ -92,6 +92,29 @@ export const getSecurityQuestionsForUser = async (token) => {
         .catch(err => console.log('Failed to retrieve security questions'));
 }
 
+
+export const addNewStaff = async(token, firstName, lastName, email, phone, address) =>{
+    let url = baseUrl + 'api/auth/register_staff';
+    let body = {
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        phone_number: phone,
+        address: address,
+    }
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.post(url, body, config)
+        .then(res => res.data)
+        .catch(err => console.log('Failed to add new staff'));
+
+}
+
 export const lockAccount = async (token) => {
     let url = baseUrl + 'api/auth/lock_user';
 
@@ -104,4 +127,5 @@ export const lockAccount = async (token) => {
     return axios.post(url, {}, config)
         .then(res => res.data)
         .catch(err => console.log('Failed to lock user account'));
+
 }
