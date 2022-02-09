@@ -35,7 +35,7 @@ function NavMenu() {
     }
 
     const createJobPosting = () => {
-        if(true) { //isUserLoggedIn()
+        if(isUserLoggedIn()) { 
             return <Nav.Link className="nav-link" href="#/create_job" >Create Job Advertisement</Nav.Link>
         }
     }
@@ -65,8 +65,8 @@ function NavMenu() {
                 <Nav className="me-auto">
                     <Nav.Link className="nav-link" href="#/">Home</Nav.Link>
                     { getAddStaff() }
-                    { getLoginOrLogoutButton() }
                     { createJobPosting()}
+                    { getLoginOrLogoutButton() }
                 </Nav>
             </Navbar.Collapse>
             <span className="navbar-text mr-5">
