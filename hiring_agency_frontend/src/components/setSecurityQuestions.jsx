@@ -48,7 +48,7 @@ function SetSecurityQuestions() {
 
     const handleSubmitClicked = () => {
         // do some validation
-        if(question1 === question2 || question1 === question3 || question2 === question3) {
+        if(parseInt(question1) === parseInt(question2) || parseInt(question1) === parseInt(question3) || parseInt(question2) === parseInt(question3)) {
             setMessage('please select three distinct questions');
         }
         else {
