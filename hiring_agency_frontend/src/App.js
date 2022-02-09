@@ -11,6 +11,8 @@ import AccountLocked from './components/accountLocked';
 import { useEffect, useState } from 'react';
 import { getAuthToken, isUserLoggedIn } from './utils/storage';
 import { getUser } from './api/authRequests';
+import CreateAdvertisement from './components/createAdvertisement';
+import ViewAdvertisement from './components/viewAdvertisement';
 
 
 function App() {
@@ -40,6 +42,8 @@ function App() {
           <Route path="/set_security_questions" element={ <SetSecurityQuestions /> } />
           <Route path="/account_locked" element={ <AccountLocked /> } />
           <Route path="/add_new_staff" element={<AddStaff/>} />
+          <Route path="/create_job" element={<CreateAdvertisement/>} />
+          <Route path="/view_job" element={<ViewAdvertisement/>} />
         </Routes>
       );
     }

@@ -13,7 +13,6 @@ class JobPostingViewSet(viewsets.ModelViewSet):
     def list(self, request):
         job_postings = self.queryset
         serializer = self.get_serializer(job_postings, many=True)
-
         return Response(serializer.data)
 
     # POST /api/jobpostings

@@ -34,6 +34,12 @@ function NavMenu() {
         }
     }
 
+    const createJobPosting = () => {
+        if(true) { //isUserLoggedIn()
+            return <Nav.Link className="nav-link" href="#/create_job" >Create Job Advertisement</Nav.Link>
+        }
+    }
+
     const getAddStaff = () => {
         if(isAdmin) {
             return <Nav.Link className="nav-link" href="#/add_new_staff" >Add staff</Nav.Link>
@@ -60,6 +66,7 @@ function NavMenu() {
                     <Nav.Link className="nav-link" href="#/">Home</Nav.Link>
                     { getAddStaff() }
                     { getLoginOrLogoutButton() }
+                    { createJobPosting()}
                 </Nav>
             </Navbar.Collapse>
             <span className="navbar-text mr-5">

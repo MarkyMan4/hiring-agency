@@ -4,7 +4,7 @@ import { setAuthToken } from "../utils/storage";
 import { isUserLoggedIn } from "../utils/storage";
 import { useNavigate } from 'react-router-dom';
 
-function viewAdvertisement() {
+function ViewAdvertisement() {
     let navigate = useNavigate();
 
     const getAllJobs = () => {
@@ -12,10 +12,18 @@ function viewAdvertisement() {
 
 
         let jobs = [];
+        /*
+        useEffect(() => {
+            //action that will happen in html
+        }, ["dependencies"]);
+        */
+
+        return(
+            <div>
+             {jobs.map(job => <div name="job-container"> </div> )}
+            </div>
+        )
         
-        jobs.forEach(function(job){
-            
-        })
 
     }
 
@@ -31,4 +39,4 @@ function viewAdvertisement() {
     )
 }
 
-export default viewAdvertisement;
+export default ViewAdvertisement;
