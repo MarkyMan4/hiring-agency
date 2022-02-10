@@ -9,6 +9,23 @@ from ..serializers import StaffMemberSerializer
 from .auth_serializers import UserSerializer, RegisterStaffMemberSerializer, LoginSerializer
 from ..models import AccountStatus
 
+def is_password_valid(password):
+    specials = '~!@#$%^&*+'
+    alphanumeric = string.ascii_letters + string.digits
+    allowed_chars = alphanumeric + specials
+    is_valid = True
+
+    # make sure password contains special characters, alphanumeric characters and is at least six characters
+    if any(p in alphanumeric for p in password) and any(p in specials for p in password) and (len(password) >= 6):
+        # make sure password only contains alphanumeric characters and special characters
+        for c in password:
+            if c not in allowed_chars:
+                is_valid = False
+                break
+    else:
+        is_valid = False
+
+    return is_valid
 
 # registering staff member, this can only be done by an administrator
 class RegisterStaffViewSet(generics.GenericAPIView):
@@ -52,11 +69,11 @@ class RegisterStaffViewSet(generics.GenericAPIView):
     
     def gen_rand_pass(self):
         specials = '~!@#$%^&*+'
-        alphabet = string.ascii_letters+string.digits+specials
+        alphabet = string.ascii_letters + string.digits + specials
+
         while True:
             password = ''.join(secrets.choice(alphabet) for i in range(10))
-            #TODO fix error where special may not be contained in password
-            if(any(p in specials for p in password) and (len(password) >= 5)):
+            if(is_password_valid(password)):
                 return password
 
 
@@ -120,7 +137,6 @@ class ChangePasswordAPI(generics.GenericAPIView):
     # verify that they correctly entered their old password
     # then set the new password
     def post(self, request):
-        response = {}
         username = self.request.user.username
         old_pass = request.data['old_pass']
         new_pass = request.data['new_pass']
@@ -128,12 +144,22 @@ class ChangePasswordAPI(generics.GenericAPIView):
         user = authenticate(username=username, password=old_pass)
 
         if user:
-            user.set_password(new_pass)
-            user.save()
-            return Response()
-        else:
-            response = {
-                'error': 'old password is incorrect'
-            }
+            # make sure new password is not the same as old password
+            if old_pass == new_pass:
+                return Response({
+                    'error': 'new password cannot be the same as old password'
+                })
 
-            return Response(response)
+            # make sure the password meets minimum requirements
+            if is_password_valid(new_pass):
+                user.set_password(new_pass)
+                user.save()
+                return Response()
+            else:
+                return Response({
+                    'error': 'password must be at least six characters, only contain alphanumeric characters and at least one of the following: ~, !, @, #, $, %, ^, &, *, +'
+                })
+        else:
+            return Response({
+                'error': 'old password is incorrect'
+            })

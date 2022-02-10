@@ -21,7 +21,7 @@ function ChangePassword() {
             navigate('/login');
 
         if(query.get('info') === 'firstlogin')
-            setTopMessage('Looks like this is your first time logging in. Please change you password before proceding.');
+            setTopMessage('Looks like this is your first time logging in. Please change your password before proceding.');
     });
 
     const handleOldPassInput = (event) => {
@@ -34,33 +34,29 @@ function ChangePassword() {
 
     const changePasswordClicked = () => {
         // determine if password change was successful and display a message
-        if(oldPassword === newPassword) {
-            setMessage('new password cannot be the same as old password');
-        }
-        else {
-            changePassword(getAuthToken(), oldPassword, newPassword)
-                .then(res => {
-                    console.log(res);
-                    if(res.error)
-                        setMessage(res.error);
-                    else {
-                        setMessage('password successfully changed');
+        changePassword(getAuthToken(), oldPassword, newPassword)
+            .then(res => {
+                if(res.error)
+                    setMessage(res.error);
+                else {
+                    setMessage('password successfully changed');
+                    setOldPassword('');
+                    setNewPassword('');
 
-                        if(query.get('info') === 'firstlogin')
-                            navigate('/set_security_questions');
-                    }
-                })
-                .catch(err => console.log(err));
-        }
+                    if(query.get('info') === 'firstlogin')
+                        navigate('/set_security_questions');
+                }
+            })
+            .catch(err => console.log(err));
     }
 
     return (
         <div>
             <div className="mb-4">{ topMessage }</div>
             <label>Old password</label><br />
-            <input onChange={ handleOldPassInput } type="password"></input><br />
+            <input value={ oldPassword } onChange={ handleOldPassInput } type="password"></input><br />
             <label className="mt-3">New password</label><br />
-            <input onChange={ handleNewPassInput } type="password"></input><br />
+            <input value={ newPassword } onChange={ handleNewPassInput } type="password"></input><br />
             <button onClick={ changePasswordClicked } className="btn btn-success mt-3">Change password</button>
             <div className="mt-3">{ message }</div>
         </div>
