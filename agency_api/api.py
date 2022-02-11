@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from knox.models import AuthToken
-from .serializers import EducationTypeSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer
+from .serializers import EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer
 from .models import EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting
 
 class JobPostingViewSet(viewsets.ModelViewSet):
@@ -73,3 +73,8 @@ class SecurityQuestionAnswerViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+class HPJobApplicationViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = HPJobApplicationSerializer
+    http_method_names = ['get', 'post']

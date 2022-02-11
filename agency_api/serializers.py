@@ -1,6 +1,10 @@
 from rest_framework import serializers
-from .models import EducationType, StaffMember, SecurityQuestion, SecurityQuestionAnswer, JobPosting
+from .models import HPJobApplication, EducationType, StaffMember, SecurityQuestion, SecurityQuestionAnswer, JobPosting
 
+class HPJobApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HPJobApplication
+        fields = ('__all__')
 
 class JobPostingSerializer(serializers.ModelSerializer):
     class Meta:

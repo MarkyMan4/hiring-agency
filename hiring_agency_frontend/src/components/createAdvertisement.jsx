@@ -35,7 +35,7 @@ function CreateAdvertisement() {
     return (
         <div className="row w-100 mt-5">
             <div className="col-md-4"></div>
-            <div className="col-md-4 text-center login-form shadow">
+            <div className="col-md-4 text-center  shadow">
                 <form id="newjobpostform container-fluid" className="form-data">
                     <div className="row mx-2">
                         <label>Job Type: </label>
