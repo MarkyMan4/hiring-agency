@@ -46,22 +46,6 @@ class HealthCareProfessional(models.Model):
     phone_number = models.IntegerField(null=False)
     email = models.CharField(null=False, max_length=200)
     
-
-class HPJobApplication(models.Model):
-    gender = models.CharField(null=False, max_length=1)
-    date_of_birth = models.DateField(null=False)
-    ssn = models.IntegerField(null=False)
-    service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE)
-    education_type = models.ForeignKey(EducationType, on_delete=models.CASCADE)
-    education_institution = models.CharField(null=False, max_length=200)
-    graduation_year = models.IntegerField(null=False)
-    graduation_month = models.IntegerField(null=False)
-    years_of_experience = models.IntegerField(null=False)
-    address = models.CharField(null=False, max_length=500)
-    phone_number = models.IntegerField(null=False)
-    email = models.CharField(null=False, max_length=200)
-
-
 class ServiceRequest(models.Model):
     care_taker = models.ForeignKey(CareTaker, on_delete=models.CASCADE)
     patient_first_name = models.CharField(null=False, max_length=50)
@@ -88,7 +72,22 @@ class JobPosting(models.Model):
     education_type = models.ForeignKey(EducationType, on_delete=models.CASCADE)
     years_experience_required = models.IntegerField(null=False)
     description = models.CharField(null=True, max_length= 500)
-    application_ids = models.ForeignKey(HPJobApplication, on_delete=models.CASCADE)
+
+class HPJobApplication(models.Model):
+    gender = models.CharField(null=False, max_length=1)
+    date_of_birth = models.DateField(null=False)
+    ssn = models.IntegerField(null=False)
+    service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE)
+    education_type = models.ForeignKey(EducationType, on_delete=models.CASCADE)
+    education_institution = models.CharField(null=False, max_length=200)
+    graduation_year = models.IntegerField(null=False)
+    graduation_month = models.IntegerField(null=False)
+    years_of_experience = models.IntegerField(null=False)
+    address = models.CharField(null=False, max_length=500)
+    phone_number = models.IntegerField(null=False)
+    email = models.CharField(null=False, max_length=200)
+    job = models.ForeignKey(JobPosting, on_delete=models.CASCADE)
+
 
 class ServiceAssignment(models.Model):
     healthcare_professional = models.ForeignKey(HealthCareProfessional, on_delete=models.CASCADE)
