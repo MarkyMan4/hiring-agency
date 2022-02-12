@@ -13,6 +13,7 @@ import { getAuthToken, isUserLoggedIn } from './utils/storage';
 import { getUser } from './api/authRequests';
 import CreateAdvertisement from './components/createAdvertisement';
 import ViewAdvertisement from './components/viewAdvertisement';
+import CareTakerAccountRequest from './components/careTakerAccountRequest';
 
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
           <Route path="/add_new_staff" element={<AddStaff/>} />
           <Route path="/create_job" element={<CreateAdvertisement/>} />
           <Route path="/view_job" element={<ViewAdvertisement/>} />
+          <Route path="/caretaker_acct_request" element={<CareTakerAccountRequest />} />
         </Routes>
       );
     }

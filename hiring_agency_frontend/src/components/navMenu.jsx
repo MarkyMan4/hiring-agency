@@ -64,6 +64,7 @@ function NavMenu() {
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
                     <Nav.Link className="nav-link" href="#/">Home</Nav.Link>
+                    <Nav.Link className="nav-link" href="#/caretaker_acct_request">Sign Up</Nav.Link>
                     { getAddStaff() }
                     { createJobPosting()}
                     { getLoginOrLogoutButton() }
