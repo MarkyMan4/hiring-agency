@@ -118,14 +118,12 @@ class UserAPI(generics.GenericAPIView):
         data['is_locked'] = AccountStatus.objects.get(user_id=user.id).is_locked
 
         # include the groups this user is part of
-        groups = []
-        for g in user.groups.all():
-            groups.append(g.name)
+        groups = [group.name for group in user.groups.all()]
 
-        # admin doesn't have any groups since they have all permissions, so include 'admin' in groups
-        # if it's a superuser so the front end knows to give them access to everything
+        # admin doesn't have any groups since they already have all permissions, so include all groups
+        # so the front end can handle admin users properly
         if user.is_superuser:
-            groups.append('admin')
+            groups = [group.name for group in Group.objects.all()]
         
         data['groups'] = groups
 
