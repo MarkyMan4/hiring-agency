@@ -117,6 +117,18 @@ class UserAPI(generics.GenericAPIView):
         data = serializer.data
         data['is_locked'] = AccountStatus.objects.get(user_id=user.id).is_locked
 
+        # include the groups this user is part of
+        groups = []
+        for g in user.groups.all():
+            groups.append(g.name)
+
+        # admin doesn't have any groups since they have all permissions, so include 'admin' in groups
+        # if it's a superuser so the front end knows to give them access to everything
+        if user.is_superuser:
+            groups.append('admin')
+        
+        data['groups'] = groups
+
         return Response(data)
 
 class LockUserAPI(generics.GenericAPIView):

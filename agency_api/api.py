@@ -102,10 +102,7 @@ class CareTakerRequestViewSet(generics.RetrieveAPIView):
     def get_queryset(self):
         return CareTakerRequest.objects.filter(is_approved=False)
 
-    def get(self, request):
-        for g in request.user.groups.all():
-            print(g.name)
-        
+    def get(self, request):        
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
 
