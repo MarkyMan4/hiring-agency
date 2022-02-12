@@ -2,7 +2,7 @@ import string
 import secrets
 from rest_framework import generics, permissions
 from rest_framework.response import Response
-from django.contrib.auth.models import update_last_login
+from django.contrib.auth.models import update_last_login, Group
 from django.contrib.auth import authenticate
 from knox.models import AuthToken
 from ..serializers import StaffMemberSerializer
@@ -60,6 +60,10 @@ class RegisterStaffViewSet(generics.GenericAPIView):
         staff_member_serializer = StaffMemberSerializer(data=staff_member_data)
         staff_member_serializer.is_valid(raise_exception=True)
         staff_member_serializer.save()
+
+        # finally, add the user to the staff group
+        staff_group = Group.objects.get(name='staff')
+        staff_group.user_set.add(user)
 
         return Response({
             'user': UserSerializer(user, context=self.get_serializer_context()).data,

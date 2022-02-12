@@ -2,6 +2,7 @@ from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from knox.models import AuthToken
+from .permissions import CustomModelPermissions
 from .serializers import CareTakerRequestSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer
 from .models import CareTakerRequest, EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting
 from datetime import datetime
@@ -93,12 +94,19 @@ class CreateCareTakerRequestViewSet(generics.GenericAPIView):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class CareTakerRequestViewSet(generics.GenericAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+class CareTakerRequestViewSet(generics.RetrieveAPIView):
+    queryset = CareTakerRequest.objects.filter(is_approved=False)
+    permission_classes = [CustomModelPermissions]
     serializer_class = CareTakerRequestSerializer
 
+    def get_queryset(self):
+        return CareTakerRequest.objects.filter(is_approved=False)
+
     def get(self, request):
-        queryset = CareTakerRequest.objects.filter(is_approved=False)
+        for g in request.user.groups.all():
+            print(g.name)
+        
+        queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
 
         return Response(serializer.data)
