@@ -88,6 +88,7 @@ class CreateCareTakerRequestViewSet(generics.GenericAPIView):
     def post(self, request):
         data = request.data
         data['date_requested'] = datetime.now()
+        data['is_pending'] = True
         data['is_approved'] = False
 
         # validate email and phone number
@@ -104,7 +105,7 @@ class CreateCareTakerRequestViewSet(generics.GenericAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class CareTakerRequestViewSet(generics.RetrieveAPIView):
-    queryset = CareTakerRequest.objects.filter(is_approved=False)
+    queryset = CareTakerRequest.objects.filter(is_pending=True)
     permission_classes = [CustomModelPermissions]
     serializer_class = CareTakerRequestSerializer
 
