@@ -10,15 +10,23 @@ function CareTakerAccountRequest() {
     const [address, setAddress] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
 
     const handleFormSubmit = (event) => {
-        event.preventDefault();
+        event.preventDefault(); // don't refresh page on form submit
+
         requestCareTakerAccount(firstName, lastName, address, phoneNumber, email)
-            .then(res => {
-                console.log(res);
-                navigate('/caretaker_acct_request_success');
-            }) // redirect to success page if request was successful
-            .catch(err => console.log(err));
+            .then(res => navigate('/caretaker_acct_request_success')) // redirect to success page if request was successful
+            .catch(err => {
+                const errorResponse = JSON.parse(err.request.response);
+                
+                if(errorResponse.error) {
+                    setMessage(errorResponse.error)
+                }
+                else {
+                    setMessage('Error creating care taker request')
+                }
+            });
     }
 
     return (
@@ -70,6 +78,8 @@ function CareTakerAccountRequest() {
                     value = { email }
                     onChange={ event => setEmail(event.target.value) }
                 />
+
+                <div className="text-danger mt-3">{ message }</div>
 
                 <button type="submit" className="btn btn-success mt-3">Submit</button>
             </form>

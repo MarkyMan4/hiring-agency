@@ -14,6 +14,5 @@ export const requestCareTakerAccount = async (firstName, lastName, address, phon
     }
 
     return axios.post(url, body)
-        .then(res => res.data)
-        .catch(err => err.request.response);
+        .then(res => res.data);
 }

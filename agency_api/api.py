@@ -5,6 +5,7 @@ from knox.models import AuthToken
 from .permissions import CustomModelPermissions
 from .serializers import CareTakerRequestSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer
 from .models import CareTakerRequest, EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting
+from .validation import is_phone_number_valid, is_email_valid
 from datetime import datetime
 
 class JobPostingViewSet(viewsets.ModelViewSet):
@@ -88,6 +89,14 @@ class CreateCareTakerRequestViewSet(generics.GenericAPIView):
         data = request.data
         data['date_requested'] = datetime.now()
         data['is_approved'] = False
+
+        # validate email and phone number
+        if not is_phone_number_valid(data['phone_number']):
+            return Response({'error': 'phone number must be 10 digits and only contain numbers'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not is_email_valid(data['email']):
+            return Response({'error': 'invalid email'}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
