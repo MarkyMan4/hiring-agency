@@ -124,6 +124,7 @@ class UserAPI(generics.GenericAPIView):
         # so the front end can handle admin users properly
         if user.is_superuser:
             groups = [group.name for group in Group.objects.all()]
+            groups.append('admin') # also include admin so the front end can easily determine if the user is an admin
         
         data['groups'] = groups
 
