@@ -108,9 +108,6 @@ class CareTakerRequestViewSet(generics.RetrieveAPIView):
     permission_classes = [CustomModelPermissions]
     serializer_class = CareTakerRequestSerializer
 
-    def get_queryset(self):
-        return CareTakerRequest.objects.filter(is_approved=False)
-
     def get(self, request):        
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
