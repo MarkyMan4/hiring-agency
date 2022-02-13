@@ -7,7 +7,7 @@ def is_phone_number_valid(phone_number):
     if not str(phone_number).isnumeric():
         is_valid = False
 
-    if len(str(phone_number)) < 10:
+    if len(str(phone_number)) != 10:
         is_valid = False
 
     return is_valid
