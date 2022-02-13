@@ -1,6 +1,10 @@
 import React, { useState } from "react";
+import { ThemeConsumer } from "react-bootstrap/esm/ThemeProvider";
+import { useNavigate } from 'react-router-dom';
+import { requestCareTakerAccount } from "../api/careTakerRequests";
 
 function CareTakerAccountRequest() {
+    let navigate = useNavigate();
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [address, setAddress] = useState('');
@@ -9,9 +13,12 @@ function CareTakerAccountRequest() {
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
-        alert('submitted');
-        
-        // redirect to home page
+        requestCareTakerAccount(firstName, lastName, address, phoneNumber, email)
+            .then(res => {
+                console.log(res);
+                navigate('/caretaker_acct_request_success');
+            }) // redirect to success page if request was successful
+            .catch(err => console.log(err));
     }
 
     return (
@@ -51,6 +58,7 @@ function CareTakerAccountRequest() {
                 <input 
                     required 
                     className="form-control mt-2" 
+                    type="tel"
                     value = { phoneNumber }
                     onChange={ event => setPhoneNumber(event.target.value) }
                 />
