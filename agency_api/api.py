@@ -1,9 +1,12 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from knox.models import AuthToken
-from .serializers import EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer
-from .models import EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting
+from .permissions import CustomModelPermissions
+from .serializers import CareTakerRequestSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer
+from .models import CareTakerRequest, EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting
+from .validation import is_phone_number_valid, is_email_valid
+from datetime import datetime
 
 class JobPostingViewSet(viewsets.ModelViewSet):
     serializer_class = JobPostingSerializer
@@ -78,3 +81,35 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = HPJobApplicationSerializer
     http_method_names = ['get', 'post']
+
+class CreateCareTakerRequestViewSet(generics.GenericAPIView):
+    serializer_class = CareTakerRequestSerializer
+
+    def post(self, request):
+        data = request.data
+        data['date_requested'] = datetime.now()
+        data['is_approved'] = False
+
+        # validate email and phone number
+        if not is_phone_number_valid(data['phone_number']):
+            return Response({'error': 'phone number must be 10 digits and only contain numbers'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not is_email_valid(data['email']):
+            return Response({'error': 'invalid email'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class CareTakerRequestViewSet(generics.RetrieveAPIView):
+    queryset = CareTakerRequest.objects.filter(is_approved=False)
+    permission_classes = [CustomModelPermissions]
+    serializer_class = CareTakerRequestSerializer
+
+    def get(self, request):        
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+
+        return Response(serializer.data)

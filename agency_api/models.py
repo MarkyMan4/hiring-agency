@@ -25,11 +25,20 @@ class CareTaker(models.Model):
     phone_number = models.IntegerField(null=False)
     email = models.CharField(null=False, max_length=100)
 
+class CareTakerRequest(models.Model):
+    first_name = models.CharField(null=False, max_length=50)
+    last_name = models.CharField(null=False, max_length=50)
+    address = models.CharField(null=False, max_length=500)
+    phone_number = models.IntegerField(null=False)
+    email = models.CharField(null=False, max_length=100)
+    date_requested = models.DateTimeField(null=False)
+    is_approved = models.BooleanField(null=False, default=False)
+
 class StaffMember(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.CharField(null=False, max_length=500)
     phone_number = models.IntegerField(null=False)
-    email = models.CharField(null=False, max_length=200)
+    email = models.EmailField(null=False, max_length=200)
 
 class HealthCareProfessional(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

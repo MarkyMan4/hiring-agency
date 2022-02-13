@@ -2,7 +2,7 @@ import string
 import secrets
 from rest_framework import generics, permissions
 from rest_framework.response import Response
-from django.contrib.auth.models import update_last_login
+from django.contrib.auth.models import update_last_login, Group
 from django.contrib.auth import authenticate
 from knox.models import AuthToken
 from ..serializers import StaffMemberSerializer
@@ -61,6 +61,10 @@ class RegisterStaffViewSet(generics.GenericAPIView):
         staff_member_serializer.is_valid(raise_exception=True)
         staff_member_serializer.save()
 
+        # finally, add the user to the staff group
+        staff_group = Group.objects.get(name='staff')
+        staff_group.user_set.add(user)
+
         return Response({
             'user': UserSerializer(user, context=self.get_serializer_context()).data,
             'initialPassword': generated_password,
@@ -112,6 +116,17 @@ class UserAPI(generics.GenericAPIView):
         serializer = self.get_serializer(user)
         data = serializer.data
         data['is_locked'] = AccountStatus.objects.get(user_id=user.id).is_locked
+
+        # include the groups this user is part of
+        groups = [group.name for group in user.groups.all()]
+
+        # admin doesn't have any groups since they already have all permissions, so include all groups
+        # so the front end can handle admin users properly
+        if user.is_superuser:
+            groups = [group.name for group in Group.objects.all()]
+            groups.append('admin') # also include admin so the front end can easily determine if the user is an admin
+        
+        data['groups'] = groups
 
         return Response(data)
 
