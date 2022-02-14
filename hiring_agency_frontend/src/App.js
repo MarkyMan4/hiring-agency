@@ -15,15 +15,20 @@ import CreateAdvertisement from './components/createAdvertisement';
 import ViewAdvertisement from './components/viewAdvertisement';
 import CareTakerAccountRequest from './components/careTakerAccountRequest';
 import CareTakerAccountRequestSuccess from './components/careTakerAccountRequestSuccess';
+import PendingCareTakerRequests from './components/pendingCareTakerRequests';
 
 
 function App() {
   const [accountLocked, setAccountLocked] = useState(false);
+  const [roles, setRoles] = useState([]);
 
   useEffect(() => {
     if(isUserLoggedIn()) {
       getUser(getAuthToken())
-        .then(res => setAccountLocked(res.is_locked));
+        .then(res => {
+          setAccountLocked(res.is_locked);
+          setRoles(res.groups);
+        });
     }
   }, []);
 
@@ -48,6 +53,7 @@ function App() {
           <Route path="/view_job" element={<ViewAdvertisement/>} />
           <Route path="/caretaker_acct_request" element={<CareTakerAccountRequest />} />
           <Route path="/caretaker_acct_request_success" element={<CareTakerAccountRequestSuccess />} />
+          { roles.includes('admin') || roles.includes('staff') ? <Route path="/pending_caretaker_requests" element={<PendingCareTakerRequests />} /> : null }
         </Routes>
       );
     }
