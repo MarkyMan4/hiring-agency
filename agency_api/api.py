@@ -85,6 +85,7 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
 class CreateCareTakerRequestViewSet(generics.GenericAPIView):
     serializer_class = CareTakerRequestSerializer
 
+    # POST /api/create_caretaker_request
     def post(self, request):
         data = request.data
         data['date_requested'] = datetime.now()
@@ -104,13 +105,30 @@ class CreateCareTakerRequestViewSet(generics.GenericAPIView):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class CareTakerRequestViewSet(generics.RetrieveAPIView):
+class CareTakerRequestViewSet(viewsets.ViewSet):
     queryset = CareTakerRequest.objects.filter(is_pending=True)
     permission_classes = [CustomModelPermissions]
     serializer_class = CareTakerRequestSerializer
 
-    def get(self, request):        
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
+    # GET /api/caretaker_requests
+    def list(self, request):        
+        queryset = self.queryset
+        serializer = self.serializer_class(queryset, many=True)
+
+        return Response(serializer.data)
+
+    # POST /api/caretaker_requests/<id>/approve
+    # approve a care taker request and create an account for them
+    # mark the request as approved and not pending
+    @action(methods=['PUT'], detail=True)
+    def approve(self, request, pk):
+        if not self.queryset.filter(id=pk).exists():
+            return Response({'error': 'care taker request does not exist'})
+
+        caretaker_request = self.queryset.get(id=pk)
+        caretaker_request.is_approved = True
+        caretaker_request.is_pending = False
+        caretaker_request.save()
+        serializer = self.serializer_class(caretaker_request)
 
         return Response(serializer.data)

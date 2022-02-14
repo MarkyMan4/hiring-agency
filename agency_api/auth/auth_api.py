@@ -8,24 +8,7 @@ from knox.models import AuthToken
 from ..serializers import StaffMemberSerializer
 from .auth_serializers import UserSerializer, RegisterStaffMemberSerializer, LoginSerializer
 from ..models import AccountStatus
-
-def is_password_valid(password):
-    specials = '~!@#$%^&*+'
-    alphanumeric = string.ascii_letters + string.digits
-    allowed_chars = alphanumeric + specials
-    is_valid = True
-
-    # make sure password contains special characters, alphanumeric characters and is at least six characters
-    if any(p in alphanumeric for p in password) and any(p in specials for p in password) and (len(password) >= 6):
-        # make sure password only contains alphanumeric characters and special characters
-        for c in password:
-            if c not in allowed_chars:
-                is_valid = False
-                break
-    else:
-        is_valid = False
-
-    return is_valid
+from ..validation import is_password_valid
 
 # registering staff member, this can only be done by an administrator
 class RegisterStaffViewSet(generics.GenericAPIView):
