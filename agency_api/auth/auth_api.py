@@ -1,14 +1,13 @@
-import string
-import secrets
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from django.contrib.auth.models import update_last_login, Group
 from django.contrib.auth import authenticate
 from knox.models import AuthToken
 from ..serializers import StaffMemberSerializer
-from .auth_serializers import UserSerializer, RegisterStaffMemberSerializer, LoginSerializer
+from .auth_serializers import UserSerializer, RegisterUserSerializer, LoginSerializer
 from ..models import AccountStatus
-from ..validation import is_password_valid
+from ..utils.validation import is_password_valid
+from ..utils.account import gen_rand_pass
 
 # registering staff member, this can only be done by an administrator
 class RegisterStaffViewSet(generics.GenericAPIView):
@@ -17,7 +16,7 @@ class RegisterStaffViewSet(generics.GenericAPIView):
     def post(self, request):
         # should return some kind of error response if any values are missing
         # or the front end could enforce this
-        generated_password = self.gen_rand_pass()
+        generated_password = gen_rand_pass()
 
         user_data = {
             'first_name': request.data['first_name'],
@@ -28,7 +27,7 @@ class RegisterStaffViewSet(generics.GenericAPIView):
         }
 
         # create the user object
-        user_serializer = RegisterStaffMemberSerializer(data=user_data)
+        user_serializer = RegisterUserSerializer(data=user_data)
         user_serializer.is_valid(raise_exception=True)
         user = user_serializer.save()
 
@@ -53,15 +52,6 @@ class RegisterStaffViewSet(generics.GenericAPIView):
             'initialPassword': generated_password,
             'token': AuthToken.objects.create(user)[1]
         })
-    
-    def gen_rand_pass(self):
-        specials = '~!@#$%^&*+'
-        alphabet = string.ascii_letters + string.digits + specials
-
-        while True:
-            password = ''.join(secrets.choice(alphabet) for i in range(10))
-            if(is_password_valid(password)):
-                return password
 
 
 # for logging in

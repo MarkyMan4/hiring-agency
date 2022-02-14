@@ -1,11 +1,14 @@
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from django.contrib.auth.models import Group
 from knox.models import AuthToken
+from agency_api.auth.auth_serializers import RegisterUserSerializer, UserSerializer
 from .permissions import CustomModelPermissions
-from .serializers import CareTakerRequestSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer
+from .serializers import CareTakerRequestSerializer, CareTakerSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer
 from .models import CareTakerRequest, EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting
-from .validation import is_phone_number_valid, is_email_valid
+from .utils.validation import is_phone_number_valid, is_email_valid
+from .utils.account import gen_rand_pass
 from datetime import datetime
 
 class JobPostingViewSet(viewsets.ModelViewSet):
@@ -125,10 +128,52 @@ class CareTakerRequestViewSet(viewsets.ViewSet):
         if not self.queryset.filter(id=pk).exists():
             return Response({'error': 'care taker request does not exist'})
 
+        # update the care taker request
         caretaker_request = self.queryset.get(id=pk)
         caretaker_request.is_approved = True
         caretaker_request.is_pending = False
         caretaker_request.save()
-        serializer = self.serializer_class(caretaker_request)
 
-        return Response(serializer.data)
+        # create a care taker account
+        username, password = self.register_caretaker(caretaker_request)
+
+        return Response({
+            'username': username,
+            'password': password
+        })
+
+    # creates a new care taker and account for them
+    # returns a username and password
+    def register_caretaker(self, caretaker_request):
+        generated_password = gen_rand_pass()
+
+        user_data = {
+            'first_name': caretaker_request.first_name,
+            'last_name': caretaker_request.last_name,
+            'username': f"{caretaker_request.last_name}02",
+            'password': generated_password,
+            'email': caretaker_request.email
+        }
+
+        # create the user object
+        user_serializer = RegisterUserSerializer(data=user_data)
+        user_serializer.is_valid(raise_exception=True)
+        user = user_serializer.save()
+
+        # use the user object to create the staff member
+        caretaker_data = {
+            'user': user.id,
+            'address': caretaker_request.address,
+            'phone_number': caretaker_request.phone_number,
+            'email': caretaker_request.email,
+        }
+
+        caretaker_serializer = CareTakerSerializer(data=caretaker_data)
+        caretaker_serializer.is_valid(raise_exception=True)
+        caretaker_serializer.save()
+
+        # finally, add the user to the staff group
+        caretaker_group = Group.objects.get(name='caretaker')
+        caretaker_group.user_set.add(user)
+
+        return user.username, generated_password
