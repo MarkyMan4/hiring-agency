@@ -109,27 +109,31 @@ class CreateCareTakerRequestViewSet(generics.GenericAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class CareTakerRequestViewSet(viewsets.ViewSet):
-    queryset = CareTakerRequest.objects.filter(is_pending=True)
     permission_classes = [CustomModelPermissions]
     serializer_class = CareTakerRequestSerializer
 
+    def get_queryset(self):
+        return CareTakerRequest.objects.filter(is_pending=True)
+
     # GET /api/caretaker_requests
-    def list(self, request):        
-        queryset = self.queryset
+    def list(self, request):
+        queryset = self.get_queryset()
         serializer = self.serializer_class(queryset, many=True)
 
         return Response(serializer.data)
 
-    # POST /api/caretaker_requests/<id>/approve
+    # PUT /api/caretaker_requests/<id>/approve
     # approve a care taker request and create an account for them
     # mark the request as approved and not pending
     @action(methods=['PUT'], detail=True)
     def approve(self, request, pk):
-        if not self.queryset.filter(id=pk).exists():
+        queryset = self.get_queryset()
+
+        if not queryset.filter(id=pk).exists():
             return Response({'error': 'care taker request does not exist'})
 
         # update the care taker request
-        caretaker_request = self.queryset.get(id=pk)
+        caretaker_request = queryset.get(id=pk)
         caretaker_request.is_approved = True
         caretaker_request.is_pending = False
         caretaker_request.save()
@@ -141,6 +145,23 @@ class CareTakerRequestViewSet(viewsets.ViewSet):
             'username': username,
             'password': password
         })
+
+    # PUT /api/caretaker_requests/<id>/reject
+    # reject a care taker request mark the request as not approved and not pending
+    @action(methods=['PUT'], detail=True)
+    def reject(self, request, pk):
+        queryset = self.get_queryset()
+        
+        if not queryset.filter(id=pk).exists():
+            return Response({'error': 'care taker request does not exist'})
+
+        # update the care taker request
+        caretaker_request = queryset.get(id=pk)
+        caretaker_request.is_approved = False
+        caretaker_request.is_pending = False
+        caretaker_request.save()
+
+        return Response()
 
     # creates a new care taker and account for them
     # returns a username and password
