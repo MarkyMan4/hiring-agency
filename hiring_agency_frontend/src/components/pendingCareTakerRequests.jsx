@@ -13,21 +13,34 @@ function PendingCareTakerRequests() {
             .then(res => setPendingRequests(res));
     }, []);
 
+    const getRequestListOrNoneMessage = () => {
+        if(pendingRequests.length > 0) {
+            return (
+                <div>
+                    { 
+                        pendingRequests.map((req, indx) => {
+                            return <CareTakerRequestCard 
+                                key={ indx } 
+                                requestId={ req.id } 
+                                firstName={ req.first_name }
+                                lastName={ req.last_name }
+                                dateRequested={req.date_requested}
+                            />
+                        }) 
+                    }
+                </div>
+            );
+        }
+        else {
+            return <h1 className="text-center">No requests at this time</h1>
+        }
+    }
+
     return (
         <div className="row">
             <div className="col-md-3"></div>
             <div className="col-md-6">
-                { 
-                    pendingRequests.map((req, indx) => {
-                        return <CareTakerRequestCard 
-                            key={ indx } 
-                            requestId={ req.id } 
-                            firstName={ req.first_name }
-                            lastName={ req.last_name }
-                            dateRequested={req.date_requested}
-                        />
-                    }) 
-                }
+                { getRequestListOrNoneMessage() }
             </div>
         </div>
     );

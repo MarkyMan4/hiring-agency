@@ -1,16 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getPendingCareTakerRequestById } from "../api/careTakerRequests";
 import { getAuthToken } from "../utils/storage";
 
 function CareTakerAccountRequestDetail() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [request, setRequest] = useState({});
 
     useEffect(() => {
         getPendingCareTakerRequestById(getAuthToken(), id)
             .then(res => setRequest(res));
     }, []);
+
+    const approveRequest = () => {
+        navigate(`/pending_caretaker_requests/${id}/approve`);
+    }
+
+    const rejectRequest = () => {
+        navigate(`/pending_caretaker_requests/${id}/reject`);
+    }
 
     return (
         <div>
@@ -21,8 +30,8 @@ function CareTakerAccountRequestDetail() {
             <p><b>Phone number: </b>{ request.phone_number }</p>
             <p><b>Email: </b>{ request.email }</p>
             <p><b>Date requested: </b>{ request.date_requested }</p>
-            <button className="btn btn-outline-success">Approve</button>
-            <button className="btn btn-outline-danger m-3">Reject</button>
+            <button onClick={ approveRequest } className="btn btn-outline-success">Approve</button>
+            <button onClick={ rejectRequest } className="btn btn-outline-danger m-3">Reject</button>
 
         </div>
     );

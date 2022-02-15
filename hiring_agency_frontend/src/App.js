@@ -17,6 +17,8 @@ import CareTakerAccountRequest from './components/careTakerAccountRequest';
 import CareTakerAccountRequestSuccess from './components/careTakerAccountRequestSuccess';
 import PendingCareTakerRequests from './components/pendingCareTakerRequests';
 import CareTakerAccountRequestDetail from './components/careTakerAccountRequestDetail';
+import CareTakerAccountRequestApproved from './components/careTakerAccountRequestApproved';
+import CareTakerAccountRequestRejected from './components/careTakerAccountRequestRejected';
 
 
 function App() {
@@ -56,6 +58,8 @@ function App() {
           <Route path="/caretaker_acct_request_success" element={<CareTakerAccountRequestSuccess />} />
           { roles.includes('admin') || roles.includes('staff') ? <Route path="/pending_caretaker_requests" element={<PendingCareTakerRequests />} /> : null }
           { roles.includes('admin') || roles.includes('staff') ? <Route path="/pending_caretaker_requests/:id" element={<CareTakerAccountRequestDetail />} /> : null }
+          { roles.includes('admin') || roles.includes('staff') ? <Route path="/pending_caretaker_requests/:id/approve" element={<CareTakerAccountRequestApproved />} /> : null }
+          { roles.includes('admin') || roles.includes('staff') ? <Route path="/pending_caretaker_requests/:id/reject" element={<CareTakerAccountRequestRejected />} /> : null }
         </Routes>
       );
     }
