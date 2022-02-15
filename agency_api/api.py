@@ -122,6 +122,13 @@ class CareTakerRequestViewSet(viewsets.ViewSet):
 
         return Response(serializer.data)
 
+    # GET /api/caretaker_requests/<id>
+    def retrieve(self, request, pk):
+        queryset = self.get_queryset().get(id=pk)
+        serializer = self.serializer_class(queryset)
+
+        return Response(serializer.data)
+
     # PUT /api/caretaker_requests/<id>/approve
     # approve a care taker request and create an account for them
     # mark the request as approved and not pending

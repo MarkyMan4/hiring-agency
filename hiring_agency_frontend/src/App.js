@@ -16,6 +16,7 @@ import ViewAdvertisement from './components/viewAdvertisement';
 import CareTakerAccountRequest from './components/careTakerAccountRequest';
 import CareTakerAccountRequestSuccess from './components/careTakerAccountRequestSuccess';
 import PendingCareTakerRequests from './components/pendingCareTakerRequests';
+import CareTakerAccountRequestDetail from './components/careTakerAccountRequestDetail';
 
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
           <Route path="/caretaker_acct_request" element={<CareTakerAccountRequest />} />
           <Route path="/caretaker_acct_request_success" element={<CareTakerAccountRequestSuccess />} />
           { roles.includes('admin') || roles.includes('staff') ? <Route path="/pending_caretaker_requests" element={<PendingCareTakerRequests />} /> : null }
+          { roles.includes('admin') || roles.includes('staff') ? <Route path="/pending_caretaker_requests/:id" element={<CareTakerAccountRequestDetail />} /> : null }
         </Routes>
       );
     }

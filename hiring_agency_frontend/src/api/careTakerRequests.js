@@ -31,8 +31,35 @@ export const getPendingCareTakerRequests = async (token) => {
         .catch(err => console.log('Failed to retrieve care taker requests'));
 }
 
+export const getPendingCareTakerRequestById = async (token, id) => {
+    let url = baseUrl + 'api/caretaker_requests/' + id;
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.get(url, config)
+        .then(res => res.data)
+        .catch(err => console.log('Failed to retrieve care taker request'));
+}
+
 export const approveCareTakerRequest = async (token, requestId) => {
     let url = `${baseUrl}api/caretaker_requests/${requestId}/approve`;
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.put(url, {}, config)
+        .then(res => res.data);
+}
+
+export const rejectCareTakerRequest = async (token, requestId) => {
+    let url = `${baseUrl}api/caretaker_requests/${requestId}/reject`;
 
     let config = {
         headers: {
