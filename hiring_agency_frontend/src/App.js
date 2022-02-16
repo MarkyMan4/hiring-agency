@@ -69,7 +69,7 @@ function App() {
 
   return (
     <div>
-      <NavMenu />
+      <NavMenu roles={ roles } />
       <div className="app">
         <Router>
           { getRoutes() }

@@ -4,7 +4,7 @@ import { isUserLoggedIn, destroyAuthToken, getAuthToken, isAdmin } from "../util
 import { getUser, logout } from "../api/authRequests";
 import AddStaff from "./addStaff";
 
-function NavMenu() {
+function NavMenu({ roles }) {
     const [username, setUsername] = useState('');
 
     useEffect(() => {
@@ -35,25 +35,21 @@ function NavMenu() {
     }
 
     const createJobPosting = () => {
-        if(isUserLoggedIn()) { 
+        if(roles.includes('admin') || roles.includes('staff')) { 
             return <Nav.Link className="nav-link" href="#/create_job" >Create Job Advertisement</Nav.Link>
         }
     }
 
     const getAddStaff = () => {
-        if(isAdmin()) {
+        if(roles.includes('admin')) {
             return <Nav.Link className="nav-link" href="#/add_new_staff" >Add staff</Nav.Link>
         }
     }
 
-    const getUserNameOrBlank = () => {
-        if(isUserLoggedIn()) {
-            return getUser(getAuthToken())
-                .then(res => <div>{res.username}</div>)
-                .catch(err => console.log(err));
-        }
-        else {
-            return <div></div>;
+    const getCareTakerAccountRequest = () => {
+        console.log(roles);
+        if(roles.includes('admin') || roles.includes('staff')) { 
+            return <Nav.Link className="nav-link" href="#/pending_caretaker_requests">Care Taker Account Requests</Nav.Link>
         }
     }
 
@@ -66,8 +62,8 @@ function NavMenu() {
                     <Nav.Link className="nav-link" href="#/">Home</Nav.Link>
                     <Nav.Link className="nav-link" href="#/caretaker_acct_request">Sign Up</Nav.Link>
                     { getAddStaff() }
-                    { createJobPosting()}
-                    <Nav.Link className="nav-link" href="#/pending_caretaker_requests">Care Taker Account Requests</Nav.Link>
+                    { createJobPosting() }
+                    { getCareTakerAccountRequest() }
                     { getLoginOrLogoutButton() }
                 </Nav>
             </Navbar.Collapse>
