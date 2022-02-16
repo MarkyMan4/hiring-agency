@@ -67,6 +67,7 @@ function NavMenu() {
                     <Nav.Link className="nav-link" href="#/caretaker_acct_request">Sign Up</Nav.Link>
                     { getAddStaff() }
                     { createJobPosting()}
+                    <Nav.Link className="nav-link" href="#/pending_caretaker_requests">Care Taker Account Requests</Nav.Link>
                     { getLoginOrLogoutButton() }
                 </Nav>
             </Navbar.Collapse>

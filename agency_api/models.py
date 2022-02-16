@@ -32,6 +32,7 @@ class CareTakerRequest(models.Model):
     phone_number = models.IntegerField(null=False)
     email = models.CharField(null=False, max_length=100)
     date_requested = models.DateTimeField(null=False)
+    is_pending = models.BooleanField(null=False, default=False)
     is_approved = models.BooleanField(null=False, default=False)
 
 class StaffMember(models.Model):
