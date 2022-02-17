@@ -21,6 +21,7 @@ import CareTakerAccountRequestApproved from './components/careTakerAccountReques
 import CareTakerAccountRequestRejected from './components/careTakerAccountRequestRejected';
 import StaffRoute from './routes/staffRoute';
 import AdminRoute from './routes/adminRoute';
+import UnauthenticatedRoute from './routes/unauthenticatedRoute';
 
 
 function App() {
@@ -56,7 +57,7 @@ function App() {
           <Route path="/add_new_staff" element={ <AdminRoute roles={ roles }><AddStaff/></AdminRoute> } />
           <Route path="/create_job" element={ <StaffRoute roles={ roles }><CreateAdvertisement/></StaffRoute> } />
           <Route path="/view_job" element={<ViewAdvertisement/>} />
-          <Route path="/caretaker_acct_request" element={<CareTakerAccountRequest />} />
+          <Route path="/caretaker_acct_request" element={ <UnauthenticatedRoute roles={ roles }><CareTakerAccountRequest /></UnauthenticatedRoute> } />
           <Route path="/caretaker_acct_request_success" element={ <StaffRoute roles={ roles }><CareTakerAccountRequestSuccess /></StaffRoute> } />
           <Route path="/pending_caretaker_requests" element={ <StaffRoute roles={ roles }><PendingCareTakerRequests /></StaffRoute> } />
           <Route path="/pending_caretaker_requests/:id" element={<StaffRoute roles={ roles }><CareTakerAccountRequestDetail /></StaffRoute> } />

@@ -34,6 +34,12 @@ function NavMenu({ roles }) {
         }
     }
 
+    const getSignUp = () => {
+        if(roles.length === 0) {
+            return <Nav.Link className="nav-link" href="#/caretaker_acct_request">Sign Up</Nav.Link>
+        }
+    }
+
     const createJobPosting = () => {
         if(roles.includes('admin') || roles.includes('staff')) { 
             return <Nav.Link className="nav-link" href="#/create_job" >Create Job Advertisement</Nav.Link>
@@ -60,7 +66,7 @@ function NavMenu({ roles }) {
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
                     <Nav.Link className="nav-link" href="#/">Home</Nav.Link>
-                    <Nav.Link className="nav-link" href="#/caretaker_acct_request">Sign Up</Nav.Link>
+                    { getSignUp() }
                     { getAddStaff() }
                     { createJobPosting() }
                     { getCareTakerAccountRequest() }
