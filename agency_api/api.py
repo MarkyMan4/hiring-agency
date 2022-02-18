@@ -117,7 +117,7 @@ class CareTakerRequestViewSet(viewsets.ViewSet):
 
     # GET /api/caretaker_requests
     def list(self, request):
-        queryset = self.get_queryset()
+        queryset = self.get_queryset().order_by('date_requested') # order requests oldest to newest
         serializer = self.serializer_class(queryset, many=True)
 
         return Response(serializer.data)

@@ -58,7 +58,7 @@ function App() {
           <Route path="/create_job" element={ <StaffRoute roles={ roles }><CreateAdvertisement/></StaffRoute> } />
           <Route path="/view_job" element={<ViewAdvertisement/>} />
           <Route path="/caretaker_acct_request" element={ <UnauthenticatedRoute roles={ roles }><CareTakerAccountRequest /></UnauthenticatedRoute> } />
-          <Route path="/caretaker_acct_request_success" element={ <StaffRoute roles={ roles }><CareTakerAccountRequestSuccess /></StaffRoute> } />
+          <Route path="/caretaker_acct_request_success" element={ <CareTakerAccountRequestSuccess /> } />
           <Route path="/pending_caretaker_requests" element={ <StaffRoute roles={ roles }><PendingCareTakerRequests /></StaffRoute> } />
           <Route path="/pending_caretaker_requests/:id" element={<StaffRoute roles={ roles }><CareTakerAccountRequestDetail /></StaffRoute> } />
           <Route path="/pending_caretaker_requests/:id/approve" element={ <StaffRoute roles={ roles }><CareTakerAccountRequestApproved /></StaffRoute> } />
