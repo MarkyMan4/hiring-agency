@@ -81,6 +81,24 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = HPJobApplicationSerializer
     http_method_names = ['get', 'post']
+    queryset = JobPosting.objects.all()
+
+    # GET /api/hrjobapplicationviewset
+    def get(self, request):        
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    # POST /api/hrjobapplicationviewset
+    def create(self, request):
+        data = request.data
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
 
 class CreateCareTakerRequestViewSet(generics.GenericAPIView):
     serializer_class = CareTakerRequestSerializer
@@ -111,5 +129,4 @@ class CareTakerRequestViewSet(generics.RetrieveAPIView):
     def get(self, request):        
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
-
         return Response(serializer.data)

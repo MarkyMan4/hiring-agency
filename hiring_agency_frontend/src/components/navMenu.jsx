@@ -40,6 +40,10 @@ function NavMenu() {
         }
     }
 
+    const viewJobPosting = () => {
+            return <Nav.Link className="nav-link" href="#/view_job" >Careers</Nav.Link>
+    }
+
     const getAddStaff = () => {
         if(isAdmin()) {
             return <Nav.Link className="nav-link" href="#/add_new_staff" >Add staff</Nav.Link>
@@ -68,6 +72,7 @@ function NavMenu() {
                     { getAddStaff() }
                     { createJobPosting()}
                     { getLoginOrLogoutButton() }
+                    { viewJobPosting() }
                 </Nav>
             </Navbar.Collapse>
             <span className="navbar-text mr-5">

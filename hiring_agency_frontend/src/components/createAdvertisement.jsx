@@ -8,16 +8,35 @@ import { sendJobForm } from "../api/jobApi";
 function CreateAdvertisement() {
     const [serviceType, setServiceType] = useState(1);
     const [educationType, setEducationType] = useState(1);
-    const [experience, setExperience] = useState(1);
+    const [experience, setExperience] = useState(-1);
     const [description, setDescription] = useState("");
+    const [message, setMessage] = useState('');
     let navigate = useNavigate();
 
     const validateJobPost = () => {
         //check input
+        if(experience == "" || experience == -1){
+            alert("Make sure experiance required is filled in");
+            return;
+        }
 
+        if(description == ""){
+            alert("Please add a description");
+            return;
+        }
         //if correct send data
         sendJobForm(serviceType, educationType, experience, description)
-        alert("Job Successfully Added")
+        .then(res => navigate('/create_job_success')) // redirect to success page if request was successful
+        .catch(err => {
+            const errorResponse = JSON.parse(err.request.response);
+            
+            if(errorResponse.error) {
+                setMessage(errorResponse.error)
+            }
+            else {
+                setMessage('Error creating job request')
+            }
+        });
     }
     const serviceTypeChanged = (event) => {
         setServiceType(event.target.value);
@@ -62,6 +81,8 @@ function CreateAdvertisement() {
                     <div className="row mt-4 ">
                         <button type="button" onClick={validateJobPost}>Submit</button>
                     </div>
+
+                    <div className="text-danger mt-3">{ message }</div>
                 </form>
             </div>
         </div>
