@@ -18,15 +18,26 @@ import CareTakerAccountRequest from './components/careTakerAccountRequest';
 import CareTakerAccountRequestSuccess from './components/careTakerAccountRequestSuccess';
 import CreateApplication from './components/createApplication.jsx';
 import CreateApplicationSuccess from './components/createApplication.jsx';
+import PendingCareTakerRequests from './components/pendingCareTakerRequests';
+import CareTakerAccountRequestDetail from './components/careTakerAccountRequestDetail';
+import CareTakerAccountRequestApproved from './components/careTakerAccountRequestApproved';
+import CareTakerAccountRequestRejected from './components/careTakerAccountRequestRejected';
+import StaffRoute from './routes/staffRoute';
+import AdminRoute from './routes/adminRoute';
+import UnauthenticatedRoute from './routes/unauthenticatedRoute';
 
 
 function App() {
   const [accountLocked, setAccountLocked] = useState(false);
+  const [roles, setRoles] = useState([]);
 
   useEffect(() => {
     if(isUserLoggedIn()) {
       getUser(getAuthToken())
-        .then(res => setAccountLocked(res.is_locked));
+        .then(res => {
+          setAccountLocked(res.is_locked);
+          setRoles(res.groups);
+        });
     }
   }, []);
 
@@ -46,14 +57,17 @@ function App() {
           <Route path="/change_password" element={ <ChangePassword /> } />
           <Route path="/set_security_questions" element={ <SetSecurityQuestions /> } />
           <Route path="/account_locked" element={ <AccountLocked /> } />
-          <Route path="/add_new_staff" element={<AddStaff/>} />
-          <Route path="/create_job" element={<CreateAdvertisement/>} />
-          <Route path="/create_job_success" element={<CreateAdvertisementSuccess/>} />
-          <Route path="/view_job" element={<ViewAdvertisement/>} />
-          <Route path="/caretaker_acct_request" element={<CareTakerAccountRequest />} />
-          <Route path="/caretaker_acct_request_success" element={<CareTakerAccountRequestSuccess />} />
           <Route path="/create_application" element={<CreateApplication/>} />
           <Route path="/create_application_success" element={<CreateApplicationSuccess/>} />
+          <Route path="/add_new_staff" element={ <AdminRoute roles={ roles }><AddStaff/></AdminRoute> } />
+          <Route path="/create_job" element={ <StaffRoute roles={ roles }><CreateAdvertisement/></StaffRoute> } />
+          <Route path="/view_job" element={<ViewAdvertisement/>} />
+          <Route path="/caretaker_acct_request" element={ <UnauthenticatedRoute roles={ roles }><CareTakerAccountRequest /></UnauthenticatedRoute> } />
+          <Route path="/caretaker_acct_request_success" element={ <StaffRoute roles={ roles }><CareTakerAccountRequestSuccess /></StaffRoute> } />
+          <Route path="/pending_caretaker_requests" element={ <StaffRoute roles={ roles }><PendingCareTakerRequests /></StaffRoute> } />
+          <Route path="/pending_caretaker_requests/:id" element={<StaffRoute roles={ roles }><CareTakerAccountRequestDetail /></StaffRoute> } />
+          <Route path="/pending_caretaker_requests/:id/approve" element={ <StaffRoute roles={ roles }><CareTakerAccountRequestApproved /></StaffRoute> } />
+          <Route path="/pending_caretaker_requests/:id/reject" element={ <StaffRoute roles={ roles }><CareTakerAccountRequestRejected /></StaffRoute> } />
         </Routes>
       );
     }
@@ -61,7 +75,7 @@ function App() {
 
   return (
     <div>
-      <NavMenu />
+      <NavMenu roles={ roles } />
       <div className="app">
         <Router>
           { getRoutes() }
