@@ -117,7 +117,7 @@ class CareTakerRequestViewSet(viewsets.ViewSet):
 
     # GET /api/caretaker_requests
     def list(self, request):
-        queryset = self.get_queryset()
+        queryset = self.get_queryset().order_by('date_requested') # order requests oldest to newest
         serializer = self.serializer_class(queryset, many=True)
 
         return Response(serializer.data)
@@ -173,12 +173,15 @@ class CareTakerRequestViewSet(viewsets.ViewSet):
     # creates a new care taker and account for them
     # returns a username and password
     def register_caretaker(self, caretaker_request):
+        # TODO: The code to create a new user is exactly the same as the code for 
+        #       creating a staff member in auth_api. This should be moved to a function
+        #       so it can be reused wherever we need to create a user
         generated_password = gen_rand_pass()
 
         user_data = {
             'first_name': caretaker_request.first_name,
             'last_name': caretaker_request.last_name,
-            'username': f"{caretaker_request.last_name}02",
+            'username': f"{caretaker_request.last_name}",
             'password': generated_password,
             'email': caretaker_request.email
         }
@@ -187,6 +190,10 @@ class CareTakerRequestViewSet(viewsets.ViewSet):
         user_serializer = RegisterUserSerializer(data=user_data)
         user_serializer.is_valid(raise_exception=True)
         user = user_serializer.save()
+
+        # update username to have sequence number
+        user.username = user.username + str(user.id).zfill(2)
+        user.save()
 
         # use the user object to create the staff member
         caretaker_data = {
