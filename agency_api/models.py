@@ -65,8 +65,10 @@ class ServiceRequest(models.Model):
     patient_phone_number = models.IntegerField(null=True)
     patient_email = models.CharField(null=True, max_length=200)
     service_location = models.CharField(null=False, max_length=500)
-    service_start_time = models.TimeField(null=False)
-    service_end_time = models.TimeField(null=False)
+    flexible_hours = models.BooleanField(null=False)
+    service_start_time = models.TimeField() # start and end time only specified if not using flexible hours
+    service_end_time = models.TimeField()
+    hours_of_service_daily = models.IntegerField() # only populated if flexible hours are selected
     service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE)
     service_needed_sunday = models.BooleanField(null=False)
     service_needed_monday = models.BooleanField(null=False)
@@ -76,6 +78,9 @@ class ServiceRequest(models.Model):
     service_needed_friday = models.BooleanField(null=False)
     service_needed_saturday = models.BooleanField(null=False)
     days_of_service = models.IntegerField(null=False)
+    hp_gender_required = models.BooleanField(null=False) # whether the gender of the healthcare professional must be the same as the patient
+    hp_min_age = models.IntegerField()
+    hp_max_age = models.IntegerField()
 
 class JobPosting(models.Model):
     service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE)

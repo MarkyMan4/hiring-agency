@@ -5,8 +5,8 @@ from django.contrib.auth.models import Group
 from knox.models import AuthToken
 from agency_api.auth.auth_serializers import RegisterUserSerializer, UserSerializer
 from .permissions import CustomModelPermissions
-from .serializers import CareTakerRequestSerializer, CareTakerSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer
-from .models import CareTakerRequest, EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting
+from .serializers import CareTakerRequestSerializer, CareTakerSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer, ServiceRequestSerialier
+from .models import CareTakerRequest, EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting, ServiceRequest
 from .utils.validation import is_phone_number_valid, is_email_valid
 from .utils.account import gen_rand_pass
 from datetime import datetime
@@ -212,3 +212,21 @@ class CareTakerRequestViewSet(viewsets.ViewSet):
         caretaker_group.user_set.add(user)
 
         return user.username, generated_password
+
+class ServiceRequestViewSet(viewsets.ModelViewSet):
+    serializer_class = ServiceRequestSerialier
+
+    def get_queryset(self):
+        return ServiceRequest.objects.all()
+
+    # POST /api/service_request
+    def create(self, request):
+        data = request.data
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+

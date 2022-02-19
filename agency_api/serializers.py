@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CareTaker, HPJobApplication, EducationType, StaffMember, SecurityQuestion, SecurityQuestionAnswer, JobPosting, CareTakerRequest
+from .models import CareTaker, HPJobApplication, EducationType, ServiceRequest, StaffMember, SecurityQuestion, SecurityQuestionAnswer, JobPosting, CareTakerRequest
 
 class HPJobApplicationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -41,4 +41,9 @@ class CareTakerRequestSerializer(serializers.ModelSerializer):
 class CareTakerSerializer(serializers.ModelSerializer):
     class Meta:
         model = CareTaker
+        fields = ('__all__')
+
+class ServiceRequestSerialier(serializers.ModelSerializer):
+    class meta:
+        model = ServiceRequest
         fields = ('__all__')

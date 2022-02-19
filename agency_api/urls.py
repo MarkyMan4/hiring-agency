@@ -8,7 +8,8 @@ from .api import (
     SecurityQuestionAnswerViewSet, 
     JobPostingViewSet, 
     CreateCareTakerRequestViewSet, 
-    CareTakerRequestViewSet
+    CareTakerRequestViewSet,
+    ServiceRequestViewSet
 )
 
 # viewsets can be registered here
@@ -18,6 +19,7 @@ router.register('api/securityquestions', SecurityQuestionViewSet, 'security-ques
 router.register('api/securityquestionanswers', SecurityQuestionAnswerViewSet, 'security-question-answers')
 router.register('api/jobposting', JobPostingViewSet, 'job-posting')
 router.register('api/caretaker_requests', CareTakerRequestViewSet, 'care-taker-requests')
+router.register('api/service_requests', ServiceRequestViewSet, 'service-requests')
 
 # put non-viewset urls here
 urlpatterns = [
