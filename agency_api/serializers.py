@@ -1,5 +1,6 @@
+from operator import mod
 from rest_framework import serializers
-from .models import CareTaker, HPJobApplication, EducationType, StaffMember, SecurityQuestion, SecurityQuestionAnswer, JobPosting, CareTakerRequest
+from .models import CareTaker, HPJobApplication, EducationType, HealthCareProfessional, StaffMember, SecurityQuestion, SecurityQuestionAnswer, JobPosting, CareTakerRequest
 
 class HPJobApplicationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -41,4 +42,9 @@ class CareTakerRequestSerializer(serializers.ModelSerializer):
 class CareTakerSerializer(serializers.ModelSerializer):
     class Meta:
         model = CareTaker
+        fields = ('__all__')
+
+class HealthCareProfessionalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HealthCareProfessional
         fields = ('__all__')

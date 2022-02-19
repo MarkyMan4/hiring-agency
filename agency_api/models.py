@@ -83,7 +83,9 @@ class JobPosting(models.Model):
     years_experience_required = models.IntegerField(null=False)
     description = models.CharField(null=True, max_length= 500)
 
-class HPJobApplication(models.Model):
+class HPJobApplication(models.Model): 
+    first_name = models.CharField(null=False, max_length=50)       # new add
+    last_name = models.CharField(null=False, max_length=50)        # new add
     gender = models.CharField(null=False, max_length=1)
     date_of_birth = models.DateField(null=False)
     ssn = models.IntegerField(null=False)
@@ -96,6 +98,8 @@ class HPJobApplication(models.Model):
     address = models.CharField(null=False, max_length=500)
     phone_number = models.IntegerField(null=False)
     email = models.CharField(null=False, max_length=200)
+    is_pending = models.BooleanField(null=False, default=False)      # new add 
+    is_approved = models.BooleanField(null=False, default=False)     # new add 
     job = models.ForeignKey(JobPosting, on_delete=models.CASCADE)
 
 
