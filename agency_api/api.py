@@ -5,8 +5,8 @@ from django.contrib.auth.models import Group
 from knox.models import AuthToken
 from agency_api.auth.auth_serializers import RegisterUserSerializer, UserSerializer
 from .permissions import CustomModelPermissions
-from .serializers import CareTakerRequestSerializer, JobPostingSerializerRetrieval, CareTakerSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer, ServiceRequestSerialier
-from .models import CareTakerRequest, EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting, ServiceRequest
+from .serializers import CareTakerRequestSerializer, JobPostingSerializerRetrieval, CareTakerSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, RetrieveServiceRequestSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer, CreateServiceRequestSerializer
+from .models import CareTaker, CareTakerRequest, EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting, ServiceRequest
 from .utils.account import gen_rand_pass
 from datetime import datetime
 
@@ -242,20 +242,54 @@ class CareTakerRequestViewSet(viewsets.ViewSet):
 
         return user.username, generated_password
 
-class ServiceRequestViewSet(viewsets.ModelViewSet):
-    serializer_class = ServiceRequestSerialier
+class CreateServiceRequestViewSet(viewsets.ViewSet):
+    serializer_class = CreateServiceRequestSerializer
+    permission_classes = [CustomModelPermissions]
 
     def get_queryset(self):
         return ServiceRequest.objects.all()
 
-    # POST /api/service_request
+    # POST /api/create_service_request
     def create(self, request):
         data = request.data
+        user = request.user
+
+        # if user is a care taker, get the care taker ID
+        # admin would need to manually provide care taker ID in body
+        if not user.is_superuser:
+            data['care_taker'] = CareTaker.objects.get(user_id=user.id).id
+
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        headers = self.get_success_headers(serializer.data)
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+class RetrieveServiceRequestViewSet(viewsets.ViewSet):
+    serializer_class = RetrieveServiceRequestSerializer
+    permission_classes = [CustomModelPermissions]
 
+    def get_queryset(self):
+        return ServiceRequest.objects.all()
+
+    # GET /api/retrieve_service_requests
+    def list(self, request):
+        user = request.user
+
+        # if user is a care taker, only get service requests they created
+        # for admin or staff, retrieve all service requests
+        if user.groups.filter(name='caretaker'):
+            queryset = self.get_queryset().filter(care_taker_id=user.id)
+        else:
+            queryset = self.get_queryset()
+        
+        serializer = self.serializer_class(queryset, many=True)
+
+        return Response(serializer.data)
+
+    # GET /api/retrieve_service_requests/<id>
+    def retrieve(self, request, pk):
+        service_request = self.get_queryset().get(id=pk)
+        serializer = self.serializer_class(service_request, many=False)
+
+        return Response(serializer.data)
