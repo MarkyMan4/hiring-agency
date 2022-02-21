@@ -27,10 +27,10 @@ function NavMenu({ roles }) {
 
     const getLoginOrLogoutButton = () => {
         if(isUserLoggedIn()) {
-            return <Nav.Link className="nav-link" href="#/" onClick={ logoutAndDestroyToken }>Logout</Nav.Link>
+            return <Nav.Link className="nav-link btn btn-outline-success" href="#/" onClick={ logoutAndDestroyToken }>Logout</Nav.Link>
         }
         else {
-            return <Nav.Link className="nav-link" href="#/login">Login</Nav.Link>
+            return <Nav.Link className="nav-link btn btn-outline-success" href="#/login">Login</Nav.Link>
         }
     }
 
@@ -74,12 +74,14 @@ function NavMenu({ roles }) {
                     { getAddStaff() }
                     { createJobPosting() }
                     { getCareTakerAccountRequest() }
-                    { getLoginOrLogoutButton() }
                     { viewJobPosting() }
                 </Nav>
             </Navbar.Collapse>
-            <span className="navbar-text mr-5">
+            <span className="navbar-text" style={ {marginRight: '20px'} }>
                 { username }
+            </span>
+            <span className="navbar-text">
+                { getLoginOrLogoutButton() }
             </span>
         </Navbar>
     )
