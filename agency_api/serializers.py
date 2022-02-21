@@ -50,12 +50,12 @@ class JobPostingSerializer(serializers.ModelSerializer):
     education_type = EducationTypeSerializer(many=False)
     class Meta:
         model = JobPosting
-        fields = ('__all__', "service_type", "education_type")
+        fields = ('__all__')
 
 class HPJobApplicationSerializer(serializers.ModelSerializer):
     service_type = ServiceTypeSerializer(many=False)
     education_type = EducationTypeSerializer(many=False)
-    Job_posting = JobPostingSerializer(many=False)
+    job = JobPostingSerializer(many=False)
     class Meta:
         model = HPJobApplication
-        fields = ('__all__', "service_type", "education_type", "Job_posting")
+        fields = ('__all__')

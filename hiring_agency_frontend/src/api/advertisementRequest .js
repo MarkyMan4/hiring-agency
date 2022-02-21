@@ -12,11 +12,11 @@ export const getAllAdvertisementRequest = async (token) =>{
 
     return axios.get(url, config)
         .then(res => res.data)
-        .catch(err => console.log('Failed to find job requests'));
+        .catch(err => console.log(err));
 }
 
 export const viewAdvertisementRequestById = async (token, id) =>{
-    let url = baseUrl + 'api/job_advertisement_request'+id;
+    let url = baseUrl + 'api/job_advertisement_request/'+id;
 
     let config = {
         headers: {
@@ -24,7 +24,7 @@ export const viewAdvertisementRequestById = async (token, id) =>{
         }
     };
 
-    return axios.get(url, config)
+    return axios.get(url)
         .then(res => res.data)
         .catch(err => console.log('Failed to find job request'));
 }

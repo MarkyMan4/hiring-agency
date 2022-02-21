@@ -9,7 +9,7 @@ function JobRequestDetail(){
     const [request, setRequest] = useState({});
 
     useEffect(() => {
-        viewAdvertisementRequestById(getAuthToken().id)
+        viewAdvertisementRequestById(getAuthToken(), id)
             .then(res => setRequest(res));
     }, []);
 
@@ -21,34 +21,53 @@ function JobRequestDetail(){
         navigate(`/job_advertisement_request/${id}/reject`);
     }
 
-    return(
-        <div>
-            <h1>Job request</h1>
-            <hr/>
-            <p><b>Job type: </b>{request.job.service_type.name}</p>
-            <p><b>Education: </b>{request.job.education_type.name}</p>
-            <p><b>Experience year(s): </b>{request.job.years_experience_required}</p>
-            <p><b>Description: </b>{request.job.description}</p>
-            <hr/>
-            <h1>Information of the applicant</h1>
-            <hr/>
-            <p><b>Name: </b>{ request.first_name } { request.last_name }</p>
-            <p><b>Gender: </b>{ request.gender }</p>
-            <p><b>Birthday: </b>{ request.date_of_birth }</p>
-            <p><b>Phone number: </b>{ request.phone_number }</p>
-            <p><b>Email: </b>{ request.email }</p>
-            <p><b>SSN: </b>{ request.ssn }</p>
-            <p><b>Address: </b>{ request.address }</p>
-            <p><b>Job Type: </b>{ request.service_type.name }</p>
-            <p><b>Education: </b>{ request.education_typ.name }</p>
-            <p><b>Education institution: </b>{ request.education_institution }</p>
-            <p><b>Graduation time: </b>{ request.graduation_year } {request.graduation_month}</p>
-            <p><b>Experience year(s): </b>{ request.years_of_experience }</p>
-            <button onClick={ approve } className="btn btn-outline-success">Approve</button>
-            <button onClick={ reject } className="btn btn-outline-danger m-3">Reject</button>
+    if(Object.keys(request).length !== 0){
+        console.log("true")
+    }
+    else{
+        console.log("false")
+    }
+    console.log(request);
+
+    console.log("logs");
+    if(Object.keys(request).length !== 0){
+        return(
+            <div>
+                <h1>Job request</h1>
+                <hr/>
+                <p><b>Job type: </b>{request.job.service_type.name}</p>
+                <p><b>Education: </b>{request.job.education_type.name}</p>
+                <p><b>Experience year(s): </b>{request.job.years_experience_required}</p>
+                <p><b>Description: </b>{request.job.description}</p>
+                <hr/>
+                <h1>Information of the applicant</h1>
+                <hr/>
+                <p><b>Name: </b>{ request.first_name } { request.last_name }</p>
+                <p><b>Gender: </b>{ request.gender }</p>
+                <p><b>Birthday: </b>{ request.date_of_birth }</p>
+                <p><b>Phone number: </b>{ request.phone_number }</p>
+                <p><b>Email: </b>{ request.email }</p>
+                <p><b>SSN: </b>{ request.ssn }</p>
+                <p><b>Address: </b>{ request.address }</p>
+                <p><b>Job Type: </b>{ request.service_type.name }</p>
+                <p><b>Education: </b>{ request.education_type.name }</p>
+                <p><b>Education institution: </b>{ request.education_institution }</p>
+                <p><b>Graduation time: </b>{ request.graduation_year } {request.graduation_month}</p>
+                <p><b>Experience year(s): </b>{ request.years_of_experience }</p>
+                <button onClick={ approve } className="btn btn-outline-success">Approve</button>
+                <button onClick={ reject } className="btn btn-outline-danger m-3">Reject</button>
+        
+            </div>
+        );
+    }
+    else{
+        return(
+            <div>
+            <h1>Loading...</h1>
+            </div>
+        );    
+    }
     
-        </div>
-    );
 }
 
 export default JobRequestDetail;

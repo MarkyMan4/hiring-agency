@@ -27,8 +27,8 @@ function ApprovejobRequest() {
                 Username and password below. Please record them and send to user.
                 If you leave this page, these information will not be shown in the future
             </p>
-            <p><b>Username: </b>{ username}</p>
-            <p><b>Password: </b>{ password}</p>
+            <p><b>Username: </b>{ username }</p>
+            <p><b>Password: </b>{ password }</p>
             
         </div>
     )
