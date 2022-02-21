@@ -1,15 +1,90 @@
 import React, { Component } from 'react'
 import { getJobList } from "../api/jobApi.js";
 import { useNavigate } from 'react-router-dom';
-class ViewAdvertisement extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            jobs: [],
-            isLoaded: false
+import { useState } from "react";
+import { useEffect } from "react";
+
+function ViewAdvertisement(){
+
+        const [advertisements, setAdvertisements] = useState([]);
+        let navigate = useNavigate();
+        useEffect(() => {
+            getJobList().then(res => setAdvertisements(res));
+        }, []);
+    
+        const routeChange = (path) =>{ 
+            
+            return function () {
+                // you code 
+                navigate(path);
+             }
+            //
+          }
+
+        const getAdvertisementsHTML = () => {
+            if(advertisements.length > 0) {
+                return (
+                    <div>
+                        <ul className="no-bulletpoints">
+                        {   
+                            advertisements.map((job,idx)  => (
+                                <div className="row mt-4">
+                                    <div className="col">
+                                        <li key={idx} className="advertisement-job-card">
+                                            <h3>{job.service_type.name}</h3>
+                                            <label>Description:</label> {job.description} <br></br>
+                                            <label>Degree Required :</label> {job.education_type.name} <br></br>
+                                            <label>Experiance Required:</label> {job.years_experience_required} year(s) <br></br>
+                                            <button onClick={routeChange("/create_application/" + job.id)}>Apply Now!</button>
+
+                                        </li>
+                                    </div>
+                                </div>
+                            ))
+                        }
+                        </ul>
+                    </div>
+                );
+            }
+            else {
+                return <h1 className="text-center">We are sorry, we dont have any available jobs at this time</h1>
+            }
         }
+    
+        return (
+            <div className="row">
+                <div className="col-md-3"></div>
+                <div className="col-md-6">
+                    { getAdvertisementsHTML() }
+                </div>
+            </div>
+        );
     }
-    render() {
+
+ //
+    export default ViewAdvertisement;
+
+
+
+
+
+
+
+
+
+
+    //-------------------------------------------------------------------------
+/*
+    const [request, setRequest] = useState({});
+
+
+    useEffect(() => {
+        getPendingCareTakerRequestById(getAuthToken(), id)
+            .then(res => setRequest(res));
+    }, []);
+
+
+        var navigate = useNavigate()
         var { isLoaded, jobs } = this.state;
         if (!isLoaded) {
             return <div> Loading...</div>
@@ -19,31 +94,13 @@ class ViewAdvertisement extends Component {
                     <h1> Available Jobs</h1>
                     <ul>
                         {
-                            jobs.map(job => (
-                                <div class="row mt-4">
-                                    <div class="col">
-                                        <li key={job.id}>
-                                            <h3>{job.service_type}</h3>
-                                            <label>Description:</label> {job.description} <br></br>
-                                            <label>Degree Required :</label> {job.education_type} <br></br>
-                                            <label>Experiance Required:</label> {job.years_experience_required} year(s)
-                                        </li>
-                                    </div>
-                                </div>
-                            ))
+                            
                         }
                     </ul>
                 </div>
             )
         }
-    }
-
-    componentDidMount() {
-        getJobList().then(res => (this.setState({ jobs: res, isLoaded: true })));
-
-    }
-
-}
+ }
 export default ViewAdvertisement
 
 
@@ -104,5 +161,5 @@ function ViewAdvertisement() {
     )
 }
 
-export default ViewAdvertisement;
+
 */

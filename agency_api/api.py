@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group
 from knox.models import AuthToken
 from agency_api.auth.auth_serializers import RegisterUserSerializer, UserSerializer
 from .permissions import CustomModelPermissions
-from .serializers import CareTakerRequestSerializer, CareTakerSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer
+from .serializers import CareTakerRequestSerializer, JobPostingSerializerRetrieval, CareTakerSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer
 from .models import CareTakerRequest, EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting
 from .utils.validation import is_phone_number_valid, is_email_valid
 from .utils.account import gen_rand_pass
@@ -15,10 +15,17 @@ class JobPostingViewSet(viewsets.ModelViewSet):
     serializer_class = JobPostingSerializer
     queryset = JobPosting.objects.all()
     http_method_names=['get', 'post'] 
+
+    # GET /api/jobposting/<id>
+    def retrieve(self, request, pk):        
+        queryset = self.get_queryset().get(id=pk)
+        serializer = JobPostingSerializerRetrieval(queryset, many=False)
+        return Response(serializer.data)
+
     # GET /api/jobposting
     def list(self, request):
-        job_postings = self.queryset
-        serializer = self.get_serializer(job_postings, many=True)
+        job_postings = self.get_queryset()
+        serializer = JobPostingSerializerRetrieval(job_postings, many=True)
         return Response(serializer.data)
 
     # POST /api/jobpostings
@@ -87,10 +94,17 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
     queryset = JobPosting.objects.all()
 
     # GET /api/hrjobapplicationviewset
-    def get(self, request):        
+    def list(self, request):        
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    # GET /api/hrjobapplicationviewset/<id>
+    def retrieve(self, request, pk):        
+        queryset = self.get_queryset().get(id=pk)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
 
     # POST /api/hrjobapplicationviewset
     def create(self, request):
@@ -136,12 +150,8 @@ class CareTakerRequestViewSet(viewsets.ViewSet):
     # GET /api/caretaker_requests
     def list(self, request):
         queryset = self.get_queryset()
-<<<<<<< HEAD
-        serializer = self.get_serializer(queryset, many=True)
-=======
         serializer = self.serializer_class(queryset, many=True)
 
->>>>>>> c1ad400e0ba6531d79e4d7f51b641451ff7f3aca
         return Response(serializer.data)
 
     # GET /api/caretaker_requests/<id>

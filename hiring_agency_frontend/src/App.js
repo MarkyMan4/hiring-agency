@@ -13,6 +13,8 @@ import { getAuthToken, isUserLoggedIn } from './utils/storage';
 import { getUser } from './api/authRequests';
 import CreateAdvertisement from './components/createAdvertisement';
 import CreateAdvertisementSuccess from './components/createAdvertisementSuccess';
+
+
 import ViewAdvertisement from './components/viewAdvertisement';
 import CareTakerAccountRequest from './components/careTakerAccountRequest';
 import CareTakerAccountRequestSuccess from './components/careTakerAccountRequestSuccess';
@@ -57,7 +59,7 @@ function App() {
           <Route path="/change_password" element={ <ChangePassword /> } />
           <Route path="/set_security_questions" element={ <SetSecurityQuestions /> } />
           <Route path="/account_locked" element={ <AccountLocked /> } />
-          <Route path="/create_application" element={<CreateApplication/>} />
+          <Route path="/create_application/:jobid" element={<CreateApplication/>} />
           <Route path="/create_application_success" element={<CreateApplicationSuccess/>} />
           <Route path="/add_new_staff" element={ <AdminRoute roles={ roles }><AddStaff/></AdminRoute> } />
           <Route path="/create_job" element={ <StaffRoute roles={ roles }><CreateAdvertisement/></StaffRoute> } />

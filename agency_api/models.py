@@ -84,7 +84,9 @@ class JobPosting(models.Model):
     description = models.CharField(null=True, max_length= 500)
 
 class HPJobApplication(models.Model):
-    gender = models.CharField(null=False, max_length=1)
+    first_name = models.CharField(null=False, max_length=50)
+    last_name = models.CharField(null = False,max_length=50)
+    gender = models.CharField(null=False, max_length=10)
     date_of_birth = models.DateField(null=False)
     ssn = models.IntegerField(null=False)
     service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE)
