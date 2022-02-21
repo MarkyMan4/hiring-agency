@@ -4,6 +4,27 @@ import { useNavigate } from "react-router-dom";
 import { requestNewService } from "../api/serviceRequests";
 import { getAuthToken } from "../utils/storage";
 
+
+const serviceTimeOptions = [];
+
+// create all times in 30 minute increments
+for(let i = 0; i < 24; i++) {
+    let hour = i.toString().padStart(2, '0');
+    serviceTimeOptions.push(
+        {
+            twentyFourHourTime: `${ hour }:00`,
+            twelveHourTime: `${ i > 12 ? i - 12 : i }:00 ${ i > 12 ? 'PM' : 'AM' }`
+        }
+    );
+
+    serviceTimeOptions.push(
+        {
+            twentyFourHourTime: `${ hour }:30`,
+            twelveHourTime: `${ i > 12 ? i - 12 : i }:30 ${ i > 12 ? 'PM' : 'AM' }`
+        }
+    );
+}
+
 function CreateServiceRequest() {
     const navigate = useNavigate();
     const [patientFirstName, setPatientFirstName] = useState('');
@@ -14,8 +35,8 @@ function CreateServiceRequest() {
     const [patientEmail, setPatientEmail] = useState('');
     const [serviceLocation, setServiceLocation] = useState('');
     const [flexibleHours, setFlexibleHours] = useState(false);
-    const [serviceStartTime, setServiceStartTime] = useState('');
-    const [serviceEndTime, setServiceEndTime] = useState('');
+    const [serviceStartTime, setServiceStartTime] = useState(serviceTimeOptions[0].twentyFourHourTime);
+    const [serviceEndTime, setServiceEndTime] = useState(serviceTimeOptions[0].twentyFourHourTime);
     const [hoursOfService, setHoursOfService] = useState();
     const [serviceType, setServiceType] = useState(1);
     const [serviceSunday, setServiceSunday] = useState(false);
@@ -89,22 +110,14 @@ function CreateServiceRequest() {
             return (
                 <div>
                     <label className="mt-3"><span className="text-danger">*</span>Service start time</label>
-                    <input 
-                        required 
-                        type="time"
-                        className="form-control mt-2" 
-                        value = { serviceStartTime }
-                        onChange={ event => setServiceStartTime(event.target.value) }
-                    />
+                    <select value={ serviceStartTime } onChange={ event => setServiceStartTime(event.target.value) } className="form-select">
+                        { serviceTimeOptions.map((time, indx) => <option value={ time.twentyFourHourTime } key={ indx }>{ time.twelveHourTime }</option>) }
+                    </select>
 
                     <label className="mt-3"><span className="text-danger">*</span>Service end time</label>
-                    <input 
-                        required 
-                        type="time"
-                        className="form-control mt-2" 
-                        value = { serviceEndTime }
-                        onChange={ event => setServiceEndTime(event.target.value) }
-                    />
+                    <select value={ serviceEndTime } onChange={ event => setServiceEndTime(event.target.value) } className="form-select">
+                        { serviceTimeOptions.map((time, indx) => <option value={ time.twentyFourHourTime } key={ indx }>{ time.twelveHourTime }</option>) }
+                    </select>
                 </div>
             );
         }
