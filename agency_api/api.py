@@ -87,33 +87,38 @@ class SecurityQuestionAnswerViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-class HPJobApplicationViewSet(viewsets.ModelViewSet):
+
+class CreateHPJobApplicationViewSet(viewsets.ViewSet):
+    serializer_class = HPJobApplicationSerializer
+    def get_queryset(self):
+        return JobPosting.objects.all()
+
+    # POST /api/creataehrjobapplicationviewset
+    def create(self, request):
+        data = request.data
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+class ViewHPJobApplicationViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = HPJobApplicationSerializer
-    http_method_names = ['get', 'post']
     queryset = JobPosting.objects.all()
-
-    # GET /api/hrjobapplicationviewset
+    http_method_names = ['get']
+    # GET /api/viewhrjobapplicationviewset
     def list(self, request):        
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    # GET /api/hrjobapplicationviewset/<id>
+    # GET /api/viewhrjobapplicationviewset/<id>
     def retrieve(self, request, pk):        
         queryset = self.get_queryset().get(id=pk)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
-
-    # POST /api/hrjobapplicationviewset
-    def create(self, request):
-        data = request.data
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 

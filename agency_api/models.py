@@ -96,8 +96,8 @@ class HPJobApplication(models.Model):
     graduation_month = models.IntegerField(null=False)
     years_of_experience = models.IntegerField(null=False)
     address = models.CharField(null=False, max_length=500)
-    phone_number = models.IntegerField(null=False)
-    email = models.CharField(null=False, max_length=200)
+    phone_number = models.BigIntegerField(null=False)
+    email = models.EmailField(null=False, max_length=200)
     job = models.ForeignKey(JobPosting, on_delete=models.CASCADE)
 
 

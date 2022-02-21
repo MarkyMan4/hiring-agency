@@ -1,6 +1,6 @@
 import React from "react";
 
-function createApplicationSuccess() {
+function CreateApplicationSuccess() {
     return (
         <div>
             <h1>You have applied to the job!</h1>
@@ -9,4 +9,4 @@ function createApplicationSuccess() {
     )
 }
 
-export default createApplicationSuccess;
+export default CreateApplicationSuccess;

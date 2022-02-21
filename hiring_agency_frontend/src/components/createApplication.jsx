@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { sendApplication } from "../api/applicationApi";
 function CreateAdvertisement() {
     const [email, setEmail] = useState('');
-    const [gender, setGender] = useState('');
+    const [gender, setGender] = useState('Male');
     const [dateOfBirth, setDateOfBirth] = useState('');
     const [ssn, setSsn] = useState('');
     const [serviceType, setServiceType] = useState(1);
@@ -18,7 +18,7 @@ function CreateAdvertisement() {
     const [yearsOfExperiance, setYearsOfExperiance] = useState('');
     const [address, setAddress] = useState('');
     const [phoneNum, setPhoneNum] = useState('');
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState({});
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     let navigate = useNavigate();
@@ -80,6 +80,7 @@ function CreateAdvertisement() {
     }
 
     const { jobid } = useParams();
+
     const handleFormSubmit = (event) => {
         //check input
         event.preventDefault(); // don't refresh page on form submit
@@ -97,12 +98,17 @@ function CreateAdvertisement() {
             .then(res => navigate('/create_application_success')) // redirect to success page if request was successful
             .catch(err => {
                 const errorResponse = JSON.parse(err.request.response);
+                console.log(err.response);
+
+                let msgString = "";
+
+
 
                 if (errorResponse.error) {
                     setMessage(errorResponse.error)
                 }
                 else {
-                    setMessage('Error creating job request')
+                    setMessage(err.response.data);
                 }
             });
     }
@@ -136,7 +142,7 @@ function CreateAdvertisement() {
                     <div className="row mx-2 mt-4">
                         <div className="col">
                             <label>Gender </label><br />
-                            <select id="gender" onChange={genderChanged} name="gender" form="newjobpostform" required>
+                            <select id="gender" onChange={genderChanged} value={gender} name="gender" form="newjobpostform" required>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                             </select>
@@ -210,10 +216,10 @@ function CreateAdvertisement() {
                             <input type="text" onChange={adressChanged} required></input>
                         </div>
                     </div>
-                    <div className="text-danger mt-3">{message}</div>
+                    <div className="text-danger mt-3">{Object.keys(message).map((msg, idx) => <p key={idx}>{message[msg]}</p>)}</div>
                     <div className="row mt-4 ">
                         <div className="col-5">
-                            <button type="submit">Submit</button>
+                            <button type="submit" className="btn btn-primary mt-2">Submit</button>
                         </div>
                     </div>
                     

@@ -19,7 +19,7 @@ import ViewAdvertisement from './components/viewAdvertisement';
 import CareTakerAccountRequest from './components/careTakerAccountRequest';
 import CareTakerAccountRequestSuccess from './components/careTakerAccountRequestSuccess';
 import CreateApplication from './components/createApplication.jsx';
-import CreateApplicationSuccess from './components/createApplication.jsx';
+import CreateApplicationSuccess from './components/createApplicationSuccess';
 import PendingCareTakerRequests from './components/pendingCareTakerRequests';
 import CareTakerAccountRequestDetail from './components/careTakerAccountRequestDetail';
 import CareTakerAccountRequestApproved from './components/careTakerAccountRequestApproved';

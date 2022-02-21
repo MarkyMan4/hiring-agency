@@ -4,7 +4,7 @@ const baseUrl = 'http://127.0.0.1:8000/';
 
 //todo finish this
 export const sendApplication = async (jobPostingID, email, gender, dateOfBirth, ssn, serviceType, educationType, educationInstitution, graduationYear, graduationMonth, yearsOfExperiance, address, phoneNum, firstName, lastName) => {
-    let url = baseUrl + 'api/jobapplications';    
+    let url = baseUrl + 'api/createjobapplications';    
     let body={
         "email" : email,
         "gender" : gender,
@@ -15,9 +15,9 @@ export const sendApplication = async (jobPostingID, email, gender, dateOfBirth, 
         "education_institution": educationInstitution,
         "graduation_year": graduationYear,
         "graduation_month": graduationMonth,
-        "years-of_experience": yearsOfExperiance,
+        "years_of_experience": yearsOfExperiance,
         "address": address,
-        "job_posting_id": jobPostingID,
+        "job": jobPostingID,
         "phone_number": phoneNum,
         "first_name": firstName,
         "last_name": lastName
@@ -25,7 +25,6 @@ export const sendApplication = async (jobPostingID, email, gender, dateOfBirth, 
     
     return axios.post(url, body)
         .then(res => res.data)
-        .catch(err => console.log(err));
 }
 
 /*

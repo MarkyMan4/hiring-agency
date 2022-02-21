@@ -28,14 +28,14 @@ function ViewAdvertisement(){
                         <ul className="no-bulletpoints">
                         {   
                             advertisements.map((job,idx)  => (
-                                <div className="row mt-4">
+                                <div className="row mt-4" key={idx} >
                                     <div className="col">
-                                        <li key={idx} className="advertisement-job-card">
+                                        <li className="advertisement-job-card shadow">
                                             <h3>{job.service_type.name}</h3>
                                             <label>Description:</label> {job.description} <br></br>
                                             <label>Degree Required :</label> {job.education_type.name} <br></br>
-                                            <label>Experiance Required:</label> {job.years_experience_required} year(s) <br></br>
-                                            <button onClick={routeChange("/create_application/" + job.id)}>Apply Now!</button>
+                                            <label>Experience Required:</label> {job.years_experience_required} year(s) <br></br>
+                                            <button className="btn btn-primary mt-2" onClick={routeChange("/create_application/" + job.id)}>Apply Now!</button>
 
                                         </li>
                                     </div>
