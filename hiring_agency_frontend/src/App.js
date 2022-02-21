@@ -19,6 +19,9 @@ import PendingCareTakerRequests from './components/pendingCareTakerRequests';
 import CareTakerAccountRequestDetail from './components/careTakerAccountRequestDetail';
 import CareTakerAccountRequestApproved from './components/careTakerAccountRequestApproved';
 import CareTakerAccountRequestRejected from './components/careTakerAccountRequestRejected';
+import StaffRoute from './routes/staffRoute';
+import AdminRoute from './routes/adminRoute';
+import UnauthenticatedRoute from './routes/unauthenticatedRoute';
 import JobRequestList from './components/jobRequestList';
 import JobRequesDetail from './components/jobRequestDetail';
 import JobRequesReject from './components/jobRequestRejected';
@@ -55,19 +58,22 @@ function App() {
           <Route path="/change_password" element={ <ChangePassword /> } />
           <Route path="/set_security_questions" element={ <SetSecurityQuestions /> } />
           <Route path="/account_locked" element={ <AccountLocked /> } />
-          <Route path="/add_new_staff" element={<AddStaff/>} />
-          <Route path="/create_job" element={<CreateAdvertisement/>} />
+          <Route path="/add_new_staff" element={ <AdminRoute roles={ roles }><AddStaff/></AdminRoute> } />
+          <Route path="/create_job" element={ <StaffRoute roles={ roles }><CreateAdvertisement/></StaffRoute> } />
           <Route path="/view_job" element={<ViewAdvertisement/>} />
-          <Route path="/caretaker_acct_request" element={<CareTakerAccountRequest />} />
-          <Route path="/caretaker_acct_request_success" element={<CareTakerAccountRequestSuccess />} />
-          { roles.includes('admin') || roles.includes('staff') ? <Route path="/pending_caretaker_requests" element={<PendingCareTakerRequests />} /> : null }
-          { roles.includes('admin') || roles.includes('staff') ? <Route path="/pending_caretaker_requests/:id" element={<CareTakerAccountRequestDetail />} /> : null }
-          { roles.includes('admin') || roles.includes('staff') ? <Route path="/pending_caretaker_requests/:id/approve" element={<CareTakerAccountRequestApproved />} /> : null }
-          { roles.includes('admin') || roles.includes('staff') ? <Route path="/pending_caretaker_requests/:id/reject" element={<CareTakerAccountRequestRejected />} /> : null }
-          { roles.includes('admin') || roles.includes('staff') ? <Route path="/job_advertisement_request" element={<JobRequestList />} /> : null }
-          { roles.includes('admin') || roles.includes('staff') ? <Route path="/job_advertisement_request/:id" element={<JobRequesDetail />} /> : null }
-          { roles.includes('admin') || roles.includes('staff') ? <Route path="/job_advertisement_request/:id/approve" element={<JobRequesApproved />} /> : null }
-          { roles.includes('admin') || roles.includes('staff') ? <Route path="/job_advertisement_request/:id/reject" element={<JobRequesReject />} /> : null }
+
+
+          <Route path="/caretaker_acct_request" element={ <UnauthenticatedRoute roles={ roles }><CareTakerAccountRequest /></UnauthenticatedRoute> } />
+          <Route path="/caretaker_acct_request_success" element={ <CareTakerAccountRequestSuccess /> } />
+          <Route path="/pending_caretaker_requests" element={ <StaffRoute roles={ roles }><PendingCareTakerRequests /></StaffRoute> } />
+          <Route path="/pending_caretaker_requests/:id" element={<StaffRoute roles={ roles }><CareTakerAccountRequestDetail /></StaffRoute> } />
+          <Route path="/pending_caretaker_requests/:id/approve" element={ <StaffRoute roles={ roles }><CareTakerAccountRequestApproved /></StaffRoute> } />
+          <Route path="/pending_caretaker_requests/:id/reject" element={ <StaffRoute roles={ roles }><CareTakerAccountRequestRejected /></StaffRoute> } />
+          <Route path="/job_advertisement_request" element={<StaffRoute roles={ roles }><JobRequestList /> </StaffRoute>} /> 
+          <Route path="/job_advertisement_request/:id" element={<StaffRoute roles={ roles }><JobRequesDetail /></StaffRoute>} /> 
+          <Route path="/job_advertisement_request/:id/approve" element={<StaffRoute roles={ roles }><JobRequesApproved /></StaffRoute>} /> 
+          <Route path="/job_advertisement_request/:id/reject" element={<StaffRoute roles={ roles }> <JobRequesReject /></StaffRoute>} /> 
+
         </Routes>
       );
     }
@@ -75,7 +81,7 @@ function App() {
 
   return (
     <div>
-      <NavMenu />
+      <NavMenu roles={ roles } />
       <div className="app">
         <Router>
           { getRoutes() }

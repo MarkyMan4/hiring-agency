@@ -21,7 +21,7 @@ class RegisterStaffViewSet(generics.GenericAPIView):
         user_data = {
             'first_name': request.data['first_name'],
             'last_name': request.data['last_name'],
-            'username': f"{request.data['last_name']}01",
+            'username': f"{request.data['last_name']}",
             'password': generated_password,
             'email': request.data['email']
         }
@@ -30,6 +30,10 @@ class RegisterStaffViewSet(generics.GenericAPIView):
         user_serializer = RegisterUserSerializer(data=user_data)
         user_serializer.is_valid(raise_exception=True)
         user = user_serializer.save()
+        
+        # update username to have sequence number
+        user.username = user.username + str(user.id).zfill(2)
+        user.save()
 
         # use the user object to create the staff member
         staff_member_data = {

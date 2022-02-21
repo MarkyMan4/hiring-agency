@@ -24,6 +24,7 @@ function JobRequestList(){
                                 requestId={ req.id } 
                                 firstName={ req.first_name }
                                 lastName={ req.last_name }
+                                jobType={ req.job.service_type.name }
                             />
                         }) 
                     }
