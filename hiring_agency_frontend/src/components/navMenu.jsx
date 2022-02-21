@@ -57,7 +57,6 @@ function NavMenu({ roles }) {
     }
 
     const getCareTakerAccountRequest = () => {
-        console.log(roles);
         if(roles.includes('admin') || roles.includes('staff')) { 
             return <Nav.Link className="nav-link" href="#/pending_caretaker_requests">Care Taker Account Requests</Nav.Link>
         }

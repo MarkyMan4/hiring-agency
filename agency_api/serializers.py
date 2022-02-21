@@ -63,6 +63,6 @@ class CareTakerSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 class ServiceRequestSerialier(serializers.ModelSerializer):
-    class meta:
+    class Meta:
         model = ServiceRequest
         fields = ('__all__')

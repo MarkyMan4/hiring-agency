@@ -7,7 +7,6 @@ from agency_api.auth.auth_serializers import RegisterUserSerializer, UserSeriali
 from .permissions import CustomModelPermissions
 from .serializers import CareTakerRequestSerializer, JobPostingSerializerRetrieval, CareTakerSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer, ServiceRequestSerialier
 from .models import CareTakerRequest, EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting, ServiceRequest
-from .utils.validation import is_phone_number_valid, is_email_valid
 from .utils.account import gen_rand_pass
 from datetime import datetime
 
@@ -131,13 +130,6 @@ class CreateCareTakerRequestViewSet(generics.GenericAPIView):
         data['date_requested'] = datetime.now()
         data['is_pending'] = True
         data['is_approved'] = False
-
-        # validate email and phone number
-        if not is_phone_number_valid(data['phone_number']):
-            return Response({'error': 'phone number must be 10 digits and only contain numbers'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        if not is_email_valid(data['email']):
-            return Response({'error': 'invalid email'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)

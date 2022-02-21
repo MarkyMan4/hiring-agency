@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from agency_api.utils.validation import validate_phone
+
 # static data tables
 class EducationType(models.Model):
     name = models.CharField(null=False, max_length=30)
@@ -22,15 +24,15 @@ class SecurityQuestionAnswer(models.Model):
 class CareTaker(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.CharField(null=False, max_length=500)
-    phone_number = models.IntegerField(null=False)
-    email = models.CharField(null=False, max_length=100)
+    phone_number = models.BigIntegerField(null=False, validators=[validate_phone])
+    email = models.EmailField(null=False, max_length=100)
 
 class CareTakerRequest(models.Model):
     first_name = models.CharField(null=False, max_length=50)
     last_name = models.CharField(null=False, max_length=50)
     address = models.CharField(null=False, max_length=500)
-    phone_number = models.IntegerField(null=False)
-    email = models.CharField(null=False, max_length=100)
+    phone_number = models.BigIntegerField(null=False, validators=[validate_phone])
+    email = models.EmailField(null=False, max_length=100)
     date_requested = models.DateTimeField(null=False)
     is_pending = models.BooleanField(null=False, default=False)
     is_approved = models.BooleanField(null=False, default=False)
@@ -62,13 +64,13 @@ class ServiceRequest(models.Model):
     patient_last_name = models.CharField(null=False, max_length=50)
     patient_gender = models.CharField(null=False, max_length=1)
     patient_date_of_birth = models.DateField(null=False)
-    patient_phone_number = models.IntegerField(null=True)
-    patient_email = models.CharField(null=True, max_length=200)
+    patient_phone_number = models.BigIntegerField(null=True, validators=[validate_phone])
+    patient_email = models.EmailField(null=True, max_length=200)
     service_location = models.CharField(null=False, max_length=500)
     flexible_hours = models.BooleanField(null=False)
     service_start_time = models.TimeField() # start and end time only specified if not using flexible hours
     service_end_time = models.TimeField()
-    hours_of_service_daily = models.IntegerField() # only populated if flexible hours are selected
+    hours_of_service_daily = models.IntegerField(null=True) # only populated if flexible hours are selected
     service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE)
     service_needed_sunday = models.BooleanField(null=False)
     service_needed_monday = models.BooleanField(null=False)
@@ -79,8 +81,8 @@ class ServiceRequest(models.Model):
     service_needed_saturday = models.BooleanField(null=False)
     days_of_service = models.IntegerField(null=False)
     hp_gender_required = models.BooleanField(null=False) # whether the gender of the healthcare professional must be the same as the patient
-    hp_min_age = models.IntegerField()
-    hp_max_age = models.IntegerField()
+    hp_min_age = models.IntegerField(null=True)
+    hp_max_age = models.IntegerField(null=True)
 
 class JobPosting(models.Model):
     service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE)
