@@ -1,7 +1,11 @@
 import React from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { requestNewService } from "../api/serviceRequests";
+import { getAuthToken } from "../utils/storage";
 
 function CreateServiceRequest() {
+    const navigate = useNavigate();
     const [patientFirstName, setPatientFirstName] = useState('');
     const [patientLastName, setPatientLastName] = useState('');
     const [patientGender, setPatientGender] = useState('M');
@@ -30,7 +34,40 @@ function CreateServiceRequest() {
     const handleFormSubmit = (event) => {
         event.preventDefault();
 
-        alert('submitted!')
+        // if no days of service are selected, make them pick one
+        if(!(serviceSunday || serviceMonday || serviceTuesday || serviceWednesday || serviceThursday || serviceFriday || serviceSaturday)) {
+            setMessage({error: 'You must pick at least one day of service'});
+        }
+        else {
+            requestNewService(
+                getAuthToken(),
+                patientFirstName,
+                patientLastName,
+                patientGender,
+                patientDob,
+                patientPhone,
+                patientEmail,
+                serviceLocation,
+                flexibleHours,
+                flexibleHours ? null : serviceStartTime, // if flexible hours were selected, start and end time should be null
+                flexibleHours ? null : serviceEndTime,
+                flexibleHours ? hoursOfService : null,
+                serviceType,
+                serviceSunday,
+                serviceMonday,
+                serviceTuesday,
+                serviceWednesday,
+                serviceThursday,
+                serviceFriday,
+                serviceSaturday,
+                daysOfService,
+                hpGenderRequired,
+                hpMinAge,
+                hpMaxAge
+            )
+            .then(res => navigate('/create_service_request_success'))
+            .catch(err => setMessage(err.response.data));
+        }
     }
 
     const getHoursInput = () => {
@@ -40,6 +77,7 @@ function CreateServiceRequest() {
                     <label className="mt-3"><span className="text-danger">*</span>Hours of service daily</label>
                     <input 
                         required 
+                        type="number"
                         className="form-control mt-2" 
                         value = { hoursOfService }
                         onChange={ event => setHoursOfService(event.target.value) }
@@ -115,6 +153,7 @@ function CreateServiceRequest() {
                 <input 
                     required 
                     type="tel"
+                    placeholder="only enter digits, e.g. 1234567890"
                     className="form-control mt-2" 
                     value = { patientPhone }
                     onChange={ event => setPatientPhone(event.target.value) }
@@ -250,7 +289,7 @@ function CreateServiceRequest() {
                     onChange={ event => setHpMaxAge(event.target.value) }
                 />
 
-                <div className="text-danger mt-3">{ Object.keys(message).map((msg, indx) => <p key={ indx }>{ message[msg] }</p>) }</div>
+                <div className="text-danger mt-3">{ Object.keys(message).map((msg, indx) => <p key={ indx }><b>{ msg.replaceAll('_', ' ') }</b>: { message[msg] }</p>) }</div>
 
                 <button type="submit" className="btn btn-success mt-3">Submit</button>
             </form>

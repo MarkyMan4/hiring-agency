@@ -27,6 +27,7 @@ import AdminRoute from './routes/adminRoute';
 import UnauthenticatedRoute from './routes/unauthenticatedRoute';
 import CareTakerRoute from './routes/careTakerRoute';
 import CreateServiceRequest from './components/createServiceRequest';
+import CreateServiceRequestSuccess from './components/createServiceRequestSuccess';
 
 
 function App() {
@@ -71,6 +72,7 @@ function App() {
           <Route path="/pending_caretaker_requests/:id/approve" element={ <StaffRoute roles={ roles }><CareTakerAccountRequestApproved /></StaffRoute> } />
           <Route path="/pending_caretaker_requests/:id/reject" element={ <StaffRoute roles={ roles }><CareTakerAccountRequestRejected /></StaffRoute> } />
           <Route path="/create_service_request" element={ <CareTakerRoute roles={ roles }><CreateServiceRequest /></CareTakerRoute> } />
+          <Route path="/create_service_request_success" element={ <CareTakerRoute roles={ roles }><CreateServiceRequestSuccess /></CareTakerRoute> } />
         </Routes>
       );
     }
