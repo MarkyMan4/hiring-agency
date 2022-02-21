@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group
 from knox.models import AuthToken
 from agency_api.auth.auth_serializers import RegisterUserSerializer, UserSerializer
 from .permissions import CustomModelPermissions
-from .serializers import CareTakerRequestSerializer, CareTakerSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer, ServiceRequestSerialier
+from .serializers import CareTakerRequestSerializer, JobPostingSerializerRetrieval, CareTakerSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer, ServiceRequestSerialier
 from .models import CareTakerRequest, EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting, ServiceRequest
 from .utils.validation import is_phone_number_valid, is_email_valid
 from .utils.account import gen_rand_pass
@@ -15,10 +15,17 @@ class JobPostingViewSet(viewsets.ModelViewSet):
     serializer_class = JobPostingSerializer
     queryset = JobPosting.objects.all()
     http_method_names=['get', 'post'] 
+
+    # GET /api/jobposting/<id>
+    def retrieve(self, request, pk):        
+        queryset = self.get_queryset().get(id=pk)
+        serializer = JobPostingSerializerRetrieval(queryset, many=False)
+        return Response(serializer.data)
+
     # GET /api/jobposting
     def list(self, request):
-        job_postings = self.queryset
-        serializer = self.get_serializer(job_postings, many=True)
+        job_postings = self.get_queryset()
+        serializer = JobPostingSerializerRetrieval(job_postings, many=True)
         return Response(serializer.data)
 
     # POST /api/jobpostings
@@ -80,10 +87,40 @@ class SecurityQuestionAnswerViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-class HPJobApplicationViewSet(viewsets.ModelViewSet):
+
+class CreateHPJobApplicationViewSet(viewsets.ViewSet):
+    serializer_class = HPJobApplicationSerializer
+    def get_queryset(self):
+        return JobPosting.objects.all()
+
+    # POST /api/creataehrjobapplicationviewset
+    def create(self, request):
+        data = request.data
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+class ViewHPJobApplicationViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = HPJobApplicationSerializer
-    http_method_names = ['get', 'post']
+    queryset = JobPosting.objects.all()
+    http_method_names = ['get']
+    # GET /api/viewhrjobapplicationviewset
+    def list(self, request):        
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    # GET /api/viewhrjobapplicationviewset/<id>
+    def retrieve(self, request, pk):        
+        queryset = self.get_queryset().get(id=pk)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
 
 class CreateCareTakerRequestViewSet(generics.GenericAPIView):
     serializer_class = CareTakerRequestSerializer
