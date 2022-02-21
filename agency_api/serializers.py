@@ -2,20 +2,16 @@ from operator import mod
 from rest_framework import serializers
 from .models import CareTaker, HPJobApplication, EducationType, HealthCareProfessional, StaffMember, SecurityQuestion, SecurityQuestionAnswer, JobPosting, CareTakerRequest
 
-class HPJobApplicationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = HPJobApplication
-        fields = ('__all__')
-
-class JobPostingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = JobPosting
-        fields = ('__all__')
 
 class StaffMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = StaffMember
         fields = ('__all__')
+
+class ServiceTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EducationType
+        fields = ('id', 'name')
 
 class EducationTypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,3 +44,18 @@ class HealthCareProfessionalSerializer(serializers.ModelSerializer):
     class Meta:
         model = HealthCareProfessional
         fields = ('__all__')
+
+class JobPostingSerializer(serializers.ModelSerializer):
+    service_type = ServiceTypeSerializer(many=False)
+    education_type = EducationTypeSerializer(many=False)
+    class Meta:
+        model = JobPosting
+        fields = ('__all__', "service_type", "education_type")
+
+class HPJobApplicationSerializer(serializers.ModelSerializer):
+    service_type = ServiceTypeSerializer(many=False)
+    education_type = EducationTypeSerializer(many=False)
+    Job_posting = JobPostingSerializer(many=False)
+    class Meta:
+        model = HPJobApplication
+        fields = ('__all__', "service_type", "education_type", "Job_posting")

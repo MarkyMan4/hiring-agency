@@ -4,10 +4,10 @@ from knox import views as knox_views
 from .auth.auth_api import RegisterStaffViewSet, LoginAPI, UserAPI, ChangePasswordAPI, LockUserAPI
 from .api import (
     EducationTypeViewSet,
-    HPJobApplicationViewSet, 
     SecurityQuestionViewSet, 
     SecurityQuestionAnswerViewSet, 
     JobPostingViewSet, 
+    HPJobApplicationViewSet,
     CreateCareTakerRequestViewSet, 
     CareTakerRequestViewSet
 )
@@ -19,7 +19,9 @@ router.register('api/securityquestions', SecurityQuestionViewSet, 'security-ques
 router.register('api/securityquestionanswers', SecurityQuestionAnswerViewSet, 'security-question-answers')
 router.register('api/jobposting', JobPostingViewSet, 'job-posting')
 router.register('api/caretaker_requests', CareTakerRequestViewSet, 'care-taker-requests')
-router.register('api/hp_job_requests', HPJobApplicationViewSet, 'Hp-job-requests')
+router.register('api/job_advertisement_request',HPJobApplicationViewSet, 'hp-job-application')
+
+
 
 # put non-viewset urls here
 urlpatterns = [

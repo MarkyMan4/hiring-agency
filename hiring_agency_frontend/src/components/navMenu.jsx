@@ -40,6 +40,12 @@ function NavMenu() {
         }
     }
 
+    /*const viewJobRequest = () => {
+        if(isUserLoggedIn()) { 
+            return <Nav.Link className="nav-link" href="#/job_advertisement_request" >Job Requests</Nav.Link>
+        }
+    }*/
+
     const getAddStaff = () => {
         if(isAdmin()) {
             return <Nav.Link className="nav-link" href="#/add_new_staff" >Add staff</Nav.Link>
@@ -67,8 +73,10 @@ function NavMenu() {
                     <Nav.Link className="nav-link" href="#/caretaker_acct_request">Sign Up</Nav.Link>
                     { getAddStaff() }
                     { createJobPosting()}
+                    <Nav.Link className="nav-link" href="#/job_advertisement_request">Job Requests</Nav.Link>
                     <Nav.Link className="nav-link" href="#/pending_caretaker_requests">Care Taker Account Requests</Nav.Link>
                     { getLoginOrLogoutButton() }
+                    
                 </Nav>
             </Navbar.Collapse>
             <span className="navbar-text mr-5">

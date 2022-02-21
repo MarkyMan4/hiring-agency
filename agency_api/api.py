@@ -82,26 +82,26 @@ class SecurityQuestionAnswerViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 class HPJobApplicationViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [CustomModelPermissions]
     serializer_class = HPJobApplicationSerializer
-    http_method_names = ['get', 'post']
-    def get_queryset(self):
-        return HPJobApplication.objects.filter(is_pending = True)
+    #http_method_names = ['get', 'post']
 
-    # GET /api/hp_job_requests
+    def get_queryset(self):
+        return HPJobApplication.objects.filter(is_pending=True)
+
+    # GET /api/caretaker_requests
     def list(self, request):
         queryset = self.get_queryset()
         serializer = self.serializer_class(queryset, many=True)
+
         return Response(serializer.data)
 
-    # GET /api/hp_job_requests/<id>
+    # GET /api/caretaker_requests/<id>
     def retrieve(self, request, pk):
         queryset = self.get_queryset().get(id=pk)
-        Serializer = self.serializer_class(queryset)
-        data = Serializer.data
-        job = data.job
-        print(job)
-        return Response(Serializer.data)
+        serializer = self.serializer_class(queryset)
+
+        return Response(serializer.data)
 
     @action(methods=['PUT'], detail=True)
     def approve(self, request, pk):
@@ -136,8 +136,6 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
 
     def register_hp(self, job_request):
         generated_password = gen_rand_pass()
-
-        user_info = job_request.objects.get(id=1)
         
         user_data = {
             'first_name': job_request.first_name,

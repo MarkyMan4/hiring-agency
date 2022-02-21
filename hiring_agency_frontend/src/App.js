@@ -19,6 +19,10 @@ import PendingCareTakerRequests from './components/pendingCareTakerRequests';
 import CareTakerAccountRequestDetail from './components/careTakerAccountRequestDetail';
 import CareTakerAccountRequestApproved from './components/careTakerAccountRequestApproved';
 import CareTakerAccountRequestRejected from './components/careTakerAccountRequestRejected';
+import JobRequestList from './components/jobRequestList';
+import JobRequesDetail from './components/jobRequestDetail';
+import JobRequesReject from './components/jobRequestRejected';
+import JobRequesApproved from './components/jobRequestApproved';
 
 
 function App() {
@@ -60,6 +64,10 @@ function App() {
           { roles.includes('admin') || roles.includes('staff') ? <Route path="/pending_caretaker_requests/:id" element={<CareTakerAccountRequestDetail />} /> : null }
           { roles.includes('admin') || roles.includes('staff') ? <Route path="/pending_caretaker_requests/:id/approve" element={<CareTakerAccountRequestApproved />} /> : null }
           { roles.includes('admin') || roles.includes('staff') ? <Route path="/pending_caretaker_requests/:id/reject" element={<CareTakerAccountRequestRejected />} /> : null }
+          { roles.includes('admin') || roles.includes('staff') ? <Route path="/job_advertisement_request" element={<JobRequestList />} /> : null }
+          { roles.includes('admin') || roles.includes('staff') ? <Route path="/job_advertisement_request/:id" element={<JobRequesDetail />} /> : null }
+          { roles.includes('admin') || roles.includes('staff') ? <Route path="/job_advertisement_request/:id/approve" element={<JobRequesApproved />} /> : null }
+          { roles.includes('admin') || roles.includes('staff') ? <Route path="/job_advertisement_request/:id/reject" element={<JobRequesReject />} /> : null }
         </Routes>
       );
     }

@@ -15,7 +15,7 @@ export const getAllAdvertisementRequest = async (token) =>{
         .catch(err => console.log('Failed to find job requests'));
 }
 
-export const viewAdvertisementRequestById = async (token) =>{
+export const viewAdvertisementRequestById = async (token, id) =>{
     let url = baseUrl + 'api/job_advertisement_request'+id;
 
     let config = {
