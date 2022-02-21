@@ -12,8 +12,6 @@ import { useEffect, useState } from 'react';
 import { getAuthToken, isUserLoggedIn } from './utils/storage';
 import { getUser } from './api/authRequests';
 import CreateAdvertisement from './components/createAdvertisement';
-import CreateAdvertisementSuccess from './components/createAdvertisementSuccess';
-
 
 import ViewAdvertisement from './components/viewAdvertisement';
 import CareTakerAccountRequest from './components/careTakerAccountRequest';
@@ -27,6 +25,8 @@ import CareTakerAccountRequestRejected from './components/careTakerAccountReques
 import StaffRoute from './routes/staffRoute';
 import AdminRoute from './routes/adminRoute';
 import UnauthenticatedRoute from './routes/unauthenticatedRoute';
+import CareTakerRoute from './routes/careTakerRoute';
+import CreateServiceRequest from './components/createServiceRequest';
 
 
 function App() {
@@ -59,17 +59,18 @@ function App() {
           <Route path="/change_password" element={ <ChangePassword /> } />
           <Route path="/set_security_questions" element={ <SetSecurityQuestions /> } />
           <Route path="/account_locked" element={ <AccountLocked /> } />
-          <Route path="/create_application/:jobid" element={<CreateApplication/>} />
-          <Route path="/create_application_success" element={<CreateApplicationSuccess/>} />
+          <Route path="/create_application/:jobid" element={ <UnauthenticatedRoute roles={ roles }><CreateApplication/></UnauthenticatedRoute> } />
+          <Route path="/create_application_success" element={ <UnauthenticatedRoute roles={ roles }><CreateApplicationSuccess/></UnauthenticatedRoute> } />
           <Route path="/add_new_staff" element={ <AdminRoute roles={ roles }><AddStaff/></AdminRoute> } />
           <Route path="/create_job" element={ <StaffRoute roles={ roles }><CreateAdvertisement/></StaffRoute> } />
-          <Route path="/view_job" element={<ViewAdvertisement/>} />
+          <Route path="/view_job" element={ <UnauthenticatedRoute roles={ roles }><ViewAdvertisement/></UnauthenticatedRoute> } />
           <Route path="/caretaker_acct_request" element={ <UnauthenticatedRoute roles={ roles }><CareTakerAccountRequest /></UnauthenticatedRoute> } />
           <Route path="/caretaker_acct_request_success" element={ <CareTakerAccountRequestSuccess /> } />
           <Route path="/pending_caretaker_requests" element={ <StaffRoute roles={ roles }><PendingCareTakerRequests /></StaffRoute> } />
           <Route path="/pending_caretaker_requests/:id" element={<StaffRoute roles={ roles }><CareTakerAccountRequestDetail /></StaffRoute> } />
           <Route path="/pending_caretaker_requests/:id/approve" element={ <StaffRoute roles={ roles }><CareTakerAccountRequestApproved /></StaffRoute> } />
           <Route path="/pending_caretaker_requests/:id/reject" element={ <StaffRoute roles={ roles }><CareTakerAccountRequestRejected /></StaffRoute> } />
+          <Route path="/create_service_request" element={ <CareTakerRoute roles={ roles }><CreateServiceRequest /></CareTakerRoute> } />
         </Routes>
       );
     }

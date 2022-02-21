@@ -165,7 +165,7 @@ function CreateAdvertisement() {
                             <label>Service Type </label><br />
                             <select id="gender" onChange={serviceTypeChanged} name="gender" form="newjobpostform" required>
                                 <option value="1">Nurse</option>
-                                <option value="2">Professional</option>
+                                <option value="2">Physiotherapist</option>
                             </select>
                         </div>
                     </div>

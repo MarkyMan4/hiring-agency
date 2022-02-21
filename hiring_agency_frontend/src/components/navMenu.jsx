@@ -47,7 +47,9 @@ function NavMenu({ roles }) {
     }
 
     const viewJobPosting = () => {
+        if(roles.length === 0) {
             return <Nav.Link className="nav-link" href="#/view_job" >Careers</Nav.Link>
+        }
     }
 
     const getAddStaff = () => {
@@ -59,6 +61,12 @@ function NavMenu({ roles }) {
     const getCareTakerAccountRequest = () => {
         if(roles.includes('admin') || roles.includes('staff')) { 
             return <Nav.Link className="nav-link" href="#/pending_caretaker_requests">Care Taker Account Requests</Nav.Link>
+        }
+    }
+
+    const getCreateServieRequest = () => {
+        if(roles.includes('admin') || roles.includes('caretaker')) { 
+            return <Nav.Link className="nav-link" href="#/create_service_request">New Service Request</Nav.Link>
         }
     }
 
@@ -74,6 +82,7 @@ function NavMenu({ roles }) {
                     { createJobPosting() }
                     { getCareTakerAccountRequest() }
                     { viewJobPosting() }
+                    { getCreateServieRequest() }
                 </Nav>
             </Navbar.Collapse>
             <span className="navbar-text" style={ {marginRight: '20px'} }>
