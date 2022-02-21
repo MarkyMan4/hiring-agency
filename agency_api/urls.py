@@ -7,6 +7,8 @@ from .api import (
     SecurityQuestionViewSet, 
     SecurityQuestionAnswerViewSet, 
     JobPostingViewSet, 
+    ViewHPJobApplicationViewSet,
+    CreateHPJobApplicationViewSet,
     CreateCareTakerRequestViewSet, 
     CareTakerRequestViewSet
 )
@@ -17,6 +19,8 @@ router.register('api/educationtypes', EducationTypeViewSet, 'education-type')
 router.register('api/securityquestions', SecurityQuestionViewSet, 'security-questions')
 router.register('api/securityquestionanswers', SecurityQuestionAnswerViewSet, 'security-question-answers')
 router.register('api/jobposting', JobPostingViewSet, 'job-posting')
+router.register('api/createjobapplications', CreateHPJobApplicationViewSet, 'job-posting')
+router.register('api/viewjobapplications', ViewHPJobApplicationViewSet, 'job-posting')
 router.register('api/caretaker_requests', CareTakerRequestViewSet, 'care-taker-requests')
 
 # put non-viewset urls here

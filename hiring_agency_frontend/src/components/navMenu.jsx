@@ -46,6 +46,10 @@ function NavMenu({ roles }) {
         }
     }
 
+    const viewJobPosting = () => {
+            return <Nav.Link className="nav-link" href="#/view_job" >Careers</Nav.Link>
+    }
+
     const getAddStaff = () => {
         if(roles.includes('admin')) {
             return <Nav.Link className="nav-link" href="#/add_new_staff" >Add staff</Nav.Link>
@@ -71,6 +75,7 @@ function NavMenu({ roles }) {
                     { createJobPosting() }
                     { getCareTakerAccountRequest() }
                     { getLoginOrLogoutButton() }
+                    { viewJobPosting() }
                 </Nav>
             </Navbar.Collapse>
             <span className="navbar-text mr-5">

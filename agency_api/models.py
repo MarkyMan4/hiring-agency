@@ -84,7 +84,9 @@ class JobPosting(models.Model):
     description = models.CharField(null=True, max_length= 500)
 
 class HPJobApplication(models.Model):
-    gender = models.CharField(null=False, max_length=1)
+    first_name = models.CharField(null=False, max_length=50)
+    last_name = models.CharField(null = False,max_length=50)
+    gender = models.CharField(null=False, max_length=10)
     date_of_birth = models.DateField(null=False)
     ssn = models.IntegerField(null=False)
     service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE)
@@ -94,8 +96,8 @@ class HPJobApplication(models.Model):
     graduation_month = models.IntegerField(null=False)
     years_of_experience = models.IntegerField(null=False)
     address = models.CharField(null=False, max_length=500)
-    phone_number = models.IntegerField(null=False)
-    email = models.CharField(null=False, max_length=200)
+    phone_number = models.BigIntegerField(null=False)
+    email = models.EmailField(null=False, max_length=200)
     job = models.ForeignKey(JobPosting, on_delete=models.CASCADE)
 
 
