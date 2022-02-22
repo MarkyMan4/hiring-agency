@@ -26,8 +26,7 @@ function CreateAdvertisement() {
         }
         //if correct send data
         sendJobForm(serviceType, educationType, experience, description)
-        .then(res => console.log(res) //navigate('/create_job_success')
-        ) // redirect to success page if request was successful
+        .then(res => navigate('/create_job_success')) // redirect to success page if request was successful
         .catch(err => {
             const errorResponse = JSON.parse(err.request.response);
             

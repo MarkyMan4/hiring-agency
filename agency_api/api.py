@@ -5,9 +5,8 @@ from django.contrib.auth.models import Group
 from knox.models import AuthToken
 from agency_api.auth.auth_serializers import RegisterUserSerializer, UserSerializer
 from .permissions import CustomModelPermissions
-from .serializers import CareTakerRequestSerializer, JobPostingSerializerRetrieval, CareTakerSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer
-from .models import CareTakerRequest, EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting
-from .utils.validation import is_phone_number_valid, is_email_valid
+from .serializers import CareTakerRequestSerializer, JobPostingSerializerRetrieval, CareTakerSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, RetrieveServiceRequestSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer, CreateServiceRequestSerializer
+from .models import CareTaker, CareTakerRequest, EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting, ServiceRequest
 from .utils.account import gen_rand_pass
 from datetime import datetime
 
@@ -132,13 +131,6 @@ class CreateCareTakerRequestViewSet(generics.GenericAPIView):
         data['is_pending'] = True
         data['is_approved'] = False
 
-        # validate email and phone number
-        if not is_phone_number_valid(data['phone_number']):
-            return Response({'error': 'phone number must be 10 digits and only contain numbers'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        if not is_email_valid(data['email']):
-            return Response({'error': 'invalid email'}, status=status.HTTP_400_BAD_REQUEST)
-
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -249,3 +241,61 @@ class CareTakerRequestViewSet(viewsets.ViewSet):
         caretaker_group.user_set.add(user)
 
         return user.username, generated_password
+
+class CreateServiceRequestViewSet(viewsets.ViewSet):
+    serializer_class = CreateServiceRequestSerializer
+    permission_classes = [CustomModelPermissions]
+
+    def get_queryset(self):
+        return ServiceRequest.objects.all()
+
+    # POST /api/create_service_request
+    def create(self, request):
+        data = request.data
+        user = request.user
+
+        # if user is a care taker, get the care taker ID
+        # admin would need to manually provide care taker ID in body
+        if not user.is_superuser:
+            data['care_taker'] = CareTaker.objects.get(user_id=user.id).id
+        else:
+            # if an admin makes this request, they need to provide the care takers username
+            try:
+                data['care_taker'] = CareTaker.objects.get(user__username=data['care_taker_username']).id
+            except:
+                print('Care taker username not found')
+
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class RetrieveServiceRequestViewSet(viewsets.ViewSet):
+    serializer_class = RetrieveServiceRequestSerializer
+    permission_classes = [CustomModelPermissions]
+
+    def get_queryset(self):
+        return ServiceRequest.objects.all()
+
+    # GET /api/retrieve_service_requests
+    def list(self, request):
+        user = request.user
+
+        # if user is a care taker, only get service requests they created
+        # for admin or staff, retrieve all service requests
+        if user.groups.filter(name='caretaker'):
+            queryset = self.get_queryset().filter(care_taker_id=user.id)
+        else:
+            queryset = self.get_queryset()
+        
+        serializer = self.serializer_class(queryset, many=True)
+
+        return Response(serializer.data)
+
+    # GET /api/retrieve_service_requests/<id>
+    def retrieve(self, request, pk):
+        service_request = self.get_queryset().get(id=pk)
+        serializer = self.serializer_class(service_request, many=False)
+
+        return Response(serializer.data)

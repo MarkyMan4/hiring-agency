@@ -1,6 +1,8 @@
 from pickle import FALSE
 from rest_framework import serializers
-from .models import CareTaker, HPJobApplication, EducationType, ServiceType, StaffMember, SecurityQuestion, SecurityQuestionAnswer, JobPosting, CareTakerRequest
+
+from agency_api.auth.auth_serializers import UserSerializer
+from .models import CareTaker, HPJobApplication, EducationType, ServiceType, StaffMember, SecurityQuestion, SecurityQuestionAnswer, JobPosting, CareTakerRequest, ServiceRequest
 
 class HPJobApplicationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,21 +12,17 @@ class HPJobApplicationSerializer(serializers.ModelSerializer):
 class ServiceTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceType
-        fields = ('name',)
+        fields = ('__all__')
 
 class JobPostingSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobPosting
-        #fields = ("service_type" , "id", "years_experience_required")
         fields = ('__all__')
         
-
-
 class EducationTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = EducationType
         fields = ('__all__')
-      
 
 class JobPostingSerializerRetrieval(serializers.ModelSerializer):
     service_type = ServiceTypeSerializer(many=False)
@@ -33,7 +31,6 @@ class JobPostingSerializerRetrieval(serializers.ModelSerializer):
         model = JobPosting
         fields = ("service_type" ,"education_type", "id", "years_experience_required", "description")
         
-
 class StaffMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = StaffMember
@@ -61,7 +58,29 @@ class CareTakerRequestSerializer(serializers.ModelSerializer):
         model = CareTakerRequest
         fields = ('__all__')
 
+# used for creating care takers
 class CareTakerSerializer(serializers.ModelSerializer):
     class Meta:
         model = CareTaker
+        fields = ('__all__')
+
+# used when user info is needed when getting care taker info (first name, last name, etc.)
+class CareTakerDetailSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False)
+
+    class Meta:
+        model = CareTaker
+        fields = ('__all__')
+
+class CreateServiceRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceRequest
+        fields = ('__all__')
+
+class RetrieveServiceRequestSerializer(serializers.ModelSerializer):
+    care_taker = CareTakerDetailSerializer(many=False)
+    service_type = ServiceTypeSerializer(many=False)
+
+    class Meta:
+        model = ServiceRequest
         fields = ('__all__')
