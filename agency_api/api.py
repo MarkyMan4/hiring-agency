@@ -258,6 +258,12 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
         # admin would need to manually provide care taker ID in body
         if not user.is_superuser:
             data['care_taker'] = CareTaker.objects.get(user_id=user.id).id
+        else:
+            # if an admin makes this request, they need to provide the care takers username
+            try:
+                data['care_taker'] = CareTaker.objects.get(user__username=data['care_taker_username']).id
+            except:
+                print('Care taker username not found')
 
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)

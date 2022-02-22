@@ -3,12 +3,13 @@ import axios from 'axios';
 const baseUrl = 'http://127.0.0.1:8000/';
 
 export const requestNewService = async (
-    token, patientFirstName, patientLastName, patientGender, patientDob, patientPhone, patientEmail, serviceLocation,
+    token, careTakerUsername, patientFirstName, patientLastName, patientGender, patientDob, patientPhone, patientEmail, serviceLocation,
     flexibleHours, serviceStartTime, serviceEndTime, hoursOfService, serviceType, serviceSunday, serviceMonday,
     serviceTuesday, serviceWednesday, serviceThursday, serviceFriday, serviceSaturday, daysOfService, hpGenderRequired, hpMinAge, hpMaxAge) => {
     let url = baseUrl + 'api/create_service_requests';
 
     let body = {
+        care_taker_username: careTakerUsername,
         patient_first_name: patientFirstName,
         patient_last_name: patientLastName,
         patient_gender: patientGender,
@@ -42,4 +43,18 @@ export const requestNewService = async (
 
     return axios.post(url, body, config)
         .then(res => res.data);
+}
+
+export const getAllServiceRequests = async (token) => {
+    let url = baseUrl + 'api/retrieve_service_requests';
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.get(url, config)
+        .then(res => res.data)
+        .catch(err => 'Failed to retrieve service requests');
 }

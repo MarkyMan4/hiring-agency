@@ -25,8 +25,9 @@ for(let i = 0; i < 24; i++) {
     );
 }
 
-function CreateServiceRequest() {
+function CreateServiceRequest({ roles }) {
     const navigate = useNavigate();
+    const [careTakerUsername, setCareTakerUsername] = useState();
     const [patientFirstName, setPatientFirstName] = useState('');
     const [patientLastName, setPatientLastName] = useState('');
     const [patientGender, setPatientGender] = useState('M');
@@ -62,6 +63,7 @@ function CreateServiceRequest() {
         else {
             requestNewService(
                 getAuthToken(),
+                careTakerUsername,
                 patientFirstName,
                 patientLastName,
                 patientGender,
@@ -131,7 +133,21 @@ function CreateServiceRequest() {
             </p>
             <hr />
             <form onSubmit={ handleFormSubmit } className="basic-form">
-                <label><span className="text-danger">*</span>Patient first name</label>
+                {/* only admin is required to enter the username of the care taker */}
+                { roles.includes('admin') ?
+                    <div>
+                        <label><span className="text-danger">*</span>Care taker username</label>
+                        <input 
+                            required 
+                            className="form-control mt-2" 
+                            value = { careTakerUsername }
+                            onChange={ event => setCareTakerUsername(event.target.value) }
+                        />
+                    </div>
+                    : <div></div>
+                }
+
+                <label className="mt-3"><span className="text-danger">*</span>Patient first name</label>
                 <input 
                     required 
                     className="form-control mt-2" 
