@@ -1,6 +1,6 @@
 import React from "react";
 
-function addStaffSuccess() {
+function AddStaffSuccess() {
     return (
         <div>
             <h1>The job has been added successfully!</h1>
@@ -8,4 +8,4 @@ function addStaffSuccess() {
     )
 }
 
-export default addStaffSuccess;
+export default AddStaffSuccess;
