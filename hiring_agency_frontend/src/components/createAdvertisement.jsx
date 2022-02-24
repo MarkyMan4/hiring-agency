@@ -13,17 +13,20 @@ function CreateAdvertisement() {
     const [message, setMessage] = useState('');
     let navigate = useNavigate();
 
-    const validateJobPost = () => {
+    const validateJobPost = (event) => {
+        event.preventDefault();
+
         //check input
-        if(experience == "" || experience == -1){
-            alert("Make sure experiance required is filled in");
+        if(experience < 0){
+            setMessage("Experience must be greater than or equal to 0");
             return;
         }
 
-        if(description == ""){
-            alert("Please add a description");
+        if(description.trim() === ""){
+            setMessage("Description cannot be empty");
             return;
         }
+
         //if correct send data
         sendJobForm(serviceType, educationType, experience, description)
         .then(res => navigate('/create_job_success')) // redirect to success page if request was successful
@@ -52,39 +55,35 @@ function CreateAdvertisement() {
     }
 
     return (
-        <div className="row w-100 mt-5">
-            <div className="col-md-4"></div>
-            <div className="col-md-4 text-center  shadow">
-                <form id="newjobpostform container-fluid" className="form-data">
-                    <div className="row mx-2">
-                        <label>Job Type: </label>
-                        <select id="jobtype" onChange={serviceTypeChanged} name="serviceType" form="newjobpostform" required>
-                            <option value="1">Nurse</option>
-                            <option value="2">Physiotherapist</option>
-                        </select>
-                    </div>
-                    <div className="row mx-2">
-                        <label>Education Level Required: </label>
-                        <select id="jobtype" name="educationType" onChange={educationTypeChanged} form="newjobpostform" required>
-                            <option value="1">Bachelors</option>
-                            <option value="2">Masters</option>
-                        </select>
-                    </div>
-                    <div className="row mx-2">
-                        <label>Experience Required (Years)</label>
-                        <input type="text" name="experiance" onChange={experienceChanged} required></input>
-                    </div>
-                    <div className="row mx-2">
-                        <label>Description</label>
-                        <input type="text" name="description" onChange={descriptionChanged} required></input>
-                    </div>
-                    <div className="row mt-4 ">
-                        <button type="button" onClick={validateJobPost}>Submit</button>
-                    </div>
+        <div>
+            <h1>Create job advertisement</h1>
+            <p>
+                Advertise to hire a healthcare professional
+            </p>
+            <hr />
+            <form id="newjobpostform" className="basic-form" onSubmit={ validateJobPost }>
+                <label>Job Type: </label>
+                <select onChange={serviceTypeChanged} name="serviceType" className="form-select mt-2" required>
+                    <option value="1">Nurse</option>
+                    <option value="2">Physiotherapist</option>
+                </select>
 
-                    <div className="text-danger mt-3">{ message }</div>
-                </form>
-            </div>
+                <label className="mt-3">Education Level Required</label>
+                <select onChange={educationTypeChanged} className="form-select mt-2" required>
+                    <option value="1">Bachelors</option>
+                    <option value="2">Masters</option>
+                </select>
+
+                <label className="mt-3">Experience Required (Years)</label>
+                <input type="number" name="experiance" onChange={experienceChanged} className="form-control mt-2" required></input>
+
+                <label className="mt-3">Description</label>
+                <input type="text" name="description" onChange={descriptionChanged} className="form-control mt-2" required></input>
+
+                <button type="submit" className="btn btn-success mt-3">Submit</button>
+
+                <div className="text-danger mt-3">{ message }</div>
+            </form>
         </div>
     )
 }

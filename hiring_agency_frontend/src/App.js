@@ -29,7 +29,7 @@ import CareTakerRoute from './routes/careTakerRoute';
 import CreateServiceRequest from './components/createServiceRequest';
 import CreateServiceRequestSuccess from './components/createServiceRequestSuccess';
 import ServiceRequests from './components/serviceRequests';
-import AddStaffSuccess from './components/createAdvertisementSuccess';
+import CreateJobSuccess from './components/createAdvertisementSuccess';
 
 
 function App() {
@@ -66,7 +66,7 @@ function App() {
           <Route path="/create_application_success" element={ <UnauthenticatedRoute roles={ roles }><CreateApplicationSuccess/></UnauthenticatedRoute> } />
           <Route path="/add_new_staff" element={ <AdminRoute roles={ roles }><AddStaff/></AdminRoute> } />
           <Route path="/create_job" element={ <StaffRoute roles={ roles }><CreateAdvertisement/></StaffRoute> } />
-          <Route path="/create_job_success" element={ <StaffRoute roles={ roles }><AddStaffSuccess /></StaffRoute> } />
+          <Route path="/create_job_success" element={ <StaffRoute roles={ roles }><CreateJobSuccess /></StaffRoute> } />
           <Route path="/view_job" element={ <UnauthenticatedRoute roles={ roles }><ViewAdvertisement/></UnauthenticatedRoute> } />
           <Route path="/caretaker_acct_request" element={ <UnauthenticatedRoute roles={ roles }><CareTakerAccountRequest /></UnauthenticatedRoute> } />
           <Route path="/caretaker_acct_request_success" element={ <CareTakerAccountRequestSuccess /> } />
