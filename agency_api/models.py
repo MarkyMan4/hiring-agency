@@ -40,7 +40,7 @@ class CareTakerRequest(models.Model):
 class StaffMember(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.CharField(null=False, max_length=500)
-    phone_number = models.IntegerField(null=False)
+    phone_number = models.BigIntegerField(null=False)
     email = models.EmailField(null=False, max_length=200)
 
 class HealthCareProfessional(models.Model):
@@ -55,7 +55,7 @@ class HealthCareProfessional(models.Model):
     graduation_month = models.IntegerField(null=False)
     years_of_experience = models.IntegerField(null=False)
     address = models.CharField(null=False, max_length=500)
-    phone_number = models.IntegerField(null=False)
+    phone_number = models.BigIntegerField(null=False)
     email = models.CharField(null=False, max_length=200)
     
 class ServiceRequest(models.Model):

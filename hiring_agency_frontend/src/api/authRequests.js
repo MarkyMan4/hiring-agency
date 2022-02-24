@@ -110,8 +110,7 @@ export const addNewStaff = async(token, firstName, lastName, email, phone, addre
     };
 
     return axios.post(url, body, config)
-        .then(res => res.data)
-        .catch(err => console.log('Failed to add new staff'));
+        .then(res => res.data);
 
 }
 
