@@ -57,6 +57,9 @@ function CareTakerAccountRequest() {
                 <input 
                     required 
                     className="form-control mt-2" 
+                    placeholder="only enter digits, e.g. 1234567890" 
+                    maxLength={10} 
+                    minLength={10}
                     type="tel"
                     value = { phoneNumber }
                     onChange={ event => setPhoneNumber(event.target.value) }
@@ -66,6 +69,7 @@ function CareTakerAccountRequest() {
                 <input 
                     required 
                     className="form-control mt-2" 
+                    type="email"
                     value = { email }
                     onChange={ event => setEmail(event.target.value) }
                 />

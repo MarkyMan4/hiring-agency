@@ -182,6 +182,8 @@ function CreateServiceRequest({ roles }) {
                 <input 
                     required 
                     type="tel"
+                    maxLength={10} 
+                    minLength={10}
                     placeholder="only enter digits, e.g. 1234567890"
                     className="form-control mt-2" 
                     value = { patientPhone }
