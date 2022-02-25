@@ -75,7 +75,7 @@ function CreateAdvertisement() {
                 </select>
 
                 <label className="mt-3">Experience Required (Years)</label>
-                <input type="number" name="experiance" onChange={experienceChanged} className="form-control mt-2" required></input>
+                <input type="number" name="experiance" min={0} onChange={experienceChanged} className="form-control mt-2" required></input>
 
                 <label className="mt-3">Description</label>
                 <input type="text" name="description" onChange={descriptionChanged} className="form-control mt-2" required></input>

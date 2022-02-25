@@ -290,6 +290,7 @@ function CreateServiceRequest({ roles }) {
                 <input 
                     required 
                     type="number"
+                    min={1}
                     className="form-control mt-2" 
                     value = { daysOfService }
                     onChange={ event => setDaysOfService(event.target.value) }
@@ -308,6 +309,7 @@ function CreateServiceRequest({ roles }) {
                 <input 
                     type="number"
                     className="form-control mt-2" 
+                    min={18}
                     value = { hpMinAge }
                     onChange={ event => setHpMinAge(event.target.value) }
                 />
@@ -316,6 +318,7 @@ function CreateServiceRequest({ roles }) {
                 <input 
                     type="number"
                     className="form-control mt-2" 
+                    min={ hpMinAge }
                     value = { hpMaxAge }
                     onChange={ event => setHpMaxAge(event.target.value) }
                 />
