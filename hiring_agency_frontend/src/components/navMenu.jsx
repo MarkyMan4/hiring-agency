@@ -27,10 +27,10 @@ function NavMenu({ roles }) {
 
     const getLoginOrLogoutButton = () => {
         if(isUserLoggedIn()) {
-            return <Nav.Link className="nav-link" href="#/" onClick={ logoutAndDestroyToken }>Logout</Nav.Link>
+            return <Nav.Link className="nav-link btn btn-outline-success" href="#/" onClick={ logoutAndDestroyToken }>Logout</Nav.Link>
         }
         else {
-            return <Nav.Link className="nav-link" href="#/login">Login</Nav.Link>
+            return <Nav.Link className="nav-link btn btn-outline-success" href="#/login">Login</Nav.Link>
         }
     }
 
@@ -51,6 +51,11 @@ function NavMenu({ roles }) {
             return <Nav.Link className="nav-link" href="#/job_advertisement_request">Job Requests</Nav.Link>
         }
     }
+    const viewJobPosting = () => {
+        if(roles.length === 0) {
+            return <Nav.Link className="nav-link" href="#/view_job" >Careers</Nav.Link>
+        }
+    }
 
     const getAddStaff = () => {
         if(roles.includes('admin')) {
@@ -59,9 +64,20 @@ function NavMenu({ roles }) {
     }
 
     const getCareTakerAccountRequest = () => {
-        console.log(roles);
         if(roles.includes('admin') || roles.includes('staff')) { 
             return <Nav.Link className="nav-link" href="#/pending_caretaker_requests">Care Taker Account Requests</Nav.Link>
+        }
+    }
+
+    const getCreateServiceRequest = () => {
+        if(roles.includes('admin') || roles.includes('caretaker')) { 
+            return <Nav.Link className="nav-link" href="#/create_service_request">New Service Request</Nav.Link>
+        }
+    }
+
+    const getServiceRequests = () => {
+        if(roles.includes('admin') || roles.includes('staff')) { 
+            return <Nav.Link className="nav-link" href="#/service_requests">Service Requests</Nav.Link>
         }
     }
 
@@ -79,13 +95,19 @@ function NavMenu({ roles }) {
                     { viewJobRequest() }
                     { getLoginOrLogoutButton() }
                     
+                    { viewJobPosting() }
+                    { getCreateServiceRequest() }
+                    { getServiceRequests() }
                 </Nav>
             </Navbar.Collapse>
-            <span className="navbar-text mr-5">
+            <span className="navbar-text" style={ {marginRight: '20px'} }>
                 { username }
+            </span>
+            <span className="navbar-text">
+                { getLoginOrLogoutButton() }
             </span>
         </Navbar>
     )
 }
-
+ 
 export default NavMenu;

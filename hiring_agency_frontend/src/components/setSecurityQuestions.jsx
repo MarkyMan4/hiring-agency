@@ -9,8 +9,8 @@ function SetSecurityQuestions() {
     let navigate = useNavigate();
     const [options, setOptions] = useState([]);
     const [question1, setQuestion1] = useState(1);
-    const [question2, setQuestion2] = useState(1);
-    const [question3, setQuestion3] = useState(1);
+    const [question2, setQuestion2] = useState(2);
+    const [question3, setQuestion3] = useState(3);
     const [answer1, setAnswer1] = useState();
     const [answer2, setAnswer2] = useState();
     const [answer3, setAnswer3] = useState();
@@ -72,20 +72,33 @@ function SetSecurityQuestions() {
             </div>
             <hr />
 
+            {/* Note: options are filtered so that the user is not allowed to select two of the same security question */}
             <select value={ question1 } onChange={ handleQuestion1Select } className="form-select w-25">
-                { options.map(o => <option key={ o.id } value={ o.id }>{ o.question }</option>) }
+                { 
+                    options
+                        .filter(o => parseInt(o.id) !== parseInt(question2) && parseInt(o.id) !== parseInt(question3))
+                        .map(o => <option key={ o.id } value={ o.id }>{ o.question }</option>) 
+                }
             </select>
 
             <input placeholder="enter your answer here" onChange={ handleAnswer1Input } className="form-control w-25 mt-2"></input><br />
 
             <select value={ question2 } onChange={ handleQuestion2Select } className="form-select w-25">
-                { options.map(o => <option key={ o.id } value={ o.id }>{ o.question }</option>) }
+                { 
+                    options
+                        .filter(o => parseInt(o.id) !== parseInt(question1) && parseInt(o.id) !== parseInt(question3))
+                        .map(o => <option key={ o.id } value={ o.id }>{ o.question }</option>) 
+                }
             </select>
 
             <input placeholder="enter your answer here" onChange={ handleAnswer2Input } className="form-control w-25 mt-2"></input><br />
 
             <select value={ question3 } onChange={ handleQuestion3Select } className="form-select w-25">
-                { options.map(o => <option key={ o.id } value={ o.id }>{ o.question }</option>) }
+                { 
+                    options
+                        .filter(o => parseInt(o.id) !== parseInt(question1) && parseInt(o.id) !== parseInt(question2))
+                        .map(o => <option key={ o.id } value={ o.id }>{ o.question }</option>) 
+                }
             </select>
 
             <input placeholder="enter your answer here" onChange={ handleAnswer3Input } className="form-control w-25 mt-2"></input><br />

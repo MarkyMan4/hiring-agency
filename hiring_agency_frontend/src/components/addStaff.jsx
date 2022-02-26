@@ -42,51 +42,41 @@ function AddStaff() {
         setPhone(event.target.value);
     }
 
-    const addStaffCliked = () =>{ 
-        if(!firstName || firstName.trim() === ''){
-            setMessage('Please enter user`s first name')
-        }
-        else if(!lastName || lastName.trim() === ''){
-            setMessage('Please enter user`s last name')
-        }
-        else if(!email || email.trim() === ''){
-            setMessage('Please enter user`s email')
-        }
-        else if(!address || address.trim() === ''){
-            setMessage('Please enter user`s address')
-        }
-        else if(!phone || phone.trim() === ''){
-            setMessage('Please enter user`s phone number')
-        }
-        else{
-            addNewStaff(getAuthToken(), firstName, lastName, email, phone, address)
-                .then(res =>{
-                    if(res.error)
-                        setMessage(res.error);
-                    else {
-                        setUsername(res.user.username);
-                        setShowPassword(res.initialPassword);
-                        setMessage('Add new staff success');
-                    }
-                        
-                })
-                .catch(err => console.log(err));
-        }
+    const addStaffClicked = (event) =>{ 
+        event.preventDefault();
+
+        addNewStaff(getAuthToken(), firstName, lastName, email, phone, address)
+            .then(res =>{
+                setUsername(res.user.username);
+                setShowPassword(res.initialPassword);
+                setMessage({});
+                    
+            })
+            .catch(err => setMessage(err.response.data));
     }
     return (
         <div>
-            <label>First name</label><br/>
-            <input onChange={ handleFirstName } required></input><br/>
-            <label>Last name</label><br/>
-            <input onChange={ handleLastName } required></input><br/>
-            <label>Email</label><br/>
-            <input onChange={ handleEmail } type="email"></input><br/>
-            <label>Phone number</label><br/>
-            <input onChange={ handlePhone } type="tel"  maxLength={10} minLength={10}></input><br/>
-            <label>Address</label><br/>
-            <input onChange={ handleAddress }></input><br/>
-            <button onClick={ addStaffCliked } className= "btn btn-success mt-2">Add Staff</button>
-            <div className="mt-3">{ message }</div>
+            <h1>Add a new staff member to the agency</h1>
+            <hr />
+            <form id="newjobpostform" className="basic-form" onSubmit={ addStaffClicked }>
+                <label>First name</label>
+                <input onChange={ handleFirstName } className="form-control mt-2" required></input>
+
+                <label className="mt-3">Last name</label>
+                <input onChange={ handleLastName } className="form-control mt-2" required></input>
+
+                <label className="mt-3">Email</label>
+                <input onChange={ handleEmail } type="email" className="form-control mt-2" required></input>
+
+                <label className="mt-3">Phone number</label>
+                <input onChange={ handlePhone } type="tel" placeholder="only enter digits, e.g. 1234567890" maxLength={10} minLength={10} className="form-control mt-2" required></input>
+
+                <label className="mt-3">Address</label>
+                <input onChange={ handleAddress } className="form-control mt-2" required></input>
+
+                <button type="submit" className= "btn btn-success mt-2">Add Staff</button>
+            </form>
+            <div className="text-danger mt-3">{ Object.keys(message).map((msg, indx) => <p key={ indx }><b>{ msg.replaceAll('_', ' ') }</b>: { message[msg] }</p>) }</div>
             <div className="mt-4">{ username === '' ? '' : 'The username for this account is: ' + username}</div>
             <div className="mt-4">{ showPassword === '' ? '' : 'The initial password for this account is: ' + showPassword}</div>
         </div>

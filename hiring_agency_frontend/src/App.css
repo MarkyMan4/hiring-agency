@@ -3,6 +3,14 @@
   margin-right: 5%;
 }
 
+.no-bulletpoints{
+  
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  
+}
+
 .login-form {
   border: 1px;
   border-style: solid;
@@ -19,6 +27,15 @@
 }
 
 .care-taker-request-card {
+  border: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  border-color: rgb(206, 206, 206);
+  padding: 10px;
+  margin-bottom: 30px;
+}
+
+.advertisement-job-card {
   border: 1px;
   border-style: solid;
   border-radius: 10px;
