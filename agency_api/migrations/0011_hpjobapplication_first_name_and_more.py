@@ -10,18 +10,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='hpjobapplication',
-            name='first_name',
-            field=models.CharField(default=1, max_length=50),
-            preserve_default=False,
-        ),
-        migrations.AddField(
-            model_name='hpjobapplication',
-            name='last_name',
-            field=models.CharField(default=1, max_length=50),
-            preserve_default=False,
-        ),
+       
         migrations.AlterField(
             model_name='hpjobapplication',
             name='gender',

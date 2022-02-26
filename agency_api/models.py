@@ -106,6 +106,8 @@ class HPJobApplication(models.Model):
     phone_number = models.BigIntegerField(null=False)
     email = models.EmailField(null=False, max_length=200)
     job = models.ForeignKey(JobPosting, on_delete=models.CASCADE)
+    is_pending = models.BooleanField(null=False, default=False)
+    is_approved = models.BooleanField(null=False, default=False)
 
 
 class ServiceAssignment(models.Model):

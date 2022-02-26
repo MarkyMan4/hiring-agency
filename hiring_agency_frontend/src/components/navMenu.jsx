@@ -93,7 +93,7 @@ function NavMenu({ roles }) {
                     { createJobPosting() }
                     { getCareTakerAccountRequest() }
                     { viewJobRequest() }
-                    { getLoginOrLogoutButton() }
+                    
                     
                     { viewJobPosting() }
                     { getCreateServiceRequest() }
