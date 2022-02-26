@@ -57,8 +57,7 @@ class HealthCareProfessional(models.Model):
     address = models.CharField(null=False, max_length=500)
     phone_number = models.BigIntegerField(null=False)
     email = models.CharField(null=False, max_length=200)
-    is_pending = models.BooleanField(null=False, default=False)
-    is_approved = models.BooleanField(null=False, default=False)
+    
     
 class ServiceRequest(models.Model):
     care_taker = models.ForeignKey(CareTaker, on_delete=models.CASCADE)
@@ -108,6 +107,8 @@ class HPJobApplication(models.Model):
     phone_number = models.BigIntegerField(null=False)
     email = models.EmailField(null=False, max_length=200)
     job = models.ForeignKey(JobPosting, on_delete=models.CASCADE)
+    is_pending = models.BooleanField(null=False, default=False)
+    is_approved = models.BooleanField(null=False, default=False)
 
 
 class ServiceAssignment(models.Model):
