@@ -30,6 +30,10 @@ import CreateServiceRequest from './components/createServiceRequest';
 import CreateServiceRequestSuccess from './components/createServiceRequestSuccess';
 import ServiceRequests from './components/serviceRequests';
 import CreateJobSuccess from './components/createAdvertisementSuccess';
+import JobRequestList from './components/jobRequestList';
+import JobRequesDetail from './components/jobRequestDetail';
+import JobRequesReject from './components/jobRequestRejected';
+import JobRequesApproved from './components/jobRequestApproved';
 
 
 function App() {
@@ -77,6 +81,10 @@ function App() {
           <Route path="/create_service_request" element={ <CareTakerRoute roles={ roles }><CreateServiceRequest roles={ roles } /></CareTakerRoute> } />
           <Route path="/create_service_request_success" element={ <CareTakerRoute roles={ roles }><CreateServiceRequestSuccess /></CareTakerRoute> } />
           <Route path="/service_requests" element={ <StaffRoute roles={ roles }><ServiceRequests /></StaffRoute> } />
+          <Route path="/job_advertisement_request" element={<StaffRoute roles={ roles }><JobRequestList /> </StaffRoute>} /> 
+          <Route path="/job_advertisement_request/:id" element={<StaffRoute roles={ roles }><JobRequesDetail /></StaffRoute>} /> 
+          <Route path="/job_advertisement_request/:id/approve" element={<StaffRoute roles={ roles }><JobRequesApproved /></StaffRoute>} /> 
+          <Route path="/job_advertisement_request/:id/reject" element={<StaffRoute roles={ roles }> <JobRequesReject /></StaffRoute>} /> 
         </Routes>
       );
     }
