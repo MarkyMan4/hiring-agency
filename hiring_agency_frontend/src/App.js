@@ -1,4 +1,5 @@
 import './App.css';
+import 'animate.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import Login from './components/login';
 import Home from './components/home';

@@ -38,6 +38,7 @@ function PendingCareTakerRequests() {
 
     return (
         <div className="row">
+            <h1 className="text-center mb-5">Care taker account requests</h1>
             <div className="col-md-3"></div>
             <div className="col-md-6">
                 { getRequestListOrNoneMessage() }

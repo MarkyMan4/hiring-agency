@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 function ServiceRequestCard({ requestId, patientName, requesterName, requesterUsername, serviceType }) {
     return (
-        <div className="care-taker-request-card shadow">
+        <div className="care-taker-request-card shadow animate__animated animate__fadeInUp">
             <Link to={ '/service_requests/' + requestId }><h4>{ serviceType }</h4></Link>
             <hr />
             <p><b>Requester name:</b> { requesterName }</p>
