@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const baseUrl = 'http://127.0.0.1:8000/';
+import { baseUrl } from './config';
 
 export const requestCareTakerAccount = async (firstName, lastName, address, phoneNumber, email) => {
     let url = baseUrl + 'api/create_caretaker_request';

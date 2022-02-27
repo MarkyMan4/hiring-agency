@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const baseUrl = 'http://127.0.0.1:8000/';
+import { baseUrl } from './config';
 
 export const requestNewService = async (
     token, careTakerUsername, patientFirstName, patientLastName, patientGender, patientDob, patientPhone, patientEmail, serviceLocation,
@@ -57,4 +56,18 @@ export const getAllServiceRequests = async (token) => {
     return axios.get(url, config)
         .then(res => res.data)
         .catch(err => 'Failed to retrieve service requests');
+}
+
+export const retrieveServiceRequest = async (token, requestId) => {
+    let url = `${baseUrl}api/retrieve_service_requests/${requestId}`;
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.get(url, config)
+        .then(res => res.data)
+        .catch(err => `Failed to retrieve service request with ID ${requestId}`);
 }

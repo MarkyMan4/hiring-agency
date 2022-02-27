@@ -30,6 +30,7 @@ import CreateServiceRequest from './components/createServiceRequest';
 import CreateServiceRequestSuccess from './components/createServiceRequestSuccess';
 import ServiceRequests from './components/serviceRequests';
 import CreateJobSuccess from './components/createAdvertisementSuccess';
+import ServiceRequestDetail from './components/serviceRequestDetail';
 
 
 function App() {
@@ -76,7 +77,8 @@ function App() {
           <Route path="/pending_caretaker_requests/:id/reject" element={ <StaffRoute roles={ roles }><CareTakerAccountRequestRejected /></StaffRoute> } />
           <Route path="/create_service_request" element={ <CareTakerRoute roles={ roles }><CreateServiceRequest roles={ roles } /></CareTakerRoute> } />
           <Route path="/create_service_request_success" element={ <CareTakerRoute roles={ roles }><CreateServiceRequestSuccess /></CareTakerRoute> } />
-          <Route path="/service_requests" element={ <StaffRoute roles={ roles }><ServiceRequests /></StaffRoute> } />
+          <Route path="/service_requests" element={ <StaffRoute roles={ roles }><ServiceRequests /></StaffRoute> } />\
+          <Route path="/service_requests/:id" element={ <StaffRoute roles={ roles }><ServiceRequestDetail /></StaffRoute> } />
         </Routes>
       );
     }

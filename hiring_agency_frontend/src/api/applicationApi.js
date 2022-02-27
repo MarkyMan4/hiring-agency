@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const baseUrl = 'http://127.0.0.1:8000/';
+import { baseUrl } from './config';
 
 //todo finish this
 export const sendApplication = async (jobPostingID, email, gender, dateOfBirth, ssn, serviceType, educationType, educationInstitution, graduationYear, graduationMonth, yearsOfExperiance, address, phoneNum, firstName, lastName) => {
