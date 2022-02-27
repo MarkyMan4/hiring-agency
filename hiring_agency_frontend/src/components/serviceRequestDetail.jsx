@@ -8,6 +8,7 @@ import CancelButton from "./cancelButton";
 function ServiceRequestDetail() {
     const { id } = useParams();
     const [serviceRequest, setServiceRequest] = useState({});
+    const [hpId, setHpId] = useState(); // TEMPORARY - USED TO QUICKLY ASSIGN HP TO SERVICE REQUESTS
 
     useEffect(() => {
         retrieveServiceRequest(getAuthToken(), id)
@@ -86,6 +87,13 @@ function ServiceRequestDetail() {
         );
     }
 
+    // DELETE ME!!!!!
+    const assign = (event) => {
+        event.preventDefault();
+
+        alert('assigned');
+    }
+
     const getHtmlOrNone = () => {
         if(isDataLoaded()) {
             return (
@@ -152,6 +160,16 @@ function ServiceRequestDetail() {
             </div>
             <hr />
             { getHtmlOrNone() }
+            <hr className="mt-5 mb-5" />
+
+            {/* TODO: delete this and the hpId state, using this as a placeholder so the billing account work can get started */}
+            <h5>see comment in serviceRequestDetail.jsx line 158</h5>
+            <form onSubmit={ assign }>
+                <label>health care professional id</label>
+                <input onChange={ (event) => setHpId(event.target.value) } required></input>
+
+                <button type="submit">assign</button>
+            </form>
         </div>
     );
 }
