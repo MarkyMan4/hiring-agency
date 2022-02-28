@@ -45,7 +45,7 @@ class StaffMember(models.Model):
 
 class HealthCareProfessional(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    gender = models.CharField(null=False, max_length=1)
+    gender = models.CharField(null=False, max_length=10)
     date_of_birth = models.DateField(null=False)
     ssn = models.IntegerField(null=False)
     service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE)
@@ -107,7 +107,7 @@ class HPJobApplication(models.Model):
     phone_number = models.BigIntegerField(null=False)
     email = models.EmailField(null=False, max_length=200)
     job = models.ForeignKey(JobPosting, on_delete=models.CASCADE)
-    is_pending = models.BooleanField(null=False, default=False)
+    is_pending = models.BooleanField(null=False, default=True)
     is_approved = models.BooleanField(null=False, default=False)
 
 

@@ -53,7 +53,7 @@ function NavMenu({ roles }) {
     }
     const viewJobRequest = () => {
         if(roles.includes('admin') || roles.includes('staff')) { 
-            return <Nav.Link className="nav-link" href="#/job_advertisement_request">Job Requests</Nav.Link>
+            return <Nav.Link className="nav-link" href="#/hp_job_application">Job Requests</Nav.Link>
         }
     }
     const getAddStaff = () => {

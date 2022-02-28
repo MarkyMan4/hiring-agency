@@ -14,27 +14,18 @@ function JobRequestDetail(){
     }, []);
 
     const approve = () =>{
-        navigate(`/job_advertisement_request/${id}/approve`);
+        navigate(`/hp_job_application/${id}/approve`);
     }
 
     const reject = () =>{
-        navigate(`/job_advertisement_request/${id}/reject`);
+        navigate(`/hp_job_application/${id}/reject`);
     }
 
     const cancel = () => {
-        navigate('/job_advertisement_request');
+        navigate('/hp_job_application');
     }
 
-    if(Object.keys(request).length !== 0){
-        console.log("true")
-    }
-    else{
-        console.log("false")
-    }
-    console.log(request);
-
-    console.log("logs");
-    if(Object.keys(request).length !== 0){
+    if(Object.keys(request).length > 0){
         return(
             <div>
                 <div className="row">

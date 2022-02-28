@@ -27,7 +27,7 @@ router.register('api/viewjobapplications', ViewHPJobApplicationViewSet, 'job-pos
 router.register('api/caretaker_requests', CareTakerRequestViewSet, 'care-taker-requests')
 router.register('api/create_service_requests', CreateServiceRequestViewSet, 'create-service-requests')
 router.register('api/retrieve_service_requests', RetrieveServiceRequestViewSet, 'retrieve-service-requests')
-router.register('api/job_advertisement_request',HPJobApplicationViewSet, 'hp-job-application')
+router.register('api/hp_job_application',HPJobApplicationViewSet, 'job-application')
 
 # put non-viewset urls here
 urlpatterns = [

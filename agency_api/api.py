@@ -301,26 +301,25 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
 class HPJobApplicationViewSet(viewsets.ModelViewSet):
-    #permission_classes = [CustomModelPermissions]
+    permission_classes = [CustomModelPermissions]
     serializer_class = HPJobApplicationRetrieveSerializer
-    #http_method_names = ['get', 'post']
 
     def get_queryset(self):
         return HPJobApplication.objects.filter(is_pending=True)
 
-    # GET /api/caretaker_requests
+    # GET /api/job_advertisement_request
     def list(self, request):
         queryset = self.get_queryset()
         serializer = self.serializer_class(queryset, many=True)
 
         return Response(serializer.data)
 
-    # GET /api/caretaker_requests/<id>
+    # GET /api/job_advertisement_request/<id>
     def retrieve(self, request, pk):
         queryset = self.get_queryset().get(id=pk)
         serializer = self.serializer_class(queryset)
 
-        return Response(serializer.data)
+        return Response(serializer.data)        
 
     @action(methods=['PUT'], detail=True)
     def approve(self, request, pk):

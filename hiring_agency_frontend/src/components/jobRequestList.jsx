@@ -33,7 +33,7 @@ function JobRequestList(){
             );
         }
         else{
-            return <h1 className="text-center">There is no request now</h1>
+            return <h1 className="text-center">There are no request now</h1>
         }
     }
     return(

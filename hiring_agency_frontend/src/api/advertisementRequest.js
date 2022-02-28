@@ -2,7 +2,7 @@ import axios from 'axios';
 const baseUrl = 'http://127.0.0.1:8000/';
 
 export const getAllAdvertisementRequest = async (token) =>{
-    let url = baseUrl + 'api/job_advertisement_request';
+    let url = baseUrl + 'api/hp_job_application';
 
     let config = {
         headers: {
@@ -16,7 +16,7 @@ export const getAllAdvertisementRequest = async (token) =>{
 }
 
 export const viewAdvertisementRequestById = async (token, id) =>{
-    let url = baseUrl + 'api/job_advertisement_request/'+id;
+    let url = baseUrl + 'api/hp_job_application/' + id;
 
     let config = {
         headers: {
@@ -24,13 +24,13 @@ export const viewAdvertisementRequestById = async (token, id) =>{
         }
     };
 
-    return axios.get(url)
+    return axios.get(url, config)
         .then(res => res.data)
         .catch(err => console.log('Failed to find job request'));
 }
 
 export const approveJobRequest = async (token, requestId) =>{
-    let url = `${baseUrl}api/job_advertisement_request/${requestId}/approve`;
+    let url = `${baseUrl}api/hp_job_application/${requestId}/approve`;
 
     let config ={
         headers: {
@@ -42,7 +42,7 @@ export const approveJobRequest = async (token, requestId) =>{
 }
 
 export const rejectJobRequest = async (token, requestId) =>{
-    let url = `${baseUrl}api/job_advertisement_request/${requestId}/reject`
+    let url = `${baseUrl}api/hp_job_application/${requestId}/reject`
 
     let config ={
         headers: {
