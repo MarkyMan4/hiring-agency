@@ -2,7 +2,7 @@ from pickle import FALSE
 from rest_framework import serializers
 
 from agency_api.auth.auth_serializers import UserSerializer
-from .models import CareTaker, HPJobApplication, EducationType, ServiceType, StaffMember, SecurityQuestion, SecurityQuestionAnswer, JobPosting, CareTakerRequest, ServiceRequest
+from .models import CareTaker, HPJobApplication, EducationType, HealthCareProfessional, ServiceAssignment, ServiceType, StaffMember, SecurityQuestion, SecurityQuestionAnswer, JobPosting, CareTakerRequest, ServiceRequest
 
 class HPJobApplicationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -84,3 +84,31 @@ class RetrieveServiceRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceRequest
         fields = ('__all__')
+
+class HealthCareProfessionalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HealthCareProfessional
+        fields = ('__all__')
+
+class HealthCareProfessionalDetailSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False)
+
+    class Meta:
+        model = HealthCareProfessional
+        fields = ('__all__')
+
+# basic service assignment serializer, foreign keys are just IDs
+class ServiceAssignmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceAssignment
+        fields = ('__all__')
+
+# detail view where foreign keys are serialized and all data is provided
+class ServiceAssignmentDetailSerializer(serializers.ModelSerializer):
+    healthcare_professional = HealthCareProfessionalDetailSerializer(many=False)
+    service_request = RetrieveServiceRequestSerializer(many=False)
+
+    class Meta:
+        model = ServiceAssignment
+        fields = ('__all__')
+
