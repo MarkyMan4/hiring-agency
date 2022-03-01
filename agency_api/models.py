@@ -85,7 +85,7 @@ class ServiceRequest(models.Model):
     hp_min_age = models.IntegerField(null=True)
     hp_max_age = models.IntegerField(null=True)
     is_assigned = models.BooleanField(null=False, default=False) # whether a healthcare professional has been assigned to this request
-    is_active = models.BooleanField(null=False, default=False) # becomes true once a healthcare professional is assigned, becomes false again once the work is complete
+    is_completed = models.BooleanField(null=False, default=False) # becomes true once a healthcare professional is assigned, becomes false once the work is complete
 
 class JobPosting(models.Model):
     service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE)

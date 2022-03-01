@@ -44,8 +44,22 @@ export const requestNewService = async (
         .then(res => res.data);
 }
 
-export const getAllServiceRequests = async (token) => {
+export const getAllServiceRequests = async (token, onlyGetAssigned=null, onlyGetCompleted=null) => {
     let url = baseUrl + 'api/retrieve_service_requests';
+
+    let query_params = [];
+
+    if(onlyGetAssigned !== null) {
+        query_params.push('is_assigned=' + (onlyGetAssigned ? 'true' : 'false'));
+    }
+
+    if(onlyGetCompleted !== null) {
+        query_params.push('is_completed=' + (onlyGetCompleted ? 'true' : 'false'));
+    }
+
+    if(query_params.length > 0) {
+        url += '?' + query_params.join('&');
+    }
 
     let config = {
         headers: {

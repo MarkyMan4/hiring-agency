@@ -7,11 +7,13 @@ import ServiceRequestCard from "./serviceRequestCard";
 
 function ServiceRequests() {
     const [serviceRequests, setServiceRequests] = useState([]);
+    const [showAssigned, setShowAssinged] = useState(false);
+    const [showCompleted, setShowCompleted] = useState(false);
 
     useEffect(() => {
-        getAllServiceRequests(getAuthToken())
+        getAllServiceRequests(getAuthToken(), showAssigned, showCompleted)
             .then(res => setServiceRequests(res));
-    }, []);
+    }, [showAssigned, showCompleted]);
 
     const getListOrEmpty = () => {
         if(serviceRequests.length === 0) {
@@ -37,7 +39,39 @@ function ServiceRequests() {
     return (
         <div className="row">
             <h1 className="text-center mb-5">Service requests</h1>
-            <div className="col-md-3"></div>
+            <div className="col-md-3">
+                <div class="form-check form-switch">
+                    <label class="form-check-label">Show assigned</label>
+                    <input 
+                        value={ showAssigned } 
+                        onChange={ event => {
+                            if(showAssigned) {
+                                setShowCompleted(false);
+                            }
+                            
+                            setShowAssinged(!showAssigned);
+                        }} 
+                        class="form-check-input" 
+                        type="checkbox" 
+                        role="switch" 
+                        checked={ showAssigned ? 'checked' : '' }
+                    />
+                </div>
+                <div class="form-check form-switch">
+                    <label class="form-check-label">Show completed</label>
+                    <input 
+                        value={ showCompleted } 
+                        onChange={ event => {
+                            setShowCompleted(!showCompleted);
+                            setShowAssinged(true);
+                        }}
+                        class="form-check-input" 
+                        type="checkbox" 
+                        role="switch" 
+                        checked={ showCompleted ? 'checked' : '' }
+                    />
+                </div>
+            </div>
             <div className="col-md-6">
                 { getListOrEmpty() }
             </div>
