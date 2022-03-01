@@ -51,7 +51,11 @@ function NavMenu({ roles }) {
             return <Nav.Link className="nav-link" href="#/view_job" >Careers</Nav.Link>
         }
     }
-
+    const viewJobRequest = () => {
+        if(roles.includes('admin') || roles.includes('staff')) { 
+            return <Nav.Link className="nav-link" href="#/hp_job_application">Job Requests</Nav.Link>
+        }
+    }
     const getAddStaff = () => {
         if(roles.includes('admin')) {
             return <Nav.Link className="nav-link" href="#/add_new_staff" >Add staff</Nav.Link>
@@ -88,6 +92,7 @@ function NavMenu({ roles }) {
                     { createJobPosting() }
                     { getCareTakerAccountRequest() }
                     { viewJobPosting() }
+                    { viewJobRequest() }
                     { getCreateServiceRequest() }
                     { getServiceRequests() }
                 </Nav>

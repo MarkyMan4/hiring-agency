@@ -14,7 +14,8 @@ from .api import (
     CreateCareTakerRequestViewSet, 
     CareTakerRequestViewSet,
     CreateServiceRequestViewSet,
-    RetrieveServiceRequestViewSet
+    RetrieveServiceRequestViewSet,
+    HPJobApplicationViewSet
 )
 
 # viewsets can be registered here
@@ -30,6 +31,7 @@ router.register('api/create_service_requests', CreateServiceRequestViewSet, 'cre
 router.register('api/retrieve_service_requests', RetrieveServiceRequestViewSet, 'retrieve-service-requests')
 router.register('api/create_service_assignment', CreateServiceAssignmentViewSet, 'create-service-assignment')
 router.register('api/service_assignments', ServiceAssignmentViewSet, 'service-assignments')
+router.register('api/hp_job_application',HPJobApplicationViewSet, 'job-application')
 
 # put non-viewset urls here
 urlpatterns = [

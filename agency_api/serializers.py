@@ -2,7 +2,20 @@ from pickle import FALSE
 from rest_framework import serializers
 
 from agency_api.auth.auth_serializers import UserSerializer
-from .models import CareTaker, HPJobApplication, EducationType, HealthCareProfessional, ServiceAssignment, ServiceType, StaffMember, SecurityQuestion, SecurityQuestionAnswer, JobPosting, CareTakerRequest, ServiceRequest
+from .models import (
+    CareTaker, 
+    HPJobApplication, 
+    HealthCareProfessional, 
+    EducationType, 
+    ServiceType, 
+    StaffMember, 
+    SecurityQuestion, 
+    SecurityQuestionAnswer, 
+    JobPosting, 
+    CareTakerRequest, 
+    ServiceRequest,
+    ServiceAssignment
+)
 
 class HPJobApplicationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,11 +48,6 @@ class StaffMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = StaffMember
         fields = ('__all__')
-
-class EducationTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = EducationType
-        fields = ('id', 'name')
 
 class SecurityQuestionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -112,3 +120,17 @@ class ServiceAssignmentDetailSerializer(serializers.ModelSerializer):
         model = ServiceAssignment
         fields = ('__all__')
 
+class JobPostingRetrieveSerializer(serializers.ModelSerializer):
+    service_type = ServiceTypeSerializer(many=False)
+    education_type = EducationTypeSerializer(many=False)
+    class Meta:
+        model = JobPosting
+        fields = ('__all__')
+
+class HPJobApplicationRetrieveSerializer(serializers.ModelSerializer):
+    service_type = ServiceTypeSerializer(many=False)
+    education_type = EducationTypeSerializer(many=False)
+    job = JobPostingRetrieveSerializer(many=False)
+    class Meta:
+        fields = ('__all__')
+        model = HPJobApplication
