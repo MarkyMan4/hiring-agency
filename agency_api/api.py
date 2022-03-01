@@ -313,6 +313,15 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
             queryset = self.get_queryset().filter(care_taker_id=user.id)
         else:
             queryset = self.get_queryset()
+
+        # filter based on any query params that were provided
+        if request.query_params.get('is_assigned'):
+            value = request.query_params.get('is_assigned')
+            queryset = queryset.filter(is_assigned=True if value.lower() == 'true' else False)
+        
+        if request.query_params.get('is_active'):
+            value = request.query_params.get('is_active')
+            queryset = queryset.filter(is_active=True if value.lower() == 'true' else False)
         
         serializer = self.serializer_class(queryset, many=True)
 
@@ -340,6 +349,12 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        # update the service request to active and assigned
+        service_request = ServiceRequest.objects.get(id=data.get('service_request'))
+        service_request.is_active = True
+        service_request.is_assigned = True
+        service_request.save()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
