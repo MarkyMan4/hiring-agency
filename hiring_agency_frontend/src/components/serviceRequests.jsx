@@ -17,7 +17,7 @@ function ServiceRequests() {
 
     const getListOrEmpty = () => {
         if(serviceRequests.length === 0) {
-            return <h1 className="text-center">No service requests at this time</h1>
+            return <h2 className="text-center">Nothing to show</h2>
         }
         else {
             return (
@@ -48,7 +48,7 @@ function ServiceRequests() {
                             if(showAssigned) {
                                 setShowCompleted(false);
                             }
-                            
+
                             setShowAssinged(!showAssigned);
                         }} 
                         class="form-check-input" 
