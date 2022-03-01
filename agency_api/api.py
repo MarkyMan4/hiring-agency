@@ -358,7 +358,7 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
         user_data = {
             'first_name': job_request.first_name,
             'last_name': job_request.last_name,
-            'username': f"{job_request.last_name}04",
+            'username': f"{job_request.last_name}",
             'password': generated_password,
             'email': job_request.email
         }
@@ -367,6 +367,10 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
         user_serializer = RegisterUserSerializer(data=user_data)
         user_serializer.is_valid(raise_exception=True)
         user = user_serializer.save()
+
+        # update username to have sequence number
+        user.username = user.username + str(user.id).zfill(2)
+        user.save()
 
         hp_data ={
             'user':user.id,
@@ -388,7 +392,7 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
         HCP_serializer.is_valid(raise_exception=True)
         HCP_serializer.save()
 
-        heathCareProfessional_group = Group.objects.get(name='heathcareprofessional')
+        heathCareProfessional_group = Group.objects.get(name='healthcareprofessional')
         heathCareProfessional_group.user_set.add(user)
 
         return user.username, generated_password
