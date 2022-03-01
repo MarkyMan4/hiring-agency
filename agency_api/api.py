@@ -5,8 +5,8 @@ from django.contrib.auth.models import Group
 from knox.models import AuthToken
 from agency_api.auth.auth_serializers import RegisterUserSerializer, UserSerializer
 from .permissions import CustomModelPermissions
-from .serializers import CareTakerRequestSerializer, JobPostingSerializerRetrieval, CareTakerSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, RetrieveServiceRequestSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer, CreateServiceRequestSerializer
-from .models import CareTaker, CareTakerRequest, EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting, ServiceRequest
+from .serializers import CareTakerRequestSerializer,HPJobApplicationRetrieveSerializer, JobPostingSerializerRetrieval, HealthCareProfessionalSerializer, CareTakerSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, RetrieveServiceRequestSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer, CreateServiceRequestSerializer
+from .models import CareTaker, CareTakerRequest,HPJobApplication, EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting, ServiceRequest
 from .utils.account import gen_rand_pass
 from datetime import datetime
 
@@ -299,3 +299,100 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
         serializer = self.serializer_class(service_request, many=False)
 
         return Response(serializer.data)
+
+class HPJobApplicationViewSet(viewsets.ModelViewSet):
+    permission_classes = [CustomModelPermissions]
+    serializer_class = HPJobApplicationRetrieveSerializer
+
+    def get_queryset(self):
+        return HPJobApplication.objects.filter(is_pending=True)
+
+    # GET /api/job_advertisement_request
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
+
+        return Response(serializer.data)
+
+    # GET /api/job_advertisement_request/<id>
+    def retrieve(self, request, pk):
+        queryset = self.get_queryset().get(id=pk)
+        serializer = self.serializer_class(queryset)
+
+        return Response(serializer.data)        
+
+    @action(methods=['PUT'], detail=True)
+    def approve(self, request, pk):
+        queryset = self.get_queryset()
+
+        if not queryset.filter(id=pk).exists():
+            return Response({'error':'advertisement request is not exist'})
+        #Do the approve opreation
+        job_request = queryset.get(id=pk)
+        job_request.is_approved = True
+        job_request.is_pending = False
+        job_request.save()
+
+        username, password = self.register_hp(job_request)
+        return Response({
+            'username' :username ,
+            'password' :password
+        })
+
+    @action(methods=['PUT'], detail=True)
+    def reject(self, request, pk):
+        queryset = self.get_queryset()
+        if not queryset.filter(id=pk).exists():
+            return Response({'error':'advertisement request is not exist'})
+
+        job_request = queryset.get(id=pk)
+        job_request.is_approved = False
+        job_request.is_pending = False
+        job_request.save()
+
+        return Response()
+
+    def register_hp(self, job_request):
+        generated_password = gen_rand_pass()
+
+        user_data = {
+            'first_name': job_request.first_name,
+            'last_name': job_request.last_name,
+            'username': f"{job_request.last_name}",
+            'password': generated_password,
+            'email': job_request.email
+        }
+
+        # create the user object
+        user_serializer = RegisterUserSerializer(data=user_data)
+        user_serializer.is_valid(raise_exception=True)
+        user = user_serializer.save()
+
+        # update username to have sequence number
+        user.username = user.username + str(user.id).zfill(2)
+        user.save()
+
+        hp_data ={
+            'user':user.id,
+            'gender': job_request.gender,
+            'date_of_birth':job_request.date_of_birth,
+            'ssn':job_request.ssn,
+            'service_type':job_request.service_type.id,
+            'education_type':job_request.education_type.id,
+            'education_institution':job_request.education_institution,
+            'graduation_year':job_request.graduation_year,
+            'graduation_month':job_request.graduation_month,
+            'years_of_experience':job_request.years_of_experience,
+            'address':job_request.address,
+            'phone_number':job_request.phone_number,
+            'email':job_request.email
+        }
+
+        HCP_serializer = HealthCareProfessionalSerializer(data=hp_data)
+        HCP_serializer.is_valid(raise_exception=True)
+        HCP_serializer.save()
+
+        heathCareProfessional_group = Group.objects.get(name='healthcareprofessional')
+        heathCareProfessional_group.user_set.add(user)
+
+        return user.username, generated_password
