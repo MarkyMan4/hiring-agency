@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { assignHpToServiceRequest } from "../api/serviceAssignments";
 import { retrieveServiceRequest } from "../api/serviceRequests";
 import { getAuthToken } from "../utils/storage";
 import CancelButton from "./cancelButton";
@@ -91,7 +92,12 @@ function ServiceRequestDetail() {
     const assign = (event) => {
         event.preventDefault();
 
-        alert('assigned');
+        assignHpToServiceRequest(getAuthToken(), id, hpId)
+            .then(res => {
+                alert('assigned'); 
+                console.log(res);
+            })
+            .catch(err => console.log(err.response.data));
     }
 
     const getHtmlOrNone = () => {

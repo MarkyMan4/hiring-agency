@@ -334,7 +334,7 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
     def get_queryset(self):
         return ServiceAssignment.objects.all()
 
-    # POST /api/
+    # POST /api/create_service_assignment
     def create(self, request):
         data = request.data
         serializer = self.serializer_class(data=data)
@@ -350,11 +350,19 @@ class ServiceAssignmentViewSet(viewsets.ViewSet):
     def get_queryset(self):
         return ServiceAssignment.objects.all()
 
+    # GET /api/service_assignments
     def list(self, request):
         data = self.get_queryset()
         serializer = self.serializer_class(data, many=True)
 
         return Response(serializer.data)
+
+    # GET /api/service_assignments/<id>
+    def retrieve(self, request, pk):
+        queryset = self.get_queryset().get(id=pk)
+        serializer = self.serializer_class(queryset)
+
+        return Response(serializer.data) 
 
 class HPJobApplicationViewSet(viewsets.ModelViewSet):
     permission_classes = [CustomModelPermissions]
