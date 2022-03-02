@@ -55,3 +55,10 @@
   margin-right: 10px;
   height: 100%;
 }
+
+.day-of-week-box {
+  border: 1px solid rgb(206, 206, 206);
+  border-radius: 5px;
+  padding: 5px;
+  margin-right: 5px;
+}

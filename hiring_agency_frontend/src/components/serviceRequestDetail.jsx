@@ -6,6 +6,11 @@ import { retrieveServiceRequest } from "../api/serviceRequests";
 import { getAuthToken } from "../utils/storage";
 import CancelButton from "./cancelButton";
 
+const daySelectedStyle = {
+    backgroundColor: 'rgb(5, 194, 68)',
+    color: 'white'
+};
+
 function ServiceRequestDetail() {
     const { id } = useParams();
     const [serviceRequest, setServiceRequest] = useState({});
@@ -88,7 +93,7 @@ function ServiceRequestDetail() {
         );
     }
 
-    // DELETE ME!!!!!
+    // delete me
     const assign = (event) => {
         event.preventDefault();
 
@@ -105,7 +110,7 @@ function ServiceRequestDetail() {
             return (
                 <div className="row mt-4">
                     <div className="col-md-4 mb-3">
-                        <div className="service-detail-card shadow">
+                        <div className="service-detail-card shadow animate__animated animate__fadeInLeft">
                             <h3 className="mt-4">Care taker info</h3>
                             <hr />
                             <b>Name</b>
@@ -118,7 +123,7 @@ function ServiceRequestDetail() {
                     </div>
 
                     <div className="col-md-4 mb-3">
-                        <div className="service-detail-card shadow">
+                        <div className="service-detail-card shadow animate__animated animate__zoomIn">
                             <h3 className="mt-4">Patient info</h3>
                             <hr />
                             <b>Name</b>
@@ -135,15 +140,25 @@ function ServiceRequestDetail() {
                     </div>
 
                     <div className="col-md-4 mb-3">
-                        <div className="service-detail-card shadow">
+                        <div className="service-detail-card shadow animate__animated animate__fadeInRight">
                             <h3 className="mt-4">Request info</h3>
                             <hr />
                             <b>Service type</b>
                             <p>{ serviceRequest.service_type.name }</p>
-                            { getHoursOrTimes() }
                             <b>Service location</b>
                             <p>{ serviceRequest.service_location }</p>
-                            <b>Days of service</b>
+                            { getHoursOrTimes() }
+                            <b>Days service needed</b>
+                            <div className="mt-2 mb-3">
+                                <span className="day-of-week-box" style={ serviceRequest.service_needed_sunday ? daySelectedStyle : {} }>Sun</span>
+                                <span className="day-of-week-box" style={ serviceRequest.service_needed_monday ? daySelectedStyle : {} }>Mon</span>
+                                <span className="day-of-week-box" style={ serviceRequest.service_needed_tuesday ? daySelectedStyle : {} }>Tue</span>
+                                <span className="day-of-week-box" style={ serviceRequest.service_needed_wednesday ? daySelectedStyle : {} }>Wed</span>
+                                <span className="day-of-week-box" style={ serviceRequest.service_needed_thursday ? daySelectedStyle : {} }>Thu</span>
+                                <span className="day-of-week-box" style={ serviceRequest.service_needed_friday ? daySelectedStyle : {} }>Fri</span>
+                                <span className="day-of-week-box" style={ serviceRequest.service_needed_saturday ? daySelectedStyle : {} }>Sat</span>
+                            </div>
+                            <b>Total days of service</b>
                             <p>{ serviceRequest.days_of_service }</p>
                             { getSpecialRequests() }
                         </div>
@@ -157,7 +172,7 @@ function ServiceRequestDetail() {
     }
 
     return (
-        <div className="row">
+        <div className="row animate__animated animate__fadeIn">
             <div className="col-md-6">
                 <h1>Service request for a { isDataLoaded() ? serviceRequest.service_type.name.toLowerCase() : null }</h1>
             </div>
@@ -168,8 +183,8 @@ function ServiceRequestDetail() {
             { getHtmlOrNone() }
             <hr className="mt-5 mb-5" />
 
-            {/* TODO: delete this and the hpId state, using this as a placeholder so the billing account work can get started */}
-            <h5>see comment in serviceRequestDetail.jsx line 158</h5>
+            {/* TODO: delete this, the hpId state and the assign function. using this as a placeholder so the billing account work can get started */}
+            <h5>see comment in serviceRequestDetail.jsx line 171</h5>
             <form onSubmit={ assign }>
                 <label>health care professional id</label>
                 <input onChange={ (event) => setHpId(event.target.value) } required></input>
