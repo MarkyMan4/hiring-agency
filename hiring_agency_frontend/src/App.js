@@ -1,4 +1,5 @@
 import './App.css';
+import 'animate.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import Login from './components/login';
 import Home from './components/home';
@@ -30,6 +31,7 @@ import CreateServiceRequest from './components/createServiceRequest';
 import CreateServiceRequestSuccess from './components/createServiceRequestSuccess';
 import ServiceRequests from './components/serviceRequests';
 import CreateJobSuccess from './components/createAdvertisementSuccess';
+import ServiceRequestDetail from './components/serviceRequestDetail';
 import JobRequestList from './components/jobRequestList';
 import JobRequesDetail from './components/jobRequestDetail';
 import JobRequesReject from './components/jobRequestRejected';
@@ -81,6 +83,7 @@ function App() {
           <Route path="/create_service_request" element={ <CareTakerRoute roles={ roles }><CreateServiceRequest roles={ roles } /></CareTakerRoute> } />
           <Route path="/create_service_request_success" element={ <CareTakerRoute roles={ roles }><CreateServiceRequestSuccess /></CareTakerRoute> } />
           <Route path="/service_requests" element={ <StaffRoute roles={ roles }><ServiceRequests /></StaffRoute> } />
+          <Route path="/service_requests/:id" element={ <StaffRoute roles={ roles }><ServiceRequestDetail /></StaffRoute> } />
           <Route path="/hp_job_application" element={<StaffRoute roles={ roles }><JobRequestList /> </StaffRoute>} /> 
           <Route path="/hp_job_application/:id" element={<StaffRoute roles={ roles }><JobRequesDetail /></StaffRoute>} /> 
           <Route path="/hp_job_application/:id/approve" element={<StaffRoute roles={ roles }><JobRequesApproved /></StaffRoute>} /> 

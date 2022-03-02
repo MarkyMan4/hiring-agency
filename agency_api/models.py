@@ -84,6 +84,8 @@ class ServiceRequest(models.Model):
     hp_gender_required = models.BooleanField(null=False) # whether the gender of the healthcare professional must be the same as the patient
     hp_min_age = models.IntegerField(null=True)
     hp_max_age = models.IntegerField(null=True)
+    is_assigned = models.BooleanField(null=False, default=False) # whether a healthcare professional has been assigned to this request
+    is_completed = models.BooleanField(null=False, default=False) # becomes true once a healthcare professional is assigned, becomes false once the work is complete
 
 class JobPosting(models.Model):
     service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE)
@@ -109,7 +111,6 @@ class HPJobApplication(models.Model):
     job = models.ForeignKey(JobPosting, on_delete=models.CASCADE)
     is_pending = models.BooleanField(null=False, default=True)
     is_approved = models.BooleanField(null=False, default=False)
-
 
 class ServiceAssignment(models.Model):
     healthcare_professional = models.ForeignKey(HealthCareProfessional, on_delete=models.CASCADE)

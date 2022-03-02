@@ -5,8 +5,33 @@ from django.contrib.auth.models import Group
 from knox.models import AuthToken
 from agency_api.auth.auth_serializers import RegisterUserSerializer, UserSerializer
 from .permissions import CustomModelPermissions
-from .serializers import CareTakerRequestSerializer,HPJobApplicationRetrieveSerializer, JobPostingSerializerRetrieval, HealthCareProfessionalSerializer, CareTakerSerializer, EducationTypeSerializer, HPJobApplicationSerializer, JobPostingSerializer, RetrieveServiceRequestSerializer, SecurityQuestionSerializer, SecurityQuestionAnswerSerializer, CreateServiceRequestSerializer
-from .models import CareTaker, CareTakerRequest,HPJobApplication, EducationType, SecurityQuestion, SecurityQuestionAnswer, JobPosting, ServiceRequest
+from .serializers import (
+    CareTakerRequestSerializer,
+    HPJobApplicationRetrieveSerializer, 
+    JobPostingSerializerRetrieval, 
+    HealthCareProfessionalSerializer, 
+    CareTakerSerializer,
+    EducationTypeSerializer,
+    HPJobApplicationSerializer,
+    JobPostingSerializer,
+    RetrieveServiceRequestSerializer,
+    SecurityQuestionSerializer,
+    SecurityQuestionAnswerSerializer,
+    CreateServiceRequestSerializer,
+    ServiceAssignmentDetailSerializer,
+    ServiceAssignmentSerializer
+)
+from .models import (
+    CareTaker, 
+    CareTakerRequest,
+    HPJobApplication, 
+    EducationType, 
+    SecurityQuestion, 
+    SecurityQuestionAnswer, 
+    JobPosting, 
+    ServiceRequest, 
+    ServiceAssignment
+)
 from .utils.account import gen_rand_pass
 from datetime import datetime
 
@@ -288,6 +313,15 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
             queryset = self.get_queryset().filter(care_taker_id=user.id)
         else:
             queryset = self.get_queryset()
+
+        # filter based on any query params that were provided
+        if request.query_params.get('is_assigned'):
+            value = request.query_params.get('is_assigned')
+            queryset = queryset.filter(is_assigned=True if value.lower() == 'true' else False)
+        
+        if request.query_params.get('is_completed'):
+            value = request.query_params.get('is_completed')
+            queryset = queryset.filter(is_completed=True if value.lower() == 'true' else False)
         
         serializer = self.serializer_class(queryset, many=True)
 
@@ -299,6 +333,50 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
         serializer = self.serializer_class(service_request, many=False)
 
         return Response(serializer.data)
+
+# only used for creating service assignments since this requires a different serializer
+# i.e. only need IDs of healthcare pro and service request when creating this assignment
+class CreateServiceAssignmentViewSet(viewsets.ViewSet):
+    serializer_class = ServiceAssignmentSerializer
+
+    # still need a queryset defined for permissions
+    def get_queryset(self):
+        return ServiceAssignment.objects.all()
+
+    # POST /api/create_service_assignment
+    def create(self, request):
+        data = request.data
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        # update the service request to assigned
+        service_request = ServiceRequest.objects.get(id=data.get('service_request'))
+        service_request.is_active = True
+        service_request.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+# used for any operations around a service request except for creation
+class ServiceAssignmentViewSet(viewsets.ViewSet):
+    serializer_class = ServiceAssignmentDetailSerializer
+
+    def get_queryset(self):
+        return ServiceAssignment.objects.all()
+
+    # GET /api/service_assignments
+    def list(self, request):
+        data = self.get_queryset()
+        serializer = self.serializer_class(data, many=True)
+
+        return Response(serializer.data)
+
+    # GET /api/service_assignments/<id>
+    def retrieve(self, request, pk):
+        queryset = self.get_queryset().get(id=pk)
+        serializer = self.serializer_class(queryset)
+
+        return Response(serializer.data) 
 
 class HPJobApplicationViewSet(viewsets.ModelViewSet):
     permission_classes = [CustomModelPermissions]

@@ -43,3 +43,22 @@
   padding: 10px;
   margin-bottom: 30px;
 }
+
+.service-detail-card {
+  border: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  border-color: rgb(206, 206, 206);
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+  height: 100%;
+}
+
+.day-of-week-box {
+  border: 1px solid rgb(206, 206, 206);
+  border-radius: 5px;
+  padding: 5px;
+  margin-right: 5px;
+}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import { getPendingCareTakerRequestById } from "../api/careTakerRequests";
 import { getAuthToken } from "../utils/storage";
+import CancelButton from "./cancelButton";
 
 function CareTakerAccountRequestDetail() {
     const { id } = useParams();
@@ -21,10 +22,6 @@ function CareTakerAccountRequestDetail() {
         navigate(`/pending_caretaker_requests/${id}/reject`);
     }
 
-    const cancel = () => {
-        navigate('/pending_caretaker_requests');
-    }
-
     return (
         <div>
             <div className="row">
@@ -32,7 +29,7 @@ function CareTakerAccountRequestDetail() {
                     <h1>Care Taker Account Request</h1>
                 </div>
                 <div className="col-md-6">
-                    <button onClick={ cancel } className="btn btn-outline-primary" style={ {float: 'right'} }>Cancel</button>
+                    <CancelButton returnUrl="/pending_caretaker_requests" style={ {float: 'right'} } />
                 </div>
             </div>
             <hr />

@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const baseUrl = 'http://127.0.0.1:8000/';
+import { baseUrl } from './config';
 
 export const requestNewService = async (
     token, careTakerUsername, patientFirstName, patientLastName, patientGender, patientDob, patientPhone, patientEmail, serviceLocation,
@@ -45,8 +44,22 @@ export const requestNewService = async (
         .then(res => res.data);
 }
 
-export const getAllServiceRequests = async (token) => {
+export const getAllServiceRequests = async (token, onlyGetAssigned=null, onlyGetCompleted=null) => {
     let url = baseUrl + 'api/retrieve_service_requests';
+
+    let query_params = [];
+
+    if(onlyGetAssigned !== null) {
+        query_params.push('is_assigned=' + (onlyGetAssigned ? 'true' : 'false'));
+    }
+
+    if(onlyGetCompleted !== null) {
+        query_params.push('is_completed=' + (onlyGetCompleted ? 'true' : 'false'));
+    }
+
+    if(query_params.length > 0) {
+        url += '?' + query_params.join('&');
+    }
 
     let config = {
         headers: {
@@ -57,4 +70,18 @@ export const getAllServiceRequests = async (token) => {
     return axios.get(url, config)
         .then(res => res.data)
         .catch(err => 'Failed to retrieve service requests');
+}
+
+export const retrieveServiceRequest = async (token, requestId) => {
+    let url = `${baseUrl}api/retrieve_service_requests/${requestId}`;
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.get(url, config)
+        .then(res => res.data)
+        .catch(err => `Failed to retrieve service request with ID ${requestId}`);
 }
