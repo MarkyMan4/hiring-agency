@@ -1,38 +1,64 @@
-.App {
-  text-align: center;
+.app {
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.no-bulletpoints{
+  
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.login-form {
+  border: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  border-color: rgb(206, 206, 206);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.site-navbar {
+  padding: 5%;
 }
 
-.App-link {
-  color: #61dafb;
+.basic-form {
+  width: 400px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.care-taker-request-card {
+  border: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  border-color: rgb(206, 206, 206);
+  padding: 10px;
+  margin-bottom: 30px;
+}
+
+.advertisement-job-card {
+  border: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  border-color: rgb(206, 206, 206);
+  padding: 10px;
+  margin-bottom: 30px;
+}
+
+.service-detail-card {
+  border: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  border-color: rgb(206, 206, 206);
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+  height: 100%;
+}
+
+.day-of-week-box {
+  border: 1px solid rgb(206, 206, 206);
+  border-radius: 5px;
+  padding: 5px;
+  margin-right: 5px;
 }
