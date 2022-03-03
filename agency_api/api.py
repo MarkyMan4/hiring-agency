@@ -22,6 +22,7 @@ from .serializers import (
     ServiceAssignmentSerializer
 )
 from .models import (
+    BillingAccount,
     CareTaker, 
     CareTakerRequest,
     HPJobApplication, 
@@ -354,6 +355,15 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
         service_request = ServiceRequest.objects.get(id=data.get('service_request'))
         service_request.is_active = True
         service_request.save()
+
+        # create a service account
+        # TODO: hard coding values for now, need to update this
+        BillingAccount.objects.create(
+            service_request=service_request,
+            hourly_rate=20.00,
+            amt_paid=0.00,
+            amt_to_be_paid=1000.00
+        )
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
