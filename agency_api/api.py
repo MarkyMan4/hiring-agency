@@ -34,7 +34,7 @@ from .models import (
     ServiceAssignment
 )
 from .utils.account import gen_rand_pass
-from datetime import datetime
+import datetime
 
 class JobPostingViewSet(viewsets.ModelViewSet):
     serializer_class = JobPostingSerializer
@@ -153,7 +153,7 @@ class CreateCareTakerRequestViewSet(generics.GenericAPIView):
     # POST /api/create_caretaker_request
     def post(self, request):
         data = request.data
-        data['date_requested'] = datetime.now()
+        data['date_requested'] = datetime.datetime.now()
         data['is_pending'] = True
         data['is_approved'] = False
 
@@ -356,13 +356,30 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
         service_request.is_active = True
         service_request.save()
 
+        # calculate the total amount to be paid based on hourly rate, hours per day
+        # and total days of service requested
+        hourly_rate = float(service_request.service_type.hourly_rate)
+        hours_per_day = 0
+
+        if service_request.flexible_hours:
+            hours_per_day = service_request.hours_of_service_daily
+        else:
+            date = datetime.date(1,1,1)
+            start_time = datetime.datetime.combine(date, service_request.service_start_time)
+            end_time = datetime.datetime.combine(date, service_request.service_end_time)
+            diff = end_time - start_time # difference is given in seconds
+            hours_per_day = diff.seconds / 60 / 60
+        
+        total_days = service_request.days_of_service
+        amt_to_be_paid = hours_per_day * total_days * hourly_rate
+
+
         # create a service account
-        # TODO: hard coding values for now, need to update this
         BillingAccount.objects.create(
             service_request=service_request,
-            hourly_rate=20.00,
+            hourly_rate=hourly_rate,
             amt_paid=0.00,
-            amt_to_be_paid=1000.00
+            amt_to_be_paid=amt_to_be_paid
         )
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
