@@ -6,6 +6,7 @@ from knox.models import AuthToken
 from agency_api.auth.auth_serializers import RegisterUserSerializer, UserSerializer
 from .permissions import CustomModelPermissions
 from .serializers import (
+    BillingAccountDetailSerializer,
     CareTakerRequestSerializer,
     HPJobApplicationRetrieveSerializer, 
     JobPostingSerializerRetrieval, 
@@ -339,6 +340,7 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
 # i.e. only need IDs of healthcare pro and service request when creating this assignment
 class CreateServiceAssignmentViewSet(viewsets.ViewSet):
     serializer_class = ServiceAssignmentSerializer
+    permission_classes = [CustomModelPermissions]
 
     # still need a queryset defined for permissions
     def get_queryset(self):
@@ -387,6 +389,7 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
 # used for any operations around a service request except for creation
 class ServiceAssignmentViewSet(viewsets.ViewSet):
     serializer_class = ServiceAssignmentDetailSerializer
+    permission_classes = [CustomModelPermissions]
 
     def get_queryset(self):
         return ServiceAssignment.objects.all()
@@ -501,3 +504,24 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
         heathCareProfessional_group.user_set.add(user)
 
         return user.username, generated_password
+
+class BillingAccountViewSet(viewsets.ViewSet):
+    serializer_class = BillingAccountDetailSerializer
+    permission_classes = [CustomModelPermissions]
+
+    def get_queryset(self):
+        return BillingAccount.objects.all()
+
+    # GET /api/billing_accounts
+    def list(self, request):
+        data = self.get_queryset()
+        serializer = self.serializer_class(data, many=True)
+
+        return Response(serializer.data)
+
+    # GET /api/BillingAccounts/<id>
+    def retrieve(self, request, pk):
+        queryset = self.get_queryset().get(id=pk)
+        serializer = self.serializer_class(queryset)
+
+        return Response(serializer.data)
