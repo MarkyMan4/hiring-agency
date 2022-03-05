@@ -137,8 +137,8 @@ class HPJobApplicationRetrieveSerializer(serializers.ModelSerializer):
         model = HPJobApplication
 
 class BillingAccountDetailSerializer(serializers.ModelSerializer):
-    service_request = RetrieveServiceRequestSerializer
-    
+    service_request = RetrieveServiceRequestSerializer(many=False)
+
     class Meta:
         fields = ('__all__')
         model = BillingAccount
