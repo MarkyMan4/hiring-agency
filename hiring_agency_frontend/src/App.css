@@ -59,6 +59,8 @@
 .day-of-week-box {
   border: 1px solid rgb(206, 206, 206);
   border-radius: 5px;
-  padding: 5px;
+  width: 40px;
+  text-align: center;
   margin-right: 5px;
+  display: inline-block;
 }

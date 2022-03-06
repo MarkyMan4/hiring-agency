@@ -36,6 +36,7 @@ import JobRequestList from './components/jobRequestList';
 import JobRequesDetail from './components/jobRequestDetail';
 import JobRequesReject from './components/jobRequestRejected';
 import JobRequesApproved from './components/jobRequestApproved';
+import BillingAccounts from './components/billingAccounts';
 
 
 function App() {
@@ -88,6 +89,7 @@ function App() {
           <Route path="/hp_job_application/:id" element={<StaffRoute roles={ roles }><JobRequesDetail /></StaffRoute>} /> 
           <Route path="/hp_job_application/:id/approve" element={<StaffRoute roles={ roles }><JobRequesApproved /></StaffRoute>} /> 
           <Route path="/hp_job_application/:id/reject" element={<StaffRoute roles={ roles }> <JobRequesReject /></StaffRoute>} /> 
+          <Route path="/billing_accounts" element={<StaffRoute roles={ roles }> <BillingAccounts /></StaffRoute>} /> 
         </Routes>
       );
     }

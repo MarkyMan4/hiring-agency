@@ -80,6 +80,12 @@ function NavMenu({ roles }) {
         }
     }
 
+    const getBillingAccounts = () => {
+        if(roles.includes('admin') || roles.includes('staff')) { 
+            return <Nav.Link className="nav-link" href="#/billing_accounts">Billing Accounts</Nav.Link>
+        }
+    }
+
     return (
         <Navbar className="navbar-dark mb-5 py-2 site-navbar" bg="dark" expand="lg">
             <Navbar.Brand href="#/" className="ml-5">Cowley Hiring Agency</Navbar.Brand>
@@ -95,6 +101,7 @@ function NavMenu({ roles }) {
                     { viewJobRequest() }
                     { getCreateServiceRequest() }
                     { getServiceRequests() }
+                    { getBillingAccounts() }
                 </Nav>
             </Navbar.Collapse>
             <span className="navbar-text" style={ {marginRight: '20px'} }>
