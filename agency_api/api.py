@@ -309,6 +309,8 @@ class RetrieveServiceRequestHPViewSet(viewsets.ViewSet):
     def get_queryset(self):
         return ServiceRequest.objects.all()
 
+  
+
 # GET /api/retrieve_service_requests/<id>
     def retrieve(self, request, pk):
         service_request = self.get_queryset().get(id=pk) 
@@ -324,6 +326,17 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
 
     def get_queryset(self):
         return ServiceRequest.objects.all()
+
+  
+    # GET /api/retrieve_service_requests/<id>/get_assign_by_request
+    @action(methods=['GET'], detail=True)
+    def get_assign_by_request(self, request, pk):
+        queryset = ServiceAssignment.objects.get(service_request_id = pk)
+        serializer = ServiceAssignmentDetailSerializer(queryset)
+
+        return Response(serializer.data) 
+
+
 
     # GET /api/retrieve_service_requests
     def list(self, request):
@@ -379,12 +392,17 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
+
+
+
 # used for any operations around a service request except for creation
 class ServiceAssignmentViewSet(viewsets.ViewSet):
     serializer_class = ServiceAssignmentDetailSerializer
 
     def get_queryset(self):
         return ServiceAssignment.objects.all()
+
 
     # GET /api/service_assignments
     def list(self, request):
@@ -403,9 +421,17 @@ class ServiceAssignmentViewSet(viewsets.ViewSet):
     #DELETE /api/service_assignments/<id>
     def destroy(self, request, pk):
         serv_assign = self.get_queryset().get(id=pk)
-        serv_req = serv_assign.service_request
-        serv_req.is_assigned = False
+
+        # update the service request to assigned
+        service_request = ServiceRequest.objects.get(id=serv_assign.service_request.id)
+        service_request.is_assigned = False
+        service_request.save()
         serv_assign.delete()
+
+
+
+        return Response() 
+        
 
 
 

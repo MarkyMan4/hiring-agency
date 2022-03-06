@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { assignHpToServiceRequest } from "../api/serviceAssignments";
+import { unassignHpToServiceRequest } from "../api/serviceAssignments";
 import { retrieveHPByServiceAsisgnment } from "../api/serviceAssignments";
 import { getHPList } from "../api/HPRequests";
 import { retrieveServiceRequest } from "../api/serviceRequests";
@@ -113,16 +114,22 @@ function ServiceRequestDetail() {
         );
     }
 
-    // delete me   no
     const assign = (event) => {
         event.preventDefault();
-        console.log("this is clickevent");
-        console.log(event);
-        console.log(event.target.value);
-        assignHpToServiceRequest(getAuthToken(), id, hpId)
+        assignHpToServiceRequest(getAuthToken(), id, event.target.value)
             .then(res => {
                 console.log(res);
-                window.location.reload(false);
+                window.location.reload(false); //refresh current page
+            })
+            .catch(err => console.log(err.response.data));
+    }
+
+    const unassign = (event) =>{
+        event.preventDefault();
+        console.log("doing unassign");
+        unassignHpToServiceRequest(getAuthToken(), hp.id)
+            .then(res => {
+                window.location.reload(false); //refresh current page
             })
             .catch(err => console.log(err.response.data));
     }
@@ -170,8 +177,8 @@ function ServiceRequestDetail() {
             //schedule
             let hoursWorked = [0, 0, 0, 0, 0, 0, 0]; //a worker can work a max of 8 hours a day
 
-            //load all hours worked by current assignments per day TODO add fixed times
-            servAssignList.forEach(thisServ => {//probably a better way to do this
+            //load all hours worked by current assignments per day 
+            servAssignList.forEach(thisServ => {//possibly a better way to do this
                 if (thisServ.care_taker.id != curHP.id) {
                     return;
                 }
@@ -389,36 +396,48 @@ function ServiceRequestDetail() {
 
     const getAssignedHPorForm = () => {
         console.log(hpList);
-        if (isDataLoaded() && serviceRequest.is_assigned == true) {
-            console.log("display assigned hp");
-            retrieveHPByServiceAsisgnment(getAuthToken(), serviceRequest.id).then(res => { setHP(res); return ([getHPHtml]) }).catch(err => console.log(err.response.data));
-            return ([getHPHtml])
+        if (isDataLoaded() && serviceRequest.is_assigned == true && hp === undefined) {
+            console.log("http assigned hp");
+            retrieveHPByServiceAsisgnment(getAuthToken(), serviceRequest.id)
+                .then(res => {setHP(res);})
+                .catch(err => console.log(err.response.data));
+            return (<div></div>)
+
+        } else if(isDataLoaded() && serviceRequest.is_assigned == true && hp !== undefined){
+            console.log("getting assigned hp data")
+            return (
+                <div>
+                    {getHPHtml()}
+                </div>
+                )
         } else if (!isDataLoaded()) {
             console.log("case notdataloaded");
             return;
+
         } else if (hpList !== undefined && servAssignList !== undefined) {
             console.log("Case hp loaded");
             return (
                 <div>
                     <h3>Assign a Health Care Professional to this Request from the list below</h3>
                     <h5>Available Health Care Professionals that meet the requirements</h5>
-
                     {getAvailableHP()}
                 </div>
             )
         }
-        console.log("no hp loaded " + hpList);
     }
 
 
 
     const getHPHtml = () => {
         console.log("getting hp html");
+        console.log(hp);
         return (
             <div className="row mt-4">
-                <div className="col-md-4 mb-3">
-                    <div className="service-detail-card shadow animate__animated animate__fadeInLeft">
-                        <p> test {hp.name} </p>
+                <div className="col">
+                    <div className="assigned-HP-servicecard shadow animate__animated animate__fadeInLeft">
+                        <h3> Currently Assigned Healthcare Professional </h3>
+                        <p> Name: {hp.healthcare_professional.user.first_name} {hp.healthcare_professional.user.last_name} </p>
+                        <button type="button" onClick={unassign}> UnAssign</button>
                     </div>
                 </div>
             </div>
