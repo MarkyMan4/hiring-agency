@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from agency_api.auth.auth_serializers import UserSerializer
 from .models import (
+    BillingAccount,
     CareTaker, 
     HPJobApplication, 
     HealthCareProfessional, 
@@ -137,3 +138,10 @@ class HPJobApplicationRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('__all__')
         model = HPJobApplication
+
+class BillingAccountDetailSerializer(serializers.ModelSerializer):
+    service_request = RetrieveServiceRequestSerializer(many=False)
+
+    class Meta:
+        fields = ('__all__')
+        model = BillingAccount

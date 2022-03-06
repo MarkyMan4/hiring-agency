@@ -3,6 +3,7 @@ from rest_framework import routers
 from knox import views as knox_views
 from .auth.auth_api import RegisterStaffViewSet, LoginAPI, UserAPI, ChangePasswordAPI, LockUserAPI
 from .api import (
+    BillingAccountViewSet,
     CreateServiceAssignmentViewSet,
     EducationTypeViewSet, 
     SecurityQuestionViewSet, 
@@ -34,6 +35,8 @@ router.register('api/create_service_assignment', CreateServiceAssignmentViewSet,
 router.register('api/service_assignments', ServiceAssignmentViewSet, 'service-assignments')
 router.register('api/hp_job_application',HPJobApplicationViewSet, 'job-application')
 router.register('api/view_staff_list',StaffManageViewSet, 'staff-list')
+router.register('api/billing_accounts', BillingAccountViewSet, 'billing-accounts')
+
 # put non-viewset urls here
 urlpatterns = [
     path('', include(router.urls)),
