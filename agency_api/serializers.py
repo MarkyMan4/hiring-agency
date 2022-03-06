@@ -1,3 +1,4 @@
+from dataclasses import field
 from pickle import FALSE
 from rest_framework import serializers
 
@@ -14,7 +15,8 @@ from .models import (
     JobPosting, 
     CareTakerRequest, 
     ServiceRequest,
-    ServiceAssignment
+    ServiceAssignment,
+    User
 )
 
 class HPJobApplicationSerializer(serializers.ModelSerializer):
@@ -43,8 +45,9 @@ class JobPostingSerializerRetrieval(serializers.ModelSerializer):
     class Meta:
         model = JobPosting
         fields = ("service_type" ,"education_type", "id", "years_experience_required", "description")
-        
+
 class StaffMemberSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False)
     class Meta:
         model = StaffMember
         fields = ('__all__')

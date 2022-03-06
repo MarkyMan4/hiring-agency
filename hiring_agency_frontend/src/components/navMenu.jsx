@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Nav, Navbar} from 'react-bootstrap';
 import { isUserLoggedIn, destroyAuthToken, getAuthToken, isAdmin } from "../utils/storage";
 import { getUser, logout } from "../api/authRequests";
-import AddStaff from "./addStaff";
+
 
 function NavMenu({ roles }) {
     const [username, setUsername] = useState('');
@@ -56,6 +56,13 @@ function NavMenu({ roles }) {
             return <Nav.Link className="nav-link" href="#/hp_job_application">Job Requests</Nav.Link>
         }
     }
+
+    const viewStaffList = () => {
+        if(roles.includes('admin') ) { 
+            return <Nav.Link className="nav-link" href="#/view_staff_list">Staff List</Nav.Link>
+        }
+    }
+
     const getAddStaff = () => {
         if(roles.includes('admin')) {
             return <Nav.Link className="nav-link" href="#/add_new_staff" >Add staff</Nav.Link>
@@ -79,6 +86,12 @@ function NavMenu({ roles }) {
             return <Nav.Link className="nav-link" href="#/service_requests">Service Requests</Nav.Link>
         }
     }
+    const userChangePassword = () =>{
+        if(isUserLoggedIn()) {
+            return <Nav.Link className="nav-link" href="#/user_menu">{ username } </Nav.Link>
+        }
+    }
+    
 
     return (
         <Navbar className="navbar-dark mb-5 py-2 site-navbar" bg="dark" expand="lg">
@@ -89,6 +102,7 @@ function NavMenu({ roles }) {
                     <Nav.Link className="nav-link" href="#/">Home</Nav.Link>
                     { getSignUp() }
                     { getAddStaff() }
+                    { viewStaffList()}
                     { createJobPosting() }
                     { getCareTakerAccountRequest() }
                     { viewJobPosting() }
@@ -98,7 +112,7 @@ function NavMenu({ roles }) {
                 </Nav>
             </Navbar.Collapse>
             <span className="navbar-text" style={ {marginRight: '20px'} }>
-                { username }
+                { userChangePassword() }
             </span>
             <span className="navbar-text">
                 { getLoginOrLogoutButton() }

@@ -36,6 +36,8 @@ import JobRequestList from './components/jobRequestList';
 import JobRequesDetail from './components/jobRequestDetail';
 import JobRequesReject from './components/jobRequestRejected';
 import JobRequesApproved from './components/jobRequestApproved';
+import StaffList from './components/staffList';
+import MyMenu from './components/myMenu';
 
 
 function App() {
@@ -88,6 +90,8 @@ function App() {
           <Route path="/hp_job_application/:id" element={<StaffRoute roles={ roles }><JobRequesDetail /></StaffRoute>} /> 
           <Route path="/hp_job_application/:id/approve" element={<StaffRoute roles={ roles }><JobRequesApproved /></StaffRoute>} /> 
           <Route path="/hp_job_application/:id/reject" element={<StaffRoute roles={ roles }> <JobRequesReject /></StaffRoute>} /> 
+          <Route path="/view_staff_list" element={ <AdminRoute roles={ roles }><StaffList/></AdminRoute> } />
+          <Route path="/user_menu" element={ <MyMenu /> } />
         </Routes>
       );
     }

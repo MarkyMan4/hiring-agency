@@ -17,6 +17,7 @@ from .serializers import (
     RetrieveServiceRequestSerializer,
     SecurityQuestionSerializer,
     SecurityQuestionAnswerSerializer,
+    StaffMemberSerializer,
     CreateServiceRequestSerializer,
     ServiceAssignmentDetailSerializer,
     ServiceAssignmentSerializer
@@ -29,8 +30,10 @@ from .models import (
     SecurityQuestion, 
     SecurityQuestionAnswer, 
     JobPosting, 
+    StaffMember,
     ServiceRequest, 
-    ServiceAssignment
+    ServiceAssignment,
+    User
 )
 from .utils.account import gen_rand_pass
 from datetime import datetime
@@ -102,12 +105,19 @@ class SecurityQuestionAnswerViewSet(viewsets.ModelViewSet):
     # POST /api/securityquestionanswers
     def create(self, request):
         data = request.data
-        data['user'] = self.request.user.id
+        data['user'] = self.request.user.id 
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         headers = self.get_success_headers(serializer.data)
+
+        count = SecurityQuestionAnswer.objects.filter(user_id=self.request.user.id).count()
+        while count > 3:
+            print("hi")
+            old_question = SecurityQuestionAnswer.objects.filter(user_id=request.user.id).order_by('id').first()
+            old_question.delete()
+            count = SecurityQuestionAnswer.objects.filter(user_id=self.request.user.id).count()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
@@ -474,3 +484,53 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
         heathCareProfessional_group.user_set.add(user)
 
         return user.username, generated_password
+
+
+class StaffManageViewSet(viewsets.ModelViewSet):
+    #permission_classes = [permissions.IsAdminUser]
+    serializer_class = StaffMemberSerializer
+
+    def get_queryset(self):
+        return StaffMember.objects.all()
+
+    # GET /api/retrieve_service_requests
+    def list(self, request):
+        queryset = self.get_queryset()
+
+        if request.query_params.get('active'):
+            value = request.query_params.get('active')
+            queryset = queryset.filter(user__is_active__exact=True if value.lower() == 'true' else False)
+
+        serializer = self.serializer_class(queryset, many=True)
+
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk):
+        queryset = self.get_queryset().get(id=pk)
+        serializer = self.serializer_class(queryset)
+
+        return Response(serializer.data)
+
+    @action(methods=['PUT'],detail=True)
+    def setStatus(self, request, pk):
+        queryset = self.get_queryset()
+
+        if not queryset.filter(id=pk).exists():
+            return Response({'error':'Staff is not exist'})
+        
+        staff = queryset.get(id=pk)
+        user_id = staff.user_id
+        user = User.objects(id=user_id)
+        
+        user.is_active = not user.is_active
+        user.save()
+        return Response()
+
+
+
+       
+        
+
+        
+
+    
