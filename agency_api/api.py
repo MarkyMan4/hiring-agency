@@ -1,3 +1,4 @@
+from ast import Delete
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -10,6 +11,7 @@ from .serializers import (
     HPJobApplicationRetrieveSerializer, 
     JobPostingSerializerRetrieval, 
     HealthCareProfessionalSerializer, 
+    HealthCareProfessionalDetailSerializer,
     CareTakerSerializer,
     EducationTypeSerializer,
     HPJobApplicationSerializer,
@@ -25,7 +27,8 @@ from .models import (
     CareTaker, 
     CareTakerRequest,
     HPJobApplication, 
-    EducationType, 
+    EducationType,
+    HealthCareProfessional, 
     SecurityQuestion, 
     SecurityQuestionAnswer, 
     JobPosting, 
@@ -296,6 +299,25 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
+
+
+class RetrieveServiceRequestHPViewSet(viewsets.ViewSet):
+    serializer_class = RetrieveServiceRequestSerializer
+    permission_classes = [CustomModelPermissions]
+
+    def get_queryset(self):
+        return ServiceRequest.objects.all()
+
+# GET /api/retrieve_service_requests/<id>
+    def retrieve(self, request, pk):
+        service_request = self.get_queryset().get(id=pk) 
+        serializer = self.serializer_class(service_request, many=False)
+
+        return Response(serializer.data)
+
+
+
 class RetrieveServiceRequestViewSet(viewsets.ViewSet):
     serializer_class = RetrieveServiceRequestSerializer
     permission_classes = [CustomModelPermissions]
@@ -352,7 +374,7 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
 
         # update the service request to assigned
         service_request = ServiceRequest.objects.get(id=data.get('service_request'))
-        service_request.is_active = True
+        service_request.is_assigned = True
         service_request.save()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -377,6 +399,15 @@ class ServiceAssignmentViewSet(viewsets.ViewSet):
         serializer = self.serializer_class(queryset)
 
         return Response(serializer.data) 
+
+    #DELETE /api/service_assignments/<id>
+    def destroy(self, request, pk):
+        serv_assign = self.get_queryset().get(id=pk)
+        serv_req = serv_assign.service_request
+        serv_req.is_assigned = False
+        serv_assign.delete()
+
+
 
 class HPJobApplicationViewSet(viewsets.ModelViewSet):
     permission_classes = [CustomModelPermissions]
@@ -474,3 +505,45 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
         heathCareProfessional_group.user_set.add(user)
 
         return user.username, generated_password
+
+    serializer_class = ServiceAssignmentDetailSerializer
+
+    def get_queryset(self):
+        return ServiceAssignment.objects.all()
+
+    # GET /api/service_assignments
+    def list(self, request):
+        data = self.get_queryset()
+        serializer = self.serializer_class(data, many=True)
+
+        return Response(serializer.data)
+
+    # GET /api/service_assignments/<id>
+    def retrieve(self, request, pk):
+        queryset = self.get_queryset().get(id=pk)
+        serializer = self.serializer_class(queryset)
+
+        return Response(serializer.data) 
+
+class HPViewSet(viewsets.ModelViewSet):
+    serializer_class = HealthCareProfessionalDetailSerializer
+
+    def get_queryset(self):
+        return HealthCareProfessional.objects.all()
+
+    # GET /api/hp_requests/<id>
+    def retrieve(self, request, pk):
+        queryset = self.get_queryset().get(id=pk)
+        serializer = self.serializer_class(queryset)
+
+        return Response(serializer.data) 
+
+    # GET /api/hp_requests/
+    def list(self, request):
+        data = self.get_queryset()
+        serializer = self.serializer_class(data, many=True)
+
+        return Response(serializer.data)
+
+
+

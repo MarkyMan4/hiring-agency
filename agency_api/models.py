@@ -63,7 +63,7 @@ class ServiceRequest(models.Model):
     care_taker = models.ForeignKey(CareTaker, on_delete=models.CASCADE)
     patient_first_name = models.CharField(null=False, max_length=50)
     patient_last_name = models.CharField(null=False, max_length=50)
-    patient_gender = models.CharField(null=False, max_length=1)
+    patient_gender = models.CharField(null=False, max_length=10)
     patient_date_of_birth = models.DateField(null=False)
     patient_phone_number = models.BigIntegerField(null=True, validators=[validate_phone])
     patient_email = models.EmailField(null=True, max_length=200)
