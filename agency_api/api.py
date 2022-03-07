@@ -535,8 +535,8 @@ class StaffManageViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-    @action(methods=['PUT'],detail=True)
-    def setStatus(self, request, pk):
+    @action(methods=['PUT'], detail=True)
+    def changeStaffStatus(self, request, pk):
         queryset = self.get_queryset()
 
         if not queryset.filter(id=pk).exists():
@@ -549,6 +549,7 @@ class StaffManageViewSet(viewsets.ModelViewSet):
         user.is_active = not user.is_active
         user.save()
         return Response()
+
 
 
 

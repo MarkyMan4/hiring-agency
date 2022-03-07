@@ -41,8 +41,8 @@ export const getStaffById = async (token, id) =>{
 }
 
 
-export const changeStaffStatus = async (token, requestId) =>{
-    let url = `${baseUrl}api/view_staff_list/${requestId}/status`;
+export const changeStaffStatus = async (token, id) =>{
+    let url = `${baseUrl}api/view_staff_list/${id}/status`
 
     let config ={
         headers: {

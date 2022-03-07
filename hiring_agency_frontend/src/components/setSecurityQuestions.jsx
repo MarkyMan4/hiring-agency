@@ -68,7 +68,7 @@ function SetSecurityQuestions() {
         <div>
             <h4>Please select your security questions and answers.</h4>
             <div>
-                Password must be at least six characters, only contain alphanumeric characters and at least one of the following: ~, !, @, #, $, %, ^, &, *, +.
+                Password must be at least four characters, please choose three question and answer them all.
             </div>
             <hr />
 

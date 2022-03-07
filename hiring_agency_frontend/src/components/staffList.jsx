@@ -36,7 +36,7 @@ function StaffList(){
     return (
         <div className="row">
             <h1 className="text-center mb-5">Staff List</h1>
-            <div className="col-md-4">
+            <div className="col-md-3">
                 <div class="form-check form-switch">
                     <label class="form-check-label">All users</label>
                     <input 
@@ -70,7 +70,7 @@ function StaffList(){
                     />
                 </div>
             </div>
-            <div className="col-md-4">
+            <div className="col-md-6">
                 { getStaffList() }
             </div>
         </div>

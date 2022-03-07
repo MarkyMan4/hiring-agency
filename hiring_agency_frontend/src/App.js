@@ -37,6 +37,8 @@ import JobRequesDetail from './components/jobRequestDetail';
 import JobRequesReject from './components/jobRequestRejected';
 import JobRequesApproved from './components/jobRequestApproved';
 import StaffList from './components/staffList';
+import StaffDetail from './components/staffDetail';
+import StaffStatusChanged from './components/staffStatusChanged';
 import MyMenu from './components/myMenu';
 import BillingAccounts from './components/billingAccounts';
 
@@ -92,6 +94,8 @@ function App() {
           <Route path="/hp_job_application/:id/approve" element={<StaffRoute roles={ roles }><JobRequesApproved /></StaffRoute>} /> 
           <Route path="/hp_job_application/:id/reject" element={<StaffRoute roles={ roles }> <JobRequesReject /></StaffRoute>} /> 
           <Route path="/view_staff_list" element={ <AdminRoute roles={ roles }><StaffList/></AdminRoute> } />
+          <Route path="/view_staff_list/:id" element={ <AdminRoute roles={ roles }><StaffDetail/></AdminRoute> } />
+          <Route path="/view_staff_list/:id/status" element={ <AdminRoute roles={ roles }><StaffStatusChanged/></AdminRoute> } />
           <Route path="/user_menu" element={ <MyMenu /> } />
           <Route path="/billing_accounts" element={<StaffRoute roles={ roles }> <BillingAccounts /></StaffRoute>} /> 
         </Routes>
