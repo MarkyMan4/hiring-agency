@@ -18,7 +18,8 @@ from .serializers import (
     RetrieveServiceRequestSerializer,
     SecurityQuestionSerializer,
     SecurityQuestionAnswerSerializer,
-    StaffMemberSerializer,
+    ViewStaffMemberSerializer,
+    ViewCareTakerMemberSerializer,
     CreateServiceRequestSerializer,
     ServiceAssignmentDetailSerializer,
     ServiceAssignmentSerializer
@@ -33,6 +34,7 @@ from .models import (
     SecurityQuestionAnswer, 
     JobPosting, 
     StaffMember,
+    CareTaker,
     ServiceRequest, 
     ServiceAssignment,
     User
@@ -517,13 +519,13 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
 
 
 class StaffManageViewSet(viewsets.ModelViewSet):
-    #permission_classes = [permissions.IsAdminUser]
-    serializer_class = StaffMemberSerializer
+    permission_classes = [permissions.IsAdminUser]
+    serializer_class = ViewStaffMemberSerializer
 
     def get_queryset(self):
         return StaffMember.objects.all()
 
-    # GET /api/retrieve_service_requests
+    
     def list(self, request):
         queryset = self.get_queryset()
 
@@ -536,7 +538,7 @@ class StaffManageViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=['PUT'], detail=True)
-    def changeStaffStatus(self, request, pk):
+    def status(self, request, pk):
         queryset = self.get_queryset()
 
         if not queryset.filter(id=pk).exists():
@@ -544,7 +546,42 @@ class StaffManageViewSet(viewsets.ModelViewSet):
         
         staff = queryset.get(id=pk)
         user_id = staff.user_id
-        user = User.objects(id=user_id)
+        user = User.objects.get(id=user_id)
+        
+        user.is_active = not user.is_active
+        user.save()
+        return Response()
+
+
+class CareTakerManageViewSet(viewsets.ModelViewSet):
+    #permission_classes = [permissions.IsAdminUser]
+    serializer_class = ViewCareTakerMemberSerializer
+
+    def get_queryset(self):
+        return CareTaker.objects.all()
+
+
+    def list(self, request):
+        queryset = self.get_queryset()
+
+        if request.query_params.get('active'):
+            value = request.query_params.get('active')
+            queryset = queryset.filter(user__is_active__exact=True if value.lower() == 'true' else False)
+
+        serializer = self.serializer_class(queryset, many=True)
+
+        return Response(serializer.data)
+
+    @action(methods=['PUT'], detail=True)
+    def status(self, request, pk):
+        queryset = self.get_queryset()
+
+        if not queryset.filter(id=pk).exists():
+            return Response({'error':'Staff is not exist'})
+        
+        staff = queryset.get(id=pk)
+        user_id = staff.user_id
+        user = User.objects.get(id=user_id)
         
         user.is_active = not user.is_active
         user.save()

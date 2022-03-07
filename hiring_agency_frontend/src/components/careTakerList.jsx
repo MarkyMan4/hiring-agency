@@ -1,28 +1,28 @@
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { getAllStaff } from "../api/staffManage"
+import { getAllCareTaker } from "../api/careTakerManage"
 import { getAuthToken } from "../utils/storage";
-import StaffCard from "./staffCard";
+import CareTakerCard from "./careTakerCard"
 
-function StaffList(){
-    const [staffList, setStaffList] = useState([]);
+function CareTakerList(){
+    const [careTakerList, setCareTakerList] = useState([]);
     const [showActive, setShowActive] = useState(null);
 
     useEffect(() => {
-        getAllStaff(getAuthToken(), showActive)
-            .then(res => setStaffList(res));
+        getAllCareTaker(getAuthToken(), showActive)
+            .then(res => setCareTakerList(res));
     }, [showActive]);
 
-    const getStaffList = () =>{
-        if(staffList.length === 0){
-            return <h2 className="text-center">There is no staff</h2>
+    const getCareTakerList = () =>{
+        if(careTakerList.length === 0){
+            return <h2 className="text-center">There is no care taker</h2>
         }
         else{
             return(
                 <div>
-                    { staffList.map(req => (    
-                        <StaffCard
+                    { careTakerList.map(req => (    
+                        <CareTakerCard
                             requestId={ req.id }
                             username={req.user.username}
                             status = {req.user.is_active ? "Active" : "Inactive"}
@@ -35,7 +35,7 @@ function StaffList(){
 
     return (
         <div className="row">
-            <h1 className="text-center mb-5">Staff List</h1>
+            <h1 className="text-center mb-5">Care taker List</h1>
             <div className="col-md-3">
                 <div class="form-check form-switch">
                     <label class="form-check-label">All users</label>&nbsp;&nbsp;
@@ -71,10 +71,10 @@ function StaffList(){
                 </div>
             </div>
             <div className="col-md-6">
-                { getStaffList() }
+                { getCareTakerList() }
             </div>
         </div>
     );
 }
 
-export default StaffList;
+export default CareTakerList;

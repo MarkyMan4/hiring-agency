@@ -39,23 +39,17 @@ function ChangePassword() {
 
     const changePasswordClicked = () => {
         // determine if password change was successful and display a message
-        changePassword(getAuthToken(), oldPassword, newPassword)
+        changePassword(getAuthToken(), oldPassword, newPassword, confirmPassword)
             .then(res => {
                 if(res.error)
-                    setMessage(res.error);
-                else {
-                    if(newPassword!==confirmPassword){
-                        setMessage('The new password is not same as comfirm password')
-                    }
-                    else{
-                        setMessage('password successfully changed');
-                        setOldPassword('');
-                        setNewPassword('');
-                        setConfirmPassword('');
-                        if(query.get('info') === 'firstlogin')
-                            navigate('/set_security_questions');
-                    }
-                    
+                    setMessage(res.error);    
+                else {    
+                    setMessage('password successfully changed');
+                    setOldPassword('');
+                    setNewPassword('');
+                    setConfirmPassword('');
+                    if(query.get('info') === 'firstlogin')
+                        navigate('/set_security_questions');    
                 }
             })
             .catch(err => console.log(err));

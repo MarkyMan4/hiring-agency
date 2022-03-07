@@ -17,7 +17,6 @@ from .models import (
     CareTakerRequest, 
     ServiceRequest,
     ServiceAssignment,
-    User
 )
 
 class HPJobApplicationSerializer(serializers.ModelSerializer):
@@ -48,9 +47,20 @@ class JobPostingSerializerRetrieval(serializers.ModelSerializer):
         fields = ("service_type" ,"education_type", "id", "years_experience_required", "description")
 
 class StaffMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StaffMember
+        fields = ('__all__')
+
+class ViewStaffMemberSerializer(serializers.ModelSerializer):
     user = UserSerializer(many=False)
     class Meta:
         model = StaffMember
+        fields = ('__all__')
+
+class ViewCareTakerMemberSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False)
+    class Meta:
+        model = CareTaker
         fields = ('__all__')
 
 class SecurityQuestionSerializer(serializers.ModelSerializer):
