@@ -10,7 +10,16 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        
+        migrations.AddField(
+            model_name='hpjobapplication',
+            name='is_approved',
+            field=models.BooleanField(default=False),
+        ),
+        migrations.AddField(
+            model_name='hpjobapplication',
+            name='is_pending',
+            field=models.BooleanField(default=True),
+        ),
         migrations.AlterField(
             model_name='healthcareprofessional',
             name='gender',
