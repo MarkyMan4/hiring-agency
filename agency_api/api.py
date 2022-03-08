@@ -554,7 +554,7 @@ class StaffManageViewSet(viewsets.ModelViewSet):
 
 
 class CareTakerManageViewSet(viewsets.ModelViewSet):
-    #permission_classes = [permissions.IsAdminUser]
+    permission_classes = [CustomModelPermissions]
     serializer_class = ViewCareTakerMemberSerializer
 
     def get_queryset(self):
