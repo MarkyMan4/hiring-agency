@@ -14,7 +14,7 @@ function BillingAccounts() {
     const getBillingAccountsOrEmpty = () => {
         if(billingAccts?.length === 0) {
             return (
-                <h3>There are no billing accounts</h3>
+                <h3 className="text-center">There are no billing accounts</h3>
             );
         }
         else {
