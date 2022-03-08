@@ -30,7 +30,7 @@ function CreateServiceRequest({ roles }) {
     const [careTakerUsername, setCareTakerUsername] = useState();
     const [patientFirstName, setPatientFirstName] = useState('');
     const [patientLastName, setPatientLastName] = useState('');
-    const [patientGender, setPatientGender] = useState('M');
+    const [patientGender, setPatientGender] = useState('Male');
     const [patientDob, setPatientDob] = useState('');
     const [patientPhone, setPatientPhone] = useState();
     const [patientEmail, setPatientEmail] = useState('');
@@ -165,8 +165,8 @@ function CreateServiceRequest({ roles }) {
 
                 <label className="mt-3"><span className="text-danger">*</span>Patient gender</label>
                 <select value={ patientGender } onChange={ event => setPatientGender(event.target.value) } className="form-select">
-                    <option value="M">Male</option>
-                    <option value="F">Female</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
                 </select>
 
                 <label className="mt-3"><span className="text-danger">*</span>Patient date of birth</label>
