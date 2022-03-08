@@ -44,6 +44,7 @@ import CareTakerDetail from './components/careTakerDetail';
 import CareTakerStatusChanged from './components/careTakerStatusChanged';
 import MyMenu from './components/myMenu';
 import BillingAccounts from './components/billingAccounts';
+import BillingAccountDetail from './components/billingAccountDetail';
 
 
 function App() {
@@ -104,6 +105,7 @@ function App() {
           <Route path="/view_caretaker_list/:id/status" element={ <StaffRoute roles={ roles }><CareTakerStatusChanged/></StaffRoute> } />
           <Route path="/user_menu" element={ <MyMenu /> } />
           <Route path="/billing_accounts" element={<StaffRoute roles={ roles }> <BillingAccounts /></StaffRoute>} /> 
+          <Route path="/billing_accounts/:id" element={<StaffRoute roles={ roles }> <BillingAccountDetail /></StaffRoute>} /> 
         </Routes>
       );
     }
