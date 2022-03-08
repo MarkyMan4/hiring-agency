@@ -44,6 +44,9 @@ from .models import (
 )
 from .utils.account import gen_rand_pass
 import datetime
+from .utils.templates import email_template
+from django.core.mail import send_mail
+from django.conf import settings
 
 class JobPostingViewSet(viewsets.ModelViewSet):
     serializer_class = JobPostingSerializer
@@ -217,11 +220,11 @@ class CareTakerRequestViewSet(viewsets.ViewSet):
         caretaker_request.save()
 
         # create a care taker account
-        username, password = self.register_caretaker(caretaker_request)
+        username, email = self.register_caretaker(caretaker_request)
 
         return Response({
             'username': username,
-            'password': password
+            'email': email
         })
 
     # PUT /api/caretaker_requests/<id>/reject
@@ -278,11 +281,20 @@ class CareTakerRequestViewSet(viewsets.ViewSet):
         caretaker_serializer.is_valid(raise_exception=True)
         caretaker_serializer.save()
 
-        # finally, add the user to the staff group
+        # add the user to the staff group
         caretaker_group = Group.objects.get(name='caretaker')
         caretaker_group.user_set.add(user)
 
-        return user.username, generated_password
+        # send an email with the first time login credentials
+        send_mail(
+            'New care taker account',
+            email_template.format(username=user.username, password=generated_password),
+            settings.EMAIL_HOST_USER,
+            [user.email],
+            fail_silently=False,
+        )
+
+        return user.username, user.email
 
 class CreateServiceRequestViewSet(viewsets.ViewSet):
     serializer_class = CreateServiceRequestSerializer

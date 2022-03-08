@@ -8,6 +8,9 @@ from .auth_serializers import UserSerializer, RegisterUserSerializer, LoginSeria
 from ..models import AccountStatus
 from ..utils.validation import is_password_valid
 from ..utils.account import gen_rand_pass
+from ..utils.templates import email_template
+from django.core.mail import send_mail
+from django.conf import settings
 
 # registering staff member, this can only be done by an administrator
 class RegisterStaffViewSet(generics.GenericAPIView):
@@ -47,13 +50,21 @@ class RegisterStaffViewSet(generics.GenericAPIView):
         staff_member_serializer.is_valid(raise_exception=True)
         staff_member_serializer.save()
 
-        # finally, add the user to the staff group
+        # add the user to the staff group
         staff_group = Group.objects.get(name='staff')
         staff_group.user_set.add(user)
 
+        # send an email with the first time login credentials
+        send_mail(
+            'New staff account',
+            email_template.format(username=user.username, password=generated_password),
+            settings.EMAIL_HOST_USER,
+            [user.email],
+            fail_silently=False,
+        )
+
         return Response({
             'user': UserSerializer(user, context=self.get_serializer_context()).data,
-            'initialPassword': generated_password,
             'token': AuthToken.objects.create(user)[1]
         })
 

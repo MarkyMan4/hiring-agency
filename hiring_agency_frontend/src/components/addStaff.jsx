@@ -16,8 +16,7 @@ function AddStaff() {
     const [address, setAddress] = useState('');
     const [phone, setPhone] = useState('');
     const [message, setMessage] = useState('');
-    const [showPassword, setShowPassword] = useState('');
-    const [username, setUsername] = useState('');
+    const [registrationSuccessful, setRegistrationSuccessful] = useState(false);
 
     let query = useQuery();
 
@@ -46,12 +45,7 @@ function AddStaff() {
         event.preventDefault();
 
         addNewStaff(getAuthToken(), firstName, lastName, email, phone, address)
-            .then(res =>{
-                setUsername(res.user.username);
-                setShowPassword(res.initialPassword);
-                setMessage({});
-                    
-            })
+            .then(res => setRegistrationSuccessful(true))
             .catch(err => setMessage(err.response.data));
     }
     return (
@@ -77,8 +71,7 @@ function AddStaff() {
                 <button type="submit" className= "btn btn-success mt-2">Add Staff</button>
             </form>
             <div className="text-danger mt-3">{ Object.keys(message).map((msg, indx) => <p key={ indx }><b>{ msg.replaceAll('_', ' ') }</b>: { message[msg] }</p>) }</div>
-            <div className="mt-4">{ username === '' ? '' : 'The username for this account is: ' + username}</div>
-            <div className="mt-4">{ showPassword === '' ? '' : 'The initial password for this account is: ' + showPassword}</div>
+            <div className="mt-4">{ registrationSuccessful ? `An email has been sent to ${email} with the login credentials.` : '' }</div>
         </div>
     );
 }
