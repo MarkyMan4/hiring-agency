@@ -308,14 +308,14 @@ function ServiceRequestDetail() {
 
 
 
-        return (<div>
+        return (<div className="mb-5">
             {
                 goodHPs.map(goodHP => {
             
                     return(
                         <div class="row mt-2" data-id="goodHP.id" >
                             <div class="col ">
-                                <button type="button" className="service-request-hp-row" value={goodHP.id} onClick={assign} > <div> <p>Name: {goodHP.user.first_name}  {goodHP.user.last_name}   |   Gender: {goodHP.gender}</p></div> </button>
+                                <button type="button" className="service-request-hp-row btn btn-outline-secondary" value={goodHP.id} onClick={assign} >Name: {goodHP.user.first_name}  {goodHP.user.last_name}   |   Gender: {goodHP.gender}</button>
                             </div>
                         </div>
                     )
@@ -434,7 +434,7 @@ function ServiceRequestDetail() {
                         <h3> Currently Assigned Healthcare Professional </h3>
                         <p> Name: {hp.healthcare_professional.user.first_name} {hp.healthcare_professional.user.last_name} </p>
                         <p> Gender: {hp.gender}</p>
-                        <button type="button" onClick={unassign}> UnAssign</button>
+                        <button type="button" className="btn btn-warning" onClick={unassign}> UnAssign</button>
                     </div>
                 </div>
             </div>

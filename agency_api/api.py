@@ -575,6 +575,26 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
         return user.username, generated_password
 
 
+class HPViewSet(viewsets.ModelViewSet):
+    serializer_class = HealthCareProfessionalDetailSerializer
+
+    def get_queryset(self):
+        return HealthCareProfessional.objects.all()
+
+    # GET /api/hp_requests/<id>
+    def retrieve(self, request, pk):
+        queryset = self.get_queryset().get(id=pk)
+        serializer = self.serializer_class(queryset)
+
+        return Response(serializer.data) 
+
+    # GET /api/hp_requests/
+    def list(self, request):
+        data = self.get_queryset()
+        serializer = self.serializer_class(data, many=True)
+
+        return Response(serializer.data)
+
 class StaffManageViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminUser]
     serializer_class = ViewStaffMemberSerializer
