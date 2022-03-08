@@ -35,6 +35,11 @@
   width: 400px;
 }
 
+.service-request-hp-row{
+  width: 20%;
+  height: 35px;
+}
+
 .care-taker-request-card {
   border: 1px;
   border-style: solid;
