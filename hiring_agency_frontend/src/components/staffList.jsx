@@ -52,7 +52,7 @@ function StaffList(){
                     <input 
                         value={ showActive } 
                         onChange={ event => {
-                            setShowActive(!showActive)
+                            setShowActive(true)
                         }}        
                         type="radio"
                         checked = { showActive === true}  
@@ -63,7 +63,7 @@ function StaffList(){
                     <input 
                         value={ !showActive } 
                         onChange={ event => {
-                            setShowActive(!showActive)
+                            setShowActive(false)
                         }}        
                         type="radio"
                         checked = { showActive === false}                 
