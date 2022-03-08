@@ -51,7 +51,7 @@ function ServiceRequests() {
 
                             setShowAssinged(!showAssigned);
                         }} 
-                        class="form-check-input" 
+                        className="form-check-input" 
                         type="checkbox" 
                         role="switch" 
                         checked={ showAssigned ? 'checked' : '' }
@@ -65,7 +65,7 @@ function ServiceRequests() {
                             setShowCompleted(!showCompleted);
                             setShowAssinged(true);
                         }}
-                        class="form-check-input" 
+                        className="form-check-input" 
                         type="checkbox" 
                         role="switch" 
                         checked={ showCompleted ? 'checked' : '' }

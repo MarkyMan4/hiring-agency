@@ -39,12 +39,13 @@ export const logout = async (token) => {
         .catch(err => console.log('Failed to logout'));
 }
 
-export const changePassword = async (token, oldPassword, newPassword) => {
+export const changePassword = async (token, oldPassword, newPassword, confirmPassword) => {
     let url = baseUrl + 'api/auth/change_password';
 
     let body = {
         old_pass: oldPassword,
-        new_pass: newPassword
+        new_pass: newPassword,
+        con_pass: confirmPassword
     };
 
     let config = {
