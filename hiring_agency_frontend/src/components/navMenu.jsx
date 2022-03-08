@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Nav, Navbar} from 'react-bootstrap';
+import { Nav, Navbar, NavDropdown} from 'react-bootstrap';
 import { isUserLoggedIn, destroyAuthToken, getAuthToken, isAdmin } from "../utils/storage";
 import { getUser, logout } from "../api/authRequests";
 
@@ -59,20 +59,20 @@ function NavMenu({ roles }) {
 
     const viewStaffList = () => {
         if(roles.includes('admin') ) { 
-            return <Nav.Link className="nav-link" href="#/view_staff_list">Staff List</Nav.Link>
+            return <NavDropdown.Item className="nav-link" href="#/view_staff_list">Staff List</NavDropdown.Item>
         }
     }
 
     const viewCareTakerList = () => {
         if(roles.includes('admin') || roles.includes('staff')) { 
-            return <Nav.Link className="nav-link" href="#/view_caretaker_list">Care taker List</Nav.Link>
+            return <NavDropdown.Item className="nav-link" href="#/view_caretaker_list">Care taker List</NavDropdown.Item>
         }
     }
 
 
     const getAddStaff = () => {
         if(roles.includes('admin')) {
-            return <Nav.Link className="nav-link" href="#/add_new_staff" >Add staff</Nav.Link>
+            return <NavDropdown.Item className="nav-link" href="#/add_new_staff" >Add staff</NavDropdown.Item>
         }
     }
 
@@ -114,9 +114,15 @@ function NavMenu({ roles }) {
                 <Nav className="me-auto">
                     <Nav.Link className="nav-link" href="#/">Home</Nav.Link>
                     { getSignUp() }
-                    { getAddStaff() }
-                    { viewStaffList() }
-                    { viewCareTakerList() }
+                    <NavDropdown
+                        id="nav-dropdown-dark-example"
+                        title="User management"
+                        menuVariant="dark"
+                        >
+                        { getAddStaff() }
+                        { viewStaffList() }
+                        { viewCareTakerList() }
+                    </NavDropdown>
                     { createJobPosting() }
                     { getCareTakerAccountRequest() }
                     { viewJobPosting() }
