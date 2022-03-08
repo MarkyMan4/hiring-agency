@@ -7,15 +7,11 @@ import { getAuthToken } from "../utils/storage";
 
 function ApprovejobRequest() {
     const { id } =useParams();
-    const [username, setUsername ] = useState('');
-    const [password, setPassword ] = useState('');
+    const [email, setEmail] = useState();
 
     useEffect(() => {
         approveJobRequest(getAuthToken(), id)
-            .then(res => {
-                setUsername(res.username);
-                setPassword(res.password);
-            })
+            .then(res => setEmail(res.email))
             .catch(err => console.log(err));
     },[]);
 
@@ -23,12 +19,7 @@ function ApprovejobRequest() {
         <div>
             <h1>You approved a job request and a heathcare professional account has been created</h1>
             <hr/>
-            <p>
-                Username and password below. Please record them and send to user.
-                If you leave this page, these information will not be shown in the future
-            </p>
-            <p><b>Username: </b>{ username }</p>
-            <p><b>Password: </b>{ password }</p>
+            <p>{ email ? `An email has been sent to ${email} with the login credentials.` : '' }</p>
 
         </div>
     )

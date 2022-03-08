@@ -522,10 +522,10 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
         job_request.is_pending = False
         job_request.save()
 
-        username, password = self.register_hp(job_request)
+        username, email = self.register_hp(job_request)
         return Response({
             'username' :username ,
-            'password' :password
+            'email' :email
         })
 
     @action(methods=['PUT'], detail=True)
@@ -584,7 +584,16 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
         heathCareProfessional_group = Group.objects.get(name='healthcareprofessional')
         heathCareProfessional_group.user_set.add(user)
 
-        return user.username, generated_password
+        # send an email with the first time login credentials
+        send_mail(
+            'New healthcare professional account',
+            email_template.format(username=user.username, password=generated_password),
+            settings.EMAIL_HOST_USER,
+            [user.email],
+            fail_silently=False,
+        )
+
+        return user.username, user.email
 
 
 class HPViewSet(viewsets.ModelViewSet):
