@@ -17,6 +17,7 @@ from .api import (
     CreateServiceRequestViewSet,
     RetrieveServiceRequestViewSet,
     HPJobApplicationViewSet,
+    HPViewSet,
     StaffManageViewSet,
     CareTakerManageViewSet
 )
@@ -35,6 +36,7 @@ router.register('api/retrieve_service_requests', RetrieveServiceRequestViewSet, 
 router.register('api/create_service_assignment', CreateServiceAssignmentViewSet, 'create-service-assignment')
 router.register('api/service_assignments', ServiceAssignmentViewSet, 'service-assignments')
 router.register('api/hp_job_application',HPJobApplicationViewSet, 'job-application')
+router.register('api/hp_requests', HPViewSet, 'job-application')
 router.register('api/view_staff_list',StaffManageViewSet, 'staff-list')
 router.register('api/view_caretaker_list',CareTakerManageViewSet, 'care-taker-list')
 router.register('api/billing_accounts', BillingAccountViewSet, 'billing-accounts')
