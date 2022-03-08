@@ -48,6 +48,14 @@
   padding: 10px;
   margin-bottom: 30px;
 }
+.staff-card {
+  border: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  border-color: rgb(206, 206, 206);
+  padding: 10px;
+  margin-bottom: 10px;
+}
 
 .advertisement-job-card {
   border: 1px;
@@ -73,6 +81,8 @@
 .day-of-week-box {
   border: 1px solid rgb(206, 206, 206);
   border-radius: 5px;
-  padding: 5px;
+  width: 40px;
+  text-align: center;
   margin-right: 5px;
+  display: inline-block;
 }

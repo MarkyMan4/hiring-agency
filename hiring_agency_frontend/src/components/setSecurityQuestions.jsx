@@ -68,7 +68,7 @@ function SetSecurityQuestions() {
         <div>
             <h4>Please select your security questions and answers.</h4>
             <div>
-                Answers must be a single word and a minimum of four characters.
+                Password must be at least four characters, please choose three question and answer them all.
             </div>
             <hr />
 

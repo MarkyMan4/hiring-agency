@@ -36,6 +36,14 @@ import JobRequestList from './components/jobRequestList';
 import JobRequesDetail from './components/jobRequestDetail';
 import JobRequesReject from './components/jobRequestRejected';
 import JobRequesApproved from './components/jobRequestApproved';
+import StaffList from './components/staffList';
+import StaffDetail from './components/staffDetail';
+import StaffStatusChanged from './components/staffStatusChanged';
+import CareTakerList from './components/careTakerList';
+import CareTakerDetail from './components/careTakerDetail';
+import CareTakerStatusChanged from './components/careTakerStatusChanged';
+import MyMenu from './components/myMenu';
+import BillingAccounts from './components/billingAccounts';
 
 
 function App() {
@@ -88,6 +96,14 @@ function App() {
           <Route path="/hp_job_application/:id" element={<StaffRoute roles={ roles }><JobRequesDetail /></StaffRoute>} /> 
           <Route path="/hp_job_application/:id/approve" element={<StaffRoute roles={ roles }><JobRequesApproved /></StaffRoute>} /> 
           <Route path="/hp_job_application/:id/reject" element={<StaffRoute roles={ roles }> <JobRequesReject /></StaffRoute>} /> 
+          <Route path="/view_staff_list" element={ <AdminRoute roles={ roles }><StaffList/></AdminRoute> } />
+          <Route path="/view_staff_list/:id" element={ <AdminRoute roles={ roles }><StaffDetail/></AdminRoute> } />
+          <Route path="/view_staff_list/:id/status" element={ <AdminRoute roles={ roles }><StaffStatusChanged/></AdminRoute> } />
+          <Route path="/view_caretaker_list" element={ <StaffRoute roles={ roles }><CareTakerList/></StaffRoute> } />
+          <Route path="/view_caretaker_list/:id" element={ <StaffRoute roles={ roles }><CareTakerDetail/></StaffRoute> } />
+          <Route path="/view_caretaker_list/:id/status" element={ <StaffRoute roles={ roles }><CareTakerStatusChanged/></StaffRoute> } />
+          <Route path="/user_menu" element={ <MyMenu /> } />
+          <Route path="/billing_accounts" element={<StaffRoute roles={ roles }> <BillingAccounts /></StaffRoute>} /> 
         </Routes>
       );
     }

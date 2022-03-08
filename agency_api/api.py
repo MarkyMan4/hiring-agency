@@ -7,6 +7,7 @@ from knox.models import AuthToken
 from agency_api.auth.auth_serializers import RegisterUserSerializer, UserSerializer
 from .permissions import CustomModelPermissions
 from .serializers import (
+    BillingAccountDetailSerializer,
     CareTakerRequestSerializer,
     HPJobApplicationRetrieveSerializer, 
     JobPostingSerializerRetrieval, 
@@ -19,11 +20,14 @@ from .serializers import (
     RetrieveServiceRequestSerializer,
     SecurityQuestionSerializer,
     SecurityQuestionAnswerSerializer,
+    ViewStaffMemberSerializer,
+    ViewCareTakerMemberSerializer,
     CreateServiceRequestSerializer,
     ServiceAssignmentDetailSerializer,
     ServiceAssignmentSerializer
 )
 from .models import (
+    BillingAccount,
     CareTaker, 
     CareTakerRequest,
     HPJobApplication, 
@@ -32,11 +36,14 @@ from .models import (
     SecurityQuestion, 
     SecurityQuestionAnswer, 
     JobPosting, 
+    StaffMember,
+    CareTaker,
     ServiceRequest, 
-    ServiceAssignment
+    ServiceAssignment,
+    User
 )
 from .utils.account import gen_rand_pass
-from datetime import datetime
+import datetime
 
 class JobPostingViewSet(viewsets.ModelViewSet):
     serializer_class = JobPostingSerializer
@@ -105,12 +112,19 @@ class SecurityQuestionAnswerViewSet(viewsets.ModelViewSet):
     # POST /api/securityquestionanswers
     def create(self, request):
         data = request.data
-        data['user'] = self.request.user.id
+        data['user'] = self.request.user.id 
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         headers = self.get_success_headers(serializer.data)
+
+        count = SecurityQuestionAnswer.objects.filter(user_id=self.request.user.id).count()
+        while count > 3:
+            print("hi")
+            old_question = SecurityQuestionAnswer.objects.filter(user_id=request.user.id).order_by('id').first()
+            old_question.delete()
+            count = SecurityQuestionAnswer.objects.filter(user_id=self.request.user.id).count()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
@@ -155,7 +169,7 @@ class CreateCareTakerRequestViewSet(generics.GenericAPIView):
     # POST /api/create_caretaker_request
     def post(self, request):
         data = request.data
-        data['date_requested'] = datetime.now()
+        data['date_requested'] = datetime.datetime.now()
         data['is_pending'] = True
         data['is_approved'] = False
 
@@ -373,6 +387,7 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
 # i.e. only need IDs of healthcare pro and service request when creating this assignment
 class CreateServiceAssignmentViewSet(viewsets.ViewSet):
     serializer_class = ServiceAssignmentSerializer
+    permission_classes = [CustomModelPermissions]
 
     # still need a queryset defined for permissions
     def get_queryset(self):
@@ -390,6 +405,32 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
         service_request.is_assigned = True
         service_request.save()
 
+        # calculate the total amount to be paid based on hourly rate, hours per day
+        # and total days of service requested
+        hourly_rate = float(service_request.service_type.hourly_rate)
+        hours_per_day = 0
+
+        if service_request.flexible_hours:
+            hours_per_day = service_request.hours_of_service_daily
+        else:
+            date = datetime.date(1,1,1)
+            start_time = datetime.datetime.combine(date, service_request.service_start_time)
+            end_time = datetime.datetime.combine(date, service_request.service_end_time)
+            diff = end_time - start_time # difference is given in seconds
+            hours_per_day = diff.seconds / 60 / 60
+        
+        total_days = service_request.days_of_service
+        amt_to_be_paid = hours_per_day * total_days * hourly_rate
+
+
+        # create a service account
+        BillingAccount.objects.create(
+            service_request=service_request,
+            hourly_rate=hourly_rate,
+            amt_paid=0.00,
+            amt_to_be_paid=amt_to_be_paid
+        )
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -399,6 +440,7 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
 # used for any operations around a service request except for creation
 class ServiceAssignmentViewSet(viewsets.ViewSet):
     serializer_class = ServiceAssignmentDetailSerializer
+    permission_classes = [CustomModelPermissions]
 
     def get_queryset(self):
         return ServiceAssignment.objects.all()
@@ -532,44 +574,96 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
 
         return user.username, generated_password
 
-    serializer_class = ServiceAssignmentDetailSerializer
+
+class StaffManageViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAdminUser]
+    serializer_class = ViewStaffMemberSerializer
 
     def get_queryset(self):
-        return ServiceAssignment.objects.all()
+        return StaffMember.objects.all()
 
-    # GET /api/service_assignments
+    
+    def list(self, request):
+        queryset = self.get_queryset()
+
+        if request.query_params.get('active'):
+            value = request.query_params.get('active')
+            queryset = queryset.filter(user__is_active__exact=True if value.lower() == 'true' else False)
+
+        serializer = self.serializer_class(queryset, many=True)
+
+        return Response(serializer.data)
+
+    @action(methods=['PUT'], detail=True)
+    def status(self, request, pk):
+        queryset = self.get_queryset()
+
+        if not queryset.filter(id=pk).exists():
+            return Response({'error':'Staff is not exist'})
+        
+        staff = queryset.get(id=pk)
+        user_id = staff.user_id
+        user = User.objects.get(id=user_id)
+        
+        user.is_active = not user.is_active
+        user.save()
+        return Response()
+
+
+class CareTakerManageViewSet(viewsets.ModelViewSet):
+    permission_classes = [CustomModelPermissions]
+    serializer_class = ViewCareTakerMemberSerializer
+
+    def get_queryset(self):
+        return CareTaker.objects.all()
+
+
+    def list(self, request):
+        queryset = self.get_queryset()
+
+        if request.query_params.get('active'):
+            value = request.query_params.get('active')
+            queryset = queryset.filter(user__is_active__exact=True if value.lower() == 'true' else False)
+
+        serializer = self.serializer_class(queryset, many=True)
+
+        return Response(serializer.data)
+
+    @action(methods=['PUT'], detail=True)
+    def status(self, request, pk):
+        queryset = self.get_queryset()
+
+        if not queryset.filter(id=pk).exists():
+            return Response({'error':'Staff is not exist'})
+        
+        staff = queryset.get(id=pk)
+        user_id = staff.user_id
+        user = User.objects.get(id=user_id)
+        
+        user.is_active = not user.is_active
+        user.save()
+        return Response()
+
+
+
+
+class BillingAccountViewSet(viewsets.ViewSet):
+    serializer_class = BillingAccountDetailSerializer
+    permission_classes = [CustomModelPermissions]
+
+    def get_queryset(self):
+        return BillingAccount.objects.all()
+
+    # GET /api/billing_accounts
     def list(self, request):
         data = self.get_queryset()
         serializer = self.serializer_class(data, many=True)
 
         return Response(serializer.data)
 
-    # GET /api/service_assignments/<id>
+    # GET /api/BillingAccounts/<id>
     def retrieve(self, request, pk):
         queryset = self.get_queryset().get(id=pk)
         serializer = self.serializer_class(queryset)
-
-        return Response(serializer.data) 
-
-class HPViewSet(viewsets.ModelViewSet):
-    serializer_class = HealthCareProfessionalDetailSerializer
-
-    def get_queryset(self):
-        return HealthCareProfessional.objects.all()
-
-    # GET /api/hp_requests/<id>
-    def retrieve(self, request, pk):
-        queryset = self.get_queryset().get(id=pk)
-        serializer = self.serializer_class(queryset)
-
-        return Response(serializer.data) 
-
-    # GET /api/hp_requests/
-    def list(self, request):
-        data = self.get_queryset()
-        serializer = self.serializer_class(data, many=True)
 
         return Response(serializer.data)
-
-
-

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Nav, Navbar} from 'react-bootstrap';
+import { Nav, Navbar, NavDropdown} from 'react-bootstrap';
 import { isUserLoggedIn, destroyAuthToken, getAuthToken, isAdmin } from "../utils/storage";
 import { getUser, logout } from "../api/authRequests";
-import AddStaff from "./addStaff";
+
 
 function NavMenu({ roles }) {
     const [username, setUsername] = useState('');
@@ -56,9 +56,23 @@ function NavMenu({ roles }) {
             return <Nav.Link className="nav-link" href="#/hp_job_application">Job Requests</Nav.Link>
         }
     }
+
+    const viewStaffList = () => {
+        if(roles.includes('admin') ) { 
+            return <NavDropdown.Item className="nav-link" href="#/view_staff_list">Staff List</NavDropdown.Item>
+        }
+    }
+
+    const viewCareTakerList = () => {
+        if(roles.includes('admin') || roles.includes('staff')) { 
+            return <NavDropdown.Item className="nav-link" href="#/view_caretaker_list">Care taker List</NavDropdown.Item>
+        }
+    }
+
+
     const getAddStaff = () => {
         if(roles.includes('admin')) {
-            return <Nav.Link className="nav-link" href="#/add_new_staff" >Add staff</Nav.Link>
+            return <NavDropdown.Item className="nav-link" href="#/add_new_staff" >Add staff</NavDropdown.Item>
         }
     }
 
@@ -79,6 +93,18 @@ function NavMenu({ roles }) {
             return <Nav.Link className="nav-link" href="#/service_requests">Service Requests</Nav.Link>
         }
     }
+    const userChangePassword = () =>{
+        if(isUserLoggedIn()) {
+            return <Nav.Link className="nav-link" href="#/user_menu">{ username } </Nav.Link>
+        }
+    }
+    
+
+    const getBillingAccounts = () => {
+        if(roles.includes('admin') || roles.includes('staff')) { 
+            return <Nav.Link className="nav-link" href="#/billing_accounts">Billing Accounts</Nav.Link>
+        }
+    }
 
     return (
         <Navbar className="navbar-dark mb-5 py-2 site-navbar" bg="dark" expand="lg">
@@ -88,17 +114,26 @@ function NavMenu({ roles }) {
                 <Nav className="me-auto">
                     <Nav.Link className="nav-link" href="#/">Home</Nav.Link>
                     { getSignUp() }
-                    { getAddStaff() }
+                    <NavDropdown
+                        id="nav-dropdown-dark-example"
+                        title="User management"
+                        menuVariant="dark"
+                        >
+                        { getAddStaff() }
+                        { viewStaffList() }
+                        { viewCareTakerList() }
+                    </NavDropdown>
                     { createJobPosting() }
                     { getCareTakerAccountRequest() }
                     { viewJobPosting() }
                     { viewJobRequest() }
                     { getCreateServiceRequest() }
                     { getServiceRequests() }
+                    { getBillingAccounts() }
                 </Nav>
             </Navbar.Collapse>
             <span className="navbar-text" style={ {marginRight: '20px'} }>
-                { username }
+                { userChangePassword() }
             </span>
             <span className="navbar-text">
                 { getLoginOrLogoutButton() }
