@@ -132,6 +132,7 @@ class ChangePasswordAPI(generics.GenericAPIView):
         username = self.request.user.username
         old_pass = request.data['old_pass']
         new_pass = request.data['new_pass']
+        con_pass = request.data['con_pass']
 
         user = authenticate(username=username, password=old_pass)
 
@@ -140,6 +141,11 @@ class ChangePasswordAPI(generics.GenericAPIView):
             if old_pass == new_pass:
                 return Response({
                     'error': 'new password cannot be the same as old password'
+                })
+
+            if con_pass != new_pass:
+                return Response({
+                    'error': 'confirm password should same as new password'
                 })
 
             # make sure the password meets minimum requirements
