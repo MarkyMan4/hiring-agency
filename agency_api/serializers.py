@@ -1,5 +1,3 @@
-from dataclasses import field
-from pickle import FALSE
 from rest_framework import serializers
 
 from agency_api.auth.auth_serializers import UserSerializer
