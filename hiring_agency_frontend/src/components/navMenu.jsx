@@ -69,10 +69,25 @@ function NavMenu({ roles }) {
         }
     }
 
-
     const getAddStaff = () => {
         if(roles.includes('admin')) {
             return <NavDropdown.Item className="nav-link" href="#/add_new_staff" >Add staff</NavDropdown.Item>
+        }
+    }
+
+    const getUserManagement = () => {
+        if(roles.includes('admin') || roles.includes('staff')) { 
+            return (
+                <NavDropdown
+                    id="nav-dropdown-dark-example"
+                    title="User management"
+                    menuVariant="dark"
+                    >
+                    { getAddStaff() }
+                    { viewStaffList() }
+                    { viewCareTakerList() }
+                </NavDropdown>
+            );
         }
     }
 
@@ -114,15 +129,7 @@ function NavMenu({ roles }) {
                 <Nav className="me-auto">
                     <Nav.Link className="nav-link" href="#/">Home</Nav.Link>
                     { getSignUp() }
-                    <NavDropdown
-                        id="nav-dropdown-dark-example"
-                        title="User management"
-                        menuVariant="dark"
-                        >
-                        { getAddStaff() }
-                        { viewStaffList() }
-                        { viewCareTakerList() }
-                    </NavDropdown>
+                    { getUserManagement() }
                     { createJobPosting() }
                     { getCareTakerAccountRequest() }
                     { viewJobPosting() }
