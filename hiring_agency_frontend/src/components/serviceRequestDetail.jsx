@@ -433,7 +433,7 @@ function ServiceRequestDetail() {
                     <div className="assigned-HP-servicecard shadow animate__animated animate__fadeInLeft">
                         <h3> Currently Assigned Healthcare Professional </h3>
                         <p> Name: {hp.healthcare_professional.user.first_name} {hp.healthcare_professional.user.last_name} </p>
-                        <p> Gender: {hp.gender}</p>
+                        <p> Gender: {hp.healthcare_professional.gender}</p>
                         <button type="button" className="btn btn-warning" onClick={unassign}> UnAssign</button>
                     </div>
                 </div>
