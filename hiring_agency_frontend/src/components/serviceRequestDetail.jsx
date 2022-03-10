@@ -18,14 +18,13 @@ const daySelectedStyle = {
 function ServiceRequestDetail() {
     const { id } = useParams();
     const [serviceRequest, setServiceRequest] = useState({});
-    const [hpId, setHpId] = useState(); // TEMPORARY - USED TO QUICKLY ASSIGN HP TO SERVICE REQUESTS
     const [hp, setHP] = useState();
     const [hpList, setHPList] = useState();
     const [servAssignList, setServAssignList] = useState();
     useEffect(() => {
         retrieveServiceRequest(getAuthToken(), id)
             .then(res => setServiceRequest(res));
-    }, []);
+    }, [id]);
 
     useEffect(() => {
         getHPList(getAuthToken())  //could be moved elsewhere for performance if needed
@@ -143,7 +142,7 @@ function ServiceRequestDetail() {
         // console.log(servAssignList);
         hpList.forEach(curHP => {
             //gender
-            if (serviceRequest.hp_gender_required == true) {
+            if (serviceRequest.hp_gender_required === true) {
                 // console.log("comparing");
                 // console.log(curHP.gender);
                 // console.log(serviceRequest.patient_gender);
@@ -175,7 +174,7 @@ function ServiceRequestDetail() {
 
             //load all hours worked by current assignments per day 
             servAssignList.forEach(thisServ => {//possibly a better way to do this
-                if (thisServ.care_taker.id != curHP.id) {
+                if (thisServ.care_taker.id !== curHP.id) {
                     return;
                 }
 
@@ -392,14 +391,14 @@ function ServiceRequestDetail() {
 
     const getAssignedHPorForm = () => {
         console.log(hpList);
-        if (isDataLoaded() && serviceRequest.is_assigned == true && hp === undefined) {
+        if (isDataLoaded() && serviceRequest.is_assigned === true && hp === undefined) {
             // console.log("http assigned hp");
             retrieveHPByServiceAsisgnment(getAuthToken(), serviceRequest.id)
                 .then(res => {setHP(res);})
                 .catch(err => console.log(err.response.data));
             return (<div></div>)
 
-        } else if(isDataLoaded() && serviceRequest.is_assigned == true && hp !== undefined){
+        } else if(isDataLoaded() && serviceRequest.is_assigned === true && hp !== undefined){
             // console.log("getting assigned hp data")
             return (
                 <div>

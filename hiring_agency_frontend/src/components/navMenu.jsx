@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Nav, Navbar, NavDropdown} from 'react-bootstrap';
-import { isUserLoggedIn, destroyAuthToken, getAuthToken, isAdmin } from "../utils/storage";
+import { isUserLoggedIn, destroyAuthToken, getAuthToken } from "../utils/storage";
 import { getUser, logout } from "../api/authRequests";
 
 

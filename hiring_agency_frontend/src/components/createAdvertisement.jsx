@@ -1,7 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { getSecurityQuestionsForUser, getUser, lockAccount, login } from "../api/authRequests";
-import { setAuthToken } from "../utils/storage";
-import { isUserLoggedIn } from "../utils/storage";
+import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { sendJobForm } from "../api/jobApi";
 
