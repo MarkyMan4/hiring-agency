@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getBillingAccountById } from "../api/billingAccounts";
 import { getAuthToken } from "../utils/storage";
-import CancelButton from "./cancelButton";
+import CancelButton from "../components/cancelButton";
 
 function BillingAccountDetail() {
     const { id } = useParams();

@@ -8,7 +8,7 @@ import { getHPList } from "../api/HPRequests";
 import { retrieveServiceRequest } from "../api/serviceRequests";
 import { getAllServiceRequests } from "../api/serviceRequests";
 import { getAuthToken } from "../utils/storage";
-import CancelButton from "./cancelButton";
+import CancelButton from "../components/cancelButton";
 
 const daySelectedStyle = {
     backgroundColor: 'rgb(5, 194, 68)',

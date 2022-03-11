@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getAllBillingAccounts } from "../api/billingAccounts";
 import { getAuthToken } from "../utils/storage";
-import BillingAccountCard from "./billingAccountCard";
+import BillingAccountCard from "../components/billingAccountCard";
 
 function BillingAccounts() {
     const [billingAccts, setBillingAccts] = useState();

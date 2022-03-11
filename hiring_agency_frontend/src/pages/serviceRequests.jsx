@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { getAllServiceRequests } from "../api/serviceRequests";
 import { getAuthToken } from "../utils/storage";
-import ServiceRequestCard from "./serviceRequestCard";
+import ServiceRequestCard from "../components/serviceRequestCard";
 
 function ServiceRequests() {
     const [serviceRequests, setServiceRequests] = useState([]);
