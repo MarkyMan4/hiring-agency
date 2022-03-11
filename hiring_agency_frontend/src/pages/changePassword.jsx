@@ -37,7 +37,9 @@ function ChangePassword() {
         setConfirmPassword(event.target.value);
     }
 
-    const changePasswordClicked = () => {
+    const changePasswordClicked = (event) => {
+        event.preventDefault();
+
         // determine if password change was successful and display a message
         changePassword(getAuthToken(), oldPassword, newPassword, confirmPassword)
             .then(res => {
@@ -62,15 +64,15 @@ function ChangePassword() {
                 Password must be at least six characters, only contain alphanumeric characters and at least one of the following: ~, !, @, #, $, %, ^, &, *, +
             </div>
             <hr />
-            <form id="changePasswordForm" className="basic-form">
-            <div className="mb-4">{ topMessage }</div>
-            <label className="mt-4">Old password</label><br />
-            <input value={ oldPassword } onChange={ handleOldPassInput } type="password" className="form-control mt-2" ></input><br />
-            <label className="mt-3">New password</label><br />
-            <input value={ newPassword } onChange={ handleNewPassInput } type="password" className="form-control mt-2" ></input><br />
-            <label className="mt-3">Confirm new password</label><br />
-            <input value={ confirmPassword } onChange={ handleConfirmPassInput } type="password" className="form-control mt-2" ></input><br />
-            <button onClick={ changePasswordClicked } className="btn btn-success mt-3">Change password</button>
+            <form id="changePasswordForm" onSubmit={ changePasswordClicked } className="basic-form">
+                <div className="mb-4">{ topMessage }</div>
+                <label className="mt-4">Old password</label><br />
+                <input value={ oldPassword } onChange={ handleOldPassInput } type="password" className="form-control mt-2" ></input><br />
+                <label className="mt-3">New password</label><br />
+                <input value={ newPassword } onChange={ handleNewPassInput } type="password" className="form-control mt-2" ></input><br />
+                <label className="mt-3">Confirm new password</label><br />
+                <input value={ confirmPassword } onChange={ handleConfirmPassInput } type="password" className="form-control mt-2" ></input><br />
+                <button type="submit" className="btn btn-success mt-3">Change password</button>
             </form>
             <div className="mt-3">{ message }</div>
         </div>
