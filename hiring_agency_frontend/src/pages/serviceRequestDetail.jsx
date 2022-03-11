@@ -21,10 +21,12 @@ function ServiceRequestDetail() {
     const [hp, setHP] = useState();
     const [hpList, setHPList] = useState();
     const [servAssignList, setServAssignList] = useState();
+    const [isAssigned, setIsAssigned] = useState();
+
     useEffect(() => {
         retrieveServiceRequest(getAuthToken(), id)
             .then(res => setServiceRequest(res));
-    }, [id]);
+    }, [id, isAssigned]);
 
     useEffect(() => {
         getHPList(getAuthToken())  //could be moved elsewhere for performance if needed
@@ -116,30 +118,20 @@ function ServiceRequestDetail() {
     const assign = (event) => {
         event.preventDefault();
         assignHpToServiceRequest(getAuthToken(), id, event.target.value)
-            .then(res => {
-                console.log(res);
-                window.location.reload(false); //refresh current page
-            })
+            .then(res => setIsAssigned(true))
             .catch(err => console.log(err.response.data));
     }
 
     const unassign = (event) =>{
         event.preventDefault();
-        // console.log("doing unassign");
         unassignHpToServiceRequest(getAuthToken(), hp.id)
-            .then(res => {
-                window.location.reload(false); //refresh current page
-            })
+            .then(res => setIsAssigned(false))
             .catch(err => console.log(err.response.data));
     }
 
     const getAvailableHP = () => { //also does validation
         let goodHPs = [];
-        // console.log("starting validation");
-        // console.log(hpList);
-        // console.log(serviceRequest);
-        // console.log("print out list");
-        // console.log(servAssignList);
+        
         hpList.forEach(curHP => {
             //gender
             if (serviceRequest.hp_gender_required === true) {
@@ -390,7 +382,6 @@ function ServiceRequestDetail() {
     }
 
     const getAssignedHPorForm = () => {
-        console.log(hpList);
         if (isDataLoaded() && serviceRequest.is_assigned === true && hp === undefined) {
             // console.log("http assigned hp");
             retrieveHPByServiceAsisgnment(getAuthToken(), serviceRequest.id)
@@ -424,8 +415,6 @@ function ServiceRequestDetail() {
 
 
     const getHPHtml = () => {
-        console.log("getting hp html");
-        console.log(hp);
         return (
             <div className="row mt-4">
                 <div className="col">
