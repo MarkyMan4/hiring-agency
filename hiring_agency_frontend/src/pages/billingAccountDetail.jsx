@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getBillingAccountById } from "../api/billingAccounts";
 import { getAuthToken } from "../utils/storage";
 import CancelButton from "../components/cancelButton";
@@ -12,7 +12,7 @@ function BillingAccountDetail() {
     useEffect(() => {
         getBillingAccountById(getAuthToken(), id)
             .then(res => setBillingAccount(res));
-    }, []);
+    }, [id]);
 
     const isDataLoaded = () => {
         return Object.keys(billingAccount).length > 0;
@@ -31,11 +31,11 @@ function BillingAccountDetail() {
                             <h3 className="mt-4">Billing Account info</h3>
                             <hr />
                             <b>Hourly rate</b>
-                            <p>{ billingAccount.hourly_rate }</p>
+                            <p>${ billingAccount.hourly_rate }</p>
                             <b>Amount paid</b>
-                            <p>{ billingAccount.amt_paid }</p>
+                            <p>${ billingAccount.amt_paid }</p>
                             <b>Amount to be paid</b>
-                            <p>{ billingAccount.amt_to_be_paid }</p>
+                            <p>${ billingAccount.amt_to_be_paid }</p>
                         </div>
                     </div>
                     <div className="col-md-6 mb-3">
