@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { getAllStaff } from "../api/staffManage"
 import { getAuthToken } from "../utils/storage";
-import StaffCard from "./staffCard";
+import StaffCard from "../components/staffCard";
 
 function StaffList(){
     const [staffList, setStaffList] = useState([]);

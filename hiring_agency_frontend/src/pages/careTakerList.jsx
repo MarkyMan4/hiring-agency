@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { getAllCareTaker } from "../api/careTakerManage"
 import { getAuthToken } from "../utils/storage";
-import CareTakerCard from "./careTakerCard"
+import CareTakerCard from "../components/careTakerCard"
 
 function CareTakerList(){
     const [careTakerList, setCareTakerList] = useState([]);

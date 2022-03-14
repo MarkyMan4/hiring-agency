@@ -8,7 +8,7 @@ import { getHPList } from "../api/HPRequests";
 import { retrieveServiceRequest } from "../api/serviceRequests";
 import { getAllServiceRequests } from "../api/serviceRequests";
 import { getAuthToken } from "../utils/storage";
-import CancelButton from "./cancelButton";
+import CancelButton from "../components/cancelButton";
 
 const daySelectedStyle = {
     backgroundColor: 'rgb(5, 194, 68)',
@@ -18,14 +18,15 @@ const daySelectedStyle = {
 function ServiceRequestDetail() {
     const { id } = useParams();
     const [serviceRequest, setServiceRequest] = useState({});
-    const [hpId, setHpId] = useState(); // TEMPORARY - USED TO QUICKLY ASSIGN HP TO SERVICE REQUESTS
     const [hp, setHP] = useState();
     const [hpList, setHPList] = useState();
     const [servAssignList, setServAssignList] = useState();
+    const [isAssigned, setIsAssigned] = useState();
+
     useEffect(() => {
         retrieveServiceRequest(getAuthToken(), id)
             .then(res => setServiceRequest(res));
-    }, []);
+    }, [id, isAssigned]);
 
     useEffect(() => {
         getHPList(getAuthToken())  //could be moved elsewhere for performance if needed
@@ -117,33 +118,23 @@ function ServiceRequestDetail() {
     const assign = (event) => {
         event.preventDefault();
         assignHpToServiceRequest(getAuthToken(), id, event.target.value)
-            .then(res => {
-                console.log(res);
-                window.location.reload(false); //refresh current page
-            })
+            .then(res => setIsAssigned(true))
             .catch(err => console.log(err.response.data));
     }
 
     const unassign = (event) =>{
         event.preventDefault();
-        // console.log("doing unassign");
         unassignHpToServiceRequest(getAuthToken(), hp.id)
-            .then(res => {
-                window.location.reload(false); //refresh current page
-            })
+            .then(res => setIsAssigned(false))
             .catch(err => console.log(err.response.data));
     }
 
     const getAvailableHP = () => { //also does validation
         let goodHPs = [];
-        // console.log("starting validation");
-        // console.log(hpList);
-        // console.log(serviceRequest);
-        // console.log("print out list");
-        // console.log(servAssignList);
+        
         hpList.forEach(curHP => {
             //gender
-            if (serviceRequest.hp_gender_required == true) {
+            if (serviceRequest.hp_gender_required === true) {
                 // console.log("comparing");
                 // console.log(curHP.gender);
                 // console.log(serviceRequest.patient_gender);
@@ -175,7 +166,7 @@ function ServiceRequestDetail() {
 
             //load all hours worked by current assignments per day 
             servAssignList.forEach(thisServ => {//possibly a better way to do this
-                if (thisServ.care_taker.id != curHP.id) {
+                if (thisServ.care_taker.id !== curHP.id) {
                     return;
                 }
 
@@ -391,15 +382,14 @@ function ServiceRequestDetail() {
     }
 
     const getAssignedHPorForm = () => {
-        console.log(hpList);
-        if (isDataLoaded() && serviceRequest.is_assigned == true && hp === undefined) {
+        if (isDataLoaded() && serviceRequest.is_assigned === true && hp === undefined) {
             // console.log("http assigned hp");
             retrieveHPByServiceAsisgnment(getAuthToken(), serviceRequest.id)
                 .then(res => {setHP(res);})
                 .catch(err => console.log(err.response.data));
             return (<div></div>)
 
-        } else if(isDataLoaded() && serviceRequest.is_assigned == true && hp !== undefined){
+        } else if(isDataLoaded() && serviceRequest.is_assigned === true && hp !== undefined){
             // console.log("getting assigned hp data")
             return (
                 <div>
@@ -425,8 +415,6 @@ function ServiceRequestDetail() {
 
 
     const getHPHtml = () => {
-        console.log("getting hp html");
-        console.log(hp);
         return (
             <div className="row mt-4">
                 <div className="col">

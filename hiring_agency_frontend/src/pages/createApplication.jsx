@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams } from 'react-router-dom';
-import { getSecurityQuestionsForUser, getUser, lockAccount, login } from "../api/authRequests";
-import { setAuthToken } from "../utils/storage";
-import { isUserLoggedIn } from "../utils/storage";
 import { useNavigate } from 'react-router-dom';
 import { sendApplication } from "../api/applicationApi";
+
 function CreateAdvertisement() {
     const [email, setEmail] = useState('');
     const [gender, setGender] = useState('Male');
@@ -85,13 +83,10 @@ function CreateAdvertisement() {
         //check input
         event.preventDefault(); // don't refresh page on form submit
         
-        if (email == "" || gender == -1) {
+        if (email === "" || gender === -1) {
             alert("Make sure experiance required is filled in");
             return;
         }
-
-       
-
 
         //if correct send data
         sendApplication(jobid, email, gender, dateOfBirth, ssn, serviceType, educationType, educationInstitution, graduationYear, graduationMonth, yearsOfExperiance, address, phoneNum, firstName, lastName)
@@ -99,10 +94,6 @@ function CreateAdvertisement() {
             .catch(err => {
                 const errorResponse = JSON.parse(err.request.response);
                 console.log(err.response);
-
-                let msgString = "";
-
-
 
                 if (errorResponse.error) {
                     setMessage(errorResponse.error)
@@ -166,7 +157,7 @@ function CreateAdvertisement() {
                 <input type="number" min={0} onChange={yearsOfExperianceChanged} className="form-control mt-2" required></input>
             
                 <label className="mt-3">Phone Number</label><br />
-                <input type="text" onChange={phoneNumChanged} placeholder="only enter digits, e.g. 1234567890" maxLength={10} minLength={10} type="tel" className="form-control mt-2" required></input>
+                <input onChange={phoneNumChanged} placeholder="only enter digits, e.g. 1234567890" maxLength={10} minLength={10} type="tel" className="form-control mt-2" required></input>
 
                 <label className="mt-3">Address</label><br />
                 <input type="text" onChange={adressChanged} className="form-control mt-2" required></input>

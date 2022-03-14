@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import { getPendingCareTakerRequestById } from "../api/careTakerRequests";
 import { getAuthToken } from "../utils/storage";
-import CancelButton from "./cancelButton";
+import CancelButton from "../components/cancelButton";
 
 function CareTakerAccountRequestDetail() {
     const { id } = useParams();

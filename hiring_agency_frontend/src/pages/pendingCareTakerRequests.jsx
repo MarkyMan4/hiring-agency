@@ -1,50 +1,50 @@
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
-import { getAllAdvertisementRequest} from "../api/advertisementRequest"
+import { getPendingCareTakerRequests } from "../api/careTakerRequests";
 import { getAuthToken } from "../utils/storage";
-import JobRequestCard from "./jobRequestCard";
+import CareTakerRequestCard from "../components/careTakerRequestCard";
 
-function JobRequestList(){
+function PendingCareTakerRequests() {
     const [pendingRequests, setPendingRequests] = useState([]);
 
-    useEffect (() =>{
-        getAllAdvertisementRequest(getAuthToken())
+    useEffect(() => {
+        getPendingCareTakerRequests(getAuthToken())
             .then(res => setPendingRequests(res));
     }, []);
 
-    const getJobRequest = () =>{
-        console.log(pendingRequests)
-        if(pendingRequests.length > 0){
-            return(
+    const getRequestListOrNoneMessage = () => {
+        if(pendingRequests.length > 0) {
+            return (
                 <div>
-                    {
+                    { 
                         pendingRequests.map((req, indx) => {
-                            return <JobRequestCard 
+                            return <CareTakerRequestCard 
                                 key={ indx } 
                                 requestId={ req.id } 
                                 firstName={ req.first_name }
                                 lastName={ req.last_name }
-                                jobType={ req.job.service_type.name }
+                                dateRequested={req.date_requested}
                             />
                         }) 
                     }
                 </div>
             );
         }
-        else{
-            return <h1 className="text-center">There are no request now</h1>
+        else {
+            return <h1 className="text-center">No requests at this time</h1>
         }
     }
-    return(
+
+    return (
         <div className="row">
-            <h1 className="text-center mb-5">Job requests</h1>
+            <h1 className="text-center mb-5">Care taker account requests</h1>
             <div className="col-md-3"></div>
             <div className="col-md-6">
-                { getJobRequest() }
+                { getRequestListOrNoneMessage() }
             </div>
         </div>
     );
 }
 
-export default JobRequestList; 
+export default PendingCareTakerRequests;
