@@ -25,6 +25,15 @@ for(let i = 0; i < 24; i++) {
     );
 }
 
+const getCurrentDateStr = () => {
+    const today = new Date();
+    const year = today.getFullYear().toString();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}
+
 function CreateServiceRequest({ roles }) {
     const navigate = useNavigate();
     const [careTakerUsername, setCareTakerUsername] = useState();
@@ -35,6 +44,7 @@ function CreateServiceRequest({ roles }) {
     const [patientPhone, setPatientPhone] = useState();
     const [patientEmail, setPatientEmail] = useState('');
     const [serviceLocation, setServiceLocation] = useState('');
+    const [startDate, setStartDate] = useState();
     const [flexibleHours, setFlexibleHours] = useState(false);
     const [serviceStartTime, setServiceStartTime] = useState(serviceTimeOptions[0].twentyFourHourTime);
     const [serviceEndTime, setServiceEndTime] = useState(serviceTimeOptions[0].twentyFourHourTime);
@@ -71,6 +81,7 @@ function CreateServiceRequest({ roles }) {
                 patientPhone,
                 patientEmail,
                 serviceLocation,
+                startDate,
                 flexibleHours,
                 flexibleHours ? null : serviceStartTime, // if flexible hours were selected, start and end time should be null
                 flexibleHours ? null : serviceEndTime,
@@ -174,6 +185,7 @@ function CreateServiceRequest({ roles }) {
                     required 
                     className="form-control mt-2" 
                     type="date"
+                    max={ getCurrentDateStr() }
                     value = { patientDob }
                     onChange={ event => setPatientDob(event.target.value) }
                 />
@@ -204,6 +216,16 @@ function CreateServiceRequest({ roles }) {
                     className="form-control mt-2" 
                     value = { serviceLocation }
                     onChange={ event => setServiceLocation(event.target.value) }
+                />
+
+                <label className="mt-3"><span className="text-danger">*</span>Start date</label>
+                <input 
+                    required 
+                    type="date"
+                    min={ getCurrentDateStr() }
+                    className="form-control mt-2" 
+                    value = { startDate }
+                    onChange={ event => setStartDate(event.target.value) }
                 />
 
                 <label className="mt-3">Flexible hours?</label><br />

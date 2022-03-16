@@ -324,8 +324,6 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-
-
 class RetrieveServiceRequestHPViewSet(viewsets.ViewSet):
     serializer_class = RetrieveServiceRequestSerializer
     permission_classes = [CustomModelPermissions]

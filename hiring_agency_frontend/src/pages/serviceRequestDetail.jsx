@@ -357,6 +357,8 @@ function ServiceRequestDetail() {
                             <p>{serviceRequest.service_type.name}</p>
                             <b>Service location</b>
                             <p>{serviceRequest.service_location}</p>
+                            <b>Start date</b>
+                            <p>{serviceRequest.start_date}</p>
                             {getHoursOrTimes()}
                             <b>Days service needed</b>
                             <div className="mt-2 mb-3">

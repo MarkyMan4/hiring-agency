@@ -69,6 +69,7 @@ class ServiceRequest(models.Model):
     patient_phone_number = models.BigIntegerField(null=True, validators=[validate_phone])
     patient_email = models.EmailField(null=True, max_length=200)
     service_location = models.CharField(null=False, max_length=500)
+    start_date = models.DateField(null=False)
     flexible_hours = models.BooleanField(null=False)
     service_start_time = models.TimeField(null=True) # start and end time only specified if not using flexible hours
     service_end_time = models.TimeField(null=True)
