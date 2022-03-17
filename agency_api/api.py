@@ -333,6 +333,10 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
             start_minute = int(serv_req_data['service_start_time'].split(':')[1])
             serv_req_data['service_start_time'] = datetime.time(start_hour, start_minute)
 
+            end_hour = int(serv_req_data['service_end_time'].split(':')[0])
+            end_minute = int(serv_req_data['service_end_time'].split(':')[1])
+            serv_req_data['service_end_time'] = datetime.time(end_hour, end_minute)
+
         new_serv_req = ServiceRequest(**serv_req_data)
 
         if self.is_request_time_available(new_serv_req):
@@ -350,7 +354,8 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
         new_req_start_date = serv_req.start_date
         new_req_end_date = self.get_service_end_date(serv_req)
 
-        #TODO: if start/end dates overlap, check if times also overlap
+        # check if new request date overlaps with the dates of an existing request
+        # if the dates overlap, check for overlap of times in the requests
         for req in existing_reqs:
             start_date = req.start_date
             end_date = self.get_service_end_date(req)
@@ -358,10 +363,71 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
             is_start_date_overlapping = new_req_start_date <= end_date and new_req_start_date >= start_date
             is_end_date_overlapping = new_req_end_date >= start_date and new_req_end_date <= end_date
 
+            # if dates overlap, check if times overlap
             if is_start_date_overlapping or is_end_date_overlapping:
-                return False
+                if self.reqs_have_time_overlap(serv_req, req):
+                    return False
 
         return True
+
+    def reqs_have_time_overlap(self, serv_req1: ServiceRequest, serv_req2: ServiceRequest):
+        # if both requests have set hours, make sure they don't overlap
+        # if one or both requests have flexible hours, make sure the total hours doesn't exceed 24
+        # TODO: for flexible hours, comparing two requests at a time isn't enough. We'd have to look
+        #       at all service requests to make sure the total hours is under 24
+        days_overlap = [
+            serv_req1.service_needed_sunday and serv_req2.service_needed_sunday,
+            serv_req1.service_needed_monday and serv_req2.service_needed_monday,
+            serv_req1.service_needed_tuesday and serv_req2.service_needed_tuesday,
+            serv_req1.service_needed_wednesday and serv_req2.service_needed_wednesday,
+            serv_req1.service_needed_thursday and serv_req2.service_needed_thursday,
+            serv_req1.service_needed_friday and serv_req2.service_needed_friday,
+            serv_req1.service_needed_saturday and serv_req2.service_needed_saturday
+        ]
+
+        # if no days in the requests overlap, no need to check times
+        if not any(days_overlap):
+            return False
+
+        # check if times overlap
+        if not serv_req1.flexible_hours and not serv_req2.flexible_hours:
+            start_times_overlap = (
+                serv_req1.service_start_time >= serv_req2.service_start_time and 
+                serv_req1.service_start_time < serv_req2.service_end_time
+            )
+
+            end_times_overlap = (
+                serv_req1.service_end_time > serv_req2.service_start_time and 
+                serv_req1.service_end_time <= serv_req2.service_end_time
+            )
+
+            if start_times_overlap or end_times_overlap:
+                return True
+        else: # at least one request has flexible hours, so make sure the total hours don't exceed 24
+            serv_req1_hours_per_day = self.get_hours_of_service_per_day(serv_req1)
+            serv_req2_hours_per_day = self.get_hours_of_service_per_day(serv_req2)
+
+            if serv_req1_hours_per_day + serv_req2_hours_per_day > 24:
+                return True
+
+        return False
+
+    def get_hours_of_service_per_day(self, serv_req: ServiceRequest):
+        # calculate the hours of service per day
+        # if flexible hours, this is a field in the model
+        # if not flexible hours, take the difference of start/end time and give the result in hours
+        hours_per_day = 0
+
+        if serv_req.flexible_hours:
+            hours_per_day = serv_req.hours_of_service_daily
+        else:
+            dt = datetime.date(1,1,1)
+            start_time = datetime.datetime.combine(dt, serv_req.service_start_time)
+            end_time = datetime.datetime.combine(dt, serv_req.service_end_time)
+            diff = end_time - start_time
+            hours_per_day = diff.seconds / 60 / 60
+
+        return hours_per_day
 
     def get_service_end_date(self, serv_req: ServiceRequest):
         days_service_needed = {
