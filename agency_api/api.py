@@ -33,7 +33,8 @@ from .models import (
     HealthCareProfessional, 
     SecurityQuestion, 
     SecurityQuestionAnswer, 
-    JobPosting, 
+    JobPosting,
+    ServiceType, 
     StaffMember,
     CareTaker,
     ServiceRequest, 
@@ -42,6 +43,7 @@ from .models import (
 )
 from .utils.account import gen_rand_pass
 import datetime
+from datetime import timedelta
 from .utils.templates import email_template
 from django.core.mail import send_mail
 from django.conf import settings
@@ -315,13 +317,75 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
             try:
                 data['care_taker'] = CareTaker.objects.get(user__username=data['care_taker_username']).id
             except:
-                print('Care taker username not found')
+                return Response({'error': 'Care taker username not found'}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = self.serializer_class(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        # create a copy of the data, get all the data types right, then load into a ServiceRequest object
+        serv_req_data = data.copy()
+        serv_req_data['care_taker'] = CareTaker.objects.get(id=serv_req_data['care_taker'])
+        serv_req_data['service_type'] = ServiceType.objects.get(id=serv_req_data['service_type'])
+        serv_req_data['start_date'] = datetime.datetime.strptime(serv_req_data['start_date'], '%Y-%m-%d').date()
+        serv_req_data['days_of_service'] = int(serv_req_data['days_of_service'])
+        
+        if serv_req_data['flexible_hours']:
+            serv_req_data['hours_of_service_daily'] = int(serv_req_data['hours_of_service_daily'])
+        else:
+            start_hour = int(serv_req_data['service_start_time'].split(':')[0])
+            start_minute = int(serv_req_data['service_start_time'].split(':')[1])
+            serv_req_data['service_start_time'] = datetime.time(start_hour, start_minute)
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        new_serv_req = ServiceRequest(**serv_req_data)
+
+        if self.is_request_time_available(new_serv_req):
+            serializer = self.serializer_class(data=data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'error': 'this overlaps with an existing service request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def is_request_time_available(self, serv_req: ServiceRequest):
+        # get existing requests for this care taker and check if any times overlap
+        existing_reqs = ServiceRequest.objects.filter(care_taker_id=serv_req.care_taker)
+        new_req_start_date = serv_req.start_date
+        new_req_end_date = self.get_service_end_date(serv_req)
+
+        #TODO: if start/end dates overlap, check if times also overlap
+        for req in existing_reqs:
+            start_date = req.start_date
+            end_date = self.get_service_end_date(req)
+
+            is_start_date_overlapping = new_req_start_date <= end_date and new_req_start_date >= start_date
+            is_end_date_overlapping = new_req_end_date >= start_date and new_req_end_date <= end_date
+
+            if is_start_date_overlapping or is_end_date_overlapping:
+                return False
+
+        return True
+
+    def get_service_end_date(self, serv_req: ServiceRequest):
+        days_service_needed = {
+            0: serv_req.service_needed_monday,
+            1: serv_req.service_needed_tuesday,
+            2: serv_req.service_needed_wednesday,
+            3: serv_req.service_needed_thursday,
+            4: serv_req.service_needed_friday,
+            5: serv_req.service_needed_saturday,
+            6: serv_req.service_needed_sunday
+        }
+
+        days_of_service = serv_req.days_of_service
+        date = serv_req.start_date
+
+        # add 1 to start date for each day of service needed
+        while days_of_service > 0:
+            if days_service_needed[date.weekday()]:
+                days_of_service -= 1
+
+            if days_of_service > 0:
+                date += timedelta(days=1)
+
+        return date
 
 
 class RetrieveServiceRequestHPViewSet(viewsets.ViewSet):
