@@ -293,12 +293,6 @@ function ServiceRequestDetail() {
             goodHPs.push(curHP);
         })
 
-        // console.log("made the hp avialable list here it is");
-        // console.log(goodHPs);
-
-
-
-
         return (<div className="mb-5">
             {
                 goodHPs.map(goodHP => {
@@ -414,8 +408,6 @@ function ServiceRequestDetail() {
         }
     }
 
-
-
     const getHPHtml = () => {
         return (
             <div className="row mt-4">
@@ -431,11 +423,6 @@ function ServiceRequestDetail() {
         )
     }
 
-
-
-
-
-
     return (
         <div className="row animate__animated animate__fadeIn">
             <div className="col-md-6">
@@ -448,11 +435,7 @@ function ServiceRequestDetail() {
             {getHtmlOrNone()}
             <hr className="mt-5 mb-5" />
 
-            {/* TODO: delete this, the hpId state and the assign function. using this as a placeholder so the billing account work can get started */}
-
             {getAssignedHPorForm()}
-
-
         </div>
     );
 }
