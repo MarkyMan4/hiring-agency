@@ -43,6 +43,7 @@ from .models import (
 )
 from .utils.account import gen_rand_pass
 import datetime
+from dateutil.relativedelta import relativedelta
 from datetime import timedelta
 from .utils.templates import email_template
 from django.core.mail import send_mail
@@ -733,14 +734,34 @@ class HPViewSet(viewsets.ModelViewSet):
         queryset = self.get_queryset().get(id=pk)
         serializer = self.serializer_class(queryset)
 
-        return Response(serializer.data) 
+        return Response(serializer.data)
 
     # GET /api/hp_requests/
     def list(self, request):
-        data = self.get_queryset()
-        serializer = self.serializer_class(data, many=True)
+        healthPros = self.get_queryset()
+
+        if request.query_params.get('gender'):
+            healthPros = healthPros.filter(gender__iexact=request.query_params.get('gender'))
+
+        if request.query_params.get('minAge'):
+            maxDob = self.get_date_of_birth_from_age(int(request.query_params.get('minAge')))
+            healthPros = healthPros.filter(date_of_birth__lte=maxDob)
+
+        if request.query_params.get('maxAge'):
+            minDob = self.get_date_of_birth_from_age(int(request.query_params.get('maxAge')))
+            healthPros = healthPros.filter(date_of_birth__gte=minDob)
+
+        serializer = self.serializer_class(healthPros, many=True)
 
         return Response(serializer.data)
+
+    def get_date_of_birth_from_age(self, age):
+        # given an age, calculate the maximum date of of birth they could have
+        # this is done by subtracting the age from the current date
+        dob = datetime.datetime.now() - relativedelta(years=age)
+        dob = dob.date()
+
+        return dob
 
 class StaffManageViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminUser]
