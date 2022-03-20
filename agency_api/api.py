@@ -751,6 +751,9 @@ class HPViewSet(viewsets.ModelViewSet):
             minDob = self.get_date_of_birth_from_age(int(request.query_params.get('maxAge')))
             healthPros = healthPros.filter(date_of_birth__gte=minDob)
 
+        if request.query_params.get('serviceType'):
+            healthPros = healthPros.filter(service_type_id=int(request.query_params.get('serviceType')))
+
         serializer = self.serializer_class(healthPros, many=True)
 
         return Response(serializer.data)

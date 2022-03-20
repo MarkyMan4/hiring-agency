@@ -18,9 +18,7 @@ const daySelectedStyle = {
 function ServiceRequestDetail() {
     const { id } = useParams();
     const [serviceRequest, setServiceRequest] = useState({});
-    const [hp, setHP] = useState();
     const [hpList, setHPList] = useState();
-    const [servAssignList, setServAssignList] = useState();
     const [isAssigned, setIsAssigned] = useState();
 
     useEffect(() => {
@@ -29,23 +27,15 @@ function ServiceRequestDetail() {
     }, [id, isAssigned]);
 
     useEffect(() => {
-        getHPList(getAuthToken())  //could be moved elsewhere for performance if needed
-            .then(res => { setHPList(res); });
+        const gender = serviceRequest?.hp_gender_required ? serviceRequest?.patient_gender : null;
 
-    }, []);
-
-    useEffect(() => {
-        getAllServiceRequests(getAuthToken(), true, false)  //could be moved elsewhere for performance if needed
-            .then(res => { setServAssignList(res); });
-
-    }, []);
-
+        getHPList(getAuthToken(), gender, serviceRequest.hp_min_age, serviceRequest?.hp_max_age, serviceRequest?.service_type?.id)
+            .then(res => setHPList(res));
+    }, [serviceRequest]);
 
     const isDataLoaded = () => {
         return Object.keys(serviceRequest).length > 0;
     }
-
-
 
     // if flexible hours, we only show the hours needed per day, else show start and end time of service
     const getHoursOrTimes = () => {
@@ -122,180 +112,10 @@ function ServiceRequestDetail() {
             .catch(err => console.log(err.response.data));
     }
 
-    const unassign = (event) =>{
-        event.preventDefault();
-        unassignHpToServiceRequest(getAuthToken(), hp.id)
-            .then(res => setIsAssigned(false))
-            .catch(err => console.log(err.response.data));
-    }
-
-    const getAvailableHP = () => { //also does validation
-        let goodHPs = [];
-        
-        hpList.forEach(curHP => {
-            //gender
-            if (serviceRequest.hp_gender_required === true) {
-                // console.log("comparing");
-                // console.log(curHP.gender);
-                // console.log(serviceRequest.patient_gender);
-                // console.log(curHP.gender !== serviceRequest.patient_gender);
-                if (curHP.gender !== serviceRequest.patient_gender) {
-                    return; //TODO standardize male and female insead of M or F
-                }
-            }
-            //age
-            let parsedDate = curHP.date_of_birth.split("-");
-            var dob = new Date(parsedDate[0], parseInt(parsedDate[1]) - 1, parsedDate[2]);  // prob will cause error 
-            var month_diff = Date.now() - dob.getTime();
-            var age_dt = new Date(month_diff);
-            var year = age_dt.getUTCFullYear();
-            //now calculate the age of the HP  
-            var age = Math.abs(year - 1970);
-            if (serviceRequest.hp_max_age !== null) {
-                if (age > serviceRequest.hp_max_age) {
-                    return;
-                }
-            }
-            if (serviceRequest.hp_min_age !== null) {
-                if (age < serviceRequest.hp_min_age) {
-                    return;
-                }
-            }
-            //schedule
-            let hoursWorked = [0, 0, 0, 0, 0, 0, 0]; //a worker can work a max of 8 hours a day
-
-            //load all hours worked by current assignments per day 
-            servAssignList.forEach(thisServ => {//possibly a better way to do this
-                if (thisServ.care_taker.id !== curHP.id) {
-                    return;
-                }
-
-                if (thisServ.service_needed_sunday) {
-                    if (thisServ.hours_of_service_daily === null) {
-                        let t2 = thisServ.service_end_time.split(":");
-                        let t1 = thisServ.service_start_time.split(":");
-                        hoursWorked[0] += parseInt(t2[0]) - parseInt(t1[0]);
-                    } else {
-                        hoursWorked[0] += thisServ.hours_of_service_daily;
-                    }
-                }
-                if (thisServ.service_needed_monday) {
-                    if (thisServ.hours_of_service_daily === null) {
-                        let t2 = thisServ.service_end_time.split(":");
-                        let t1 = thisServ.service_start_time.split(":");
-                        hoursWorked[1] += parseInt(t2[0]) - parseInt(t1[0]);
-                    } else {
-                        hoursWorked[1] += thisServ.hours_of_service_daily;
-                    }
-                }
-                if (thisServ.service_needed_tuesday) {
-                    if (thisServ.hours_of_service_daily === null) {
-                        let t2 = thisServ.service_end_time.split(":");
-                        let t1 = thisServ.service_start_time.split(":");
-                        hoursWorked[2] += parseInt(t2[0]) - parseInt(t1[0]);
-                    } else {
-                        hoursWorked[2] += thisServ.hours_of_service_daily;
-                    }
-                }
-                if (thisServ.service_needed_wednesday) {
-                    if (thisServ.hours_of_service_daily === null) {
-                        let t2 = thisServ.service_end_time.split(":");
-                        let t1 = thisServ.service_start_time.split(":");
-                        hoursWorked[3] += parseInt(t2[0]) - parseInt(t1[0]);
-                    } else {
-                        hoursWorked[3] += thisServ.hours_of_service_daily;
-                    }
-                }
-                if (thisServ.service_needed_thursday) {
-                    if (thisServ.hours_of_service_daily === null) {
-                        let t2 = thisServ.service_end_time.split(":");
-                        let t1 = thisServ.service_start_time.split(":");
-                        hoursWorked[4] += parseInt(t2[0]) - parseInt(t1[0]);
-                    } else {
-                        hoursWorked[4] += thisServ.hours_of_service_daily;
-                    }
-                }
-                if (thisServ.service_needed_friday) {
-                    if (thisServ.hours_of_service_daily === null) {
-                        let t2 = thisServ.service_end_time.split(":");
-                        let t1 = thisServ.service_start_time.split(":");
-                        hoursWorked[5] += parseInt(t2[0]) - parseInt(t1[0]);
-                    } else {
-                        hoursWorked[5] += thisServ.hours_of_service_daily;
-                    }
-                }
-                if (thisServ.service_needed_saturday) {
-                    if (thisServ.hours_of_service_daily === null) {
-                        let t2 = thisServ.service_end_time.split(":");
-                        let t1 = thisServ.service_start_time.split(":");
-                        hoursWorked[6] += parseInt(t2[0]) - parseInt(t1[0]);
-                    } else {
-                        hoursWorked[6] += thisServ.hours_of_service_daily;
-                    }
-                }
-            })
-            // console.log("loaded existing schedules");
-            // console.log(hoursWorked);
-            //schedule - check if any conflicts with requested days/times 
-            let timeRequested = 0;
-            if (serviceRequest.hours_of_service_daily === undefined) {
-                let t1 = serviceRequest.service_end_time.split(":");
-                let t2 = serviceRequest.service_start_time.split(":");
-                timeRequested = parseInt(t2[0]) - parseInt(t1[0]);
-            } else {
-                timeRequested = serviceRequest.hours_of_service_daily;
-            }
-            // console.log("time requested is ");
-            // console.log(timeRequested);
-
-            if (serviceRequest.service_needed_sunday) {
-                if (timeRequested + hoursWorked[0] > 8) {
-                    return;
-                }
-            }
-
-            if (serviceRequest.service_needed_monday) {
-                if (timeRequested + hoursWorked[1] > 8) {
-                    return;
-                }
-            }
-
-            if (serviceRequest.service_needed_tuesday) {
-                if (timeRequested + hoursWorked[2] > 8) {
-                    return;
-                }
-            }
-
-            if (serviceRequest.service_needed_wednesday) {
-                if (timeRequested + hoursWorked[3] > 8) {
-                    return;
-                }
-            }
-
-            if (serviceRequest.service_needed_thursday) {
-                if (timeRequested + hoursWorked[4] > 8) {
-                    return;
-                }
-            }
-
-            if (serviceRequest.service_needed_friday) {
-                if (timeRequested + hoursWorked[5] > 8) {
-                    return;
-                }
-            }
-
-            if (serviceRequest.service_needed_saturday) {
-                if (timeRequested + hoursWorked[6] > 8) {
-                    return;
-                }
-            }
-            // console.log("we like this guys");
-            goodHPs.push(curHP);
-        })
-
+    const getAvailableHP = () => {
         return (<div className="mb-5">
             {
-                goodHPs.map(goodHP => {
+                hpList?.map(goodHP => {
             
                     return(
                         <div class="row mt-2" data-id="goodHP.id" >
@@ -378,49 +198,13 @@ function ServiceRequestDetail() {
     }
 
     const getAssignedHPorForm = () => {
-        if (isDataLoaded() && serviceRequest.is_assigned === true && hp === undefined) {
-            // console.log("http assigned hp");
-            retrieveHPByServiceAsisgnment(getAuthToken(), serviceRequest.id)
-                .then(res => {setHP(res);})
-                .catch(err => console.log(err.response.data));
-            return (<div></div>)
-
-        } else if(isDataLoaded() && serviceRequest.is_assigned === true && hp !== undefined){
-            // console.log("getting assigned hp data")
-            return (
-                <div>
-                    {getHPHtml()}
-                </div>
-                )
-        } else if (!isDataLoaded()) {
-            // console.log("case notdataloaded");
-            return;
-
-        } else if (hpList !== undefined && servAssignList !== undefined) {
-            // console.log("Case hp loaded");
-            return (
-                <div>
-                    <h3>Assign a Health Care Professional to this Request from the list below</h3>
-                    <h5>Available Health Care Professionals that meet the requirements</h5>
-                    {getAvailableHP()}
-                </div>
-            )
-        }
-    }
-
-    const getHPHtml = () => {
         return (
-            <div className="row mt-4">
-                <div className="col">
-                    <div className="assigned-HP-servicecard shadow animate__animated animate__fadeInLeft">
-                        <h3> Currently Assigned Healthcare Professional </h3>
-                        <p> Name: {hp.healthcare_professional.user.first_name} {hp.healthcare_professional.user.last_name} </p>
-                        <p> Gender: {hp.healthcare_professional.gender}</p>
-                        <button type="button" className="btn btn-warning" onClick={unassign}> UnAssign</button>
-                    </div>
-                </div>
+            <div>
+                <h3>Assign a Health Care Professional to this Request from the list below</h3>
+                <h5>Available Health Care Professionals that meet the requirements</h5>
+                {getAvailableHP()}
             </div>
-        )
+        );
     }
 
     return (
