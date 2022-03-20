@@ -117,27 +117,12 @@ class HPJobApplication(models.Model):
 class ServiceAssignment(models.Model):
     healthcare_professional = models.ForeignKey(HealthCareProfessional, on_delete=models.CASCADE)
     service_request = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE)
-    hours_sunday = models.IntegerField(null=True)
-    hours_monday = models.IntegerField(null=True)
-    hours_tuesday = models.IntegerField(null=True)
-    hours_wednesday = models.IntegerField(null=True)
-    hours_thursday = models.IntegerField(null=True)
-    hours_friday = models.IntegerField(null=True)
-    hours_saturday = models.IntegerField(null=True)
-    start_time_sunday = models.TimeField(null=True)
-    end_time_sunday = models.TimeField(null=True)
-    start_time_monday = models.TimeField(null=True)
-    end_time_monday = models.TimeField(null=True)
-    start_time_tuesday = models.TimeField(null=True)
-    end_time_tuesday = models.TimeField(null=True)
-    start_time_wednesday = models.TimeField(null=True)
-    end_time_wednesday = models.TimeField(null=True)
-    start_time_thursday = models.TimeField(null=True)
-    end_time_thursday = models.TimeField(null=True)
-    start_time_friday = models.TimeField(null=True)
-    end_time_friday = models.TimeField(null=True)
-    start_time_saturday = models.TimeField(null=True)
-    end_time_saturday = models.TimeField(null=True)
+
+class TimeSlot(models.Model):
+    service_assignment = models.ForeignKey(ServiceAssignment, on_delete=models.CASCADE)
+    day = models.IntegerField(null=False)
+    start_time = models.TimeField(null=False)
+    end_time = models.TimeField(null=False)
 
 class BillingAccount(models.Model):
     service_request = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE)
