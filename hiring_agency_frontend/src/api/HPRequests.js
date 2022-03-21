@@ -5,8 +5,18 @@ import { baseUrl } from './config';
 
 
 
-export const getHPList = async (token, gender=null, minAge=null, maxAge=null, serviceType=null) => {
+export const getHPList = async (token, eligibleForRequest=null) => {
     let url = `${baseUrl}api/hp_requests`;
+
+    let query_params = [];
+
+    if(eligibleForRequest !== null) {
+        query_params.push('eligibleForRequest=' + eligibleForRequest);
+    }
+
+    if(query_params.length > 0) {
+        url += '?' + query_params.join('&');
+    }
 
     let config = {
         headers: {

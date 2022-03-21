@@ -1,6 +1,7 @@
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from django.db.models import Min
 from django.contrib.auth.models import Group
 from agency_api.auth.auth_serializers import RegisterUserSerializer, UserSerializer
 from .permissions import CustomModelPermissions
@@ -39,6 +40,7 @@ from .models import (
     CareTaker,
     ServiceRequest, 
     ServiceAssignment,
+    TimeSlot,
     User
 )
 from .utils.account import gen_rand_pass
@@ -48,6 +50,32 @@ from datetime import timedelta
 from .utils.templates import email_template
 from django.core.mail import send_mail
 from django.conf import settings
+
+
+# given a service request, calculate the end date
+def get_service_end_date(serv_req: ServiceRequest):
+    days_service_needed = {
+        0: serv_req.service_needed_monday,
+        1: serv_req.service_needed_tuesday,
+        2: serv_req.service_needed_wednesday,
+        3: serv_req.service_needed_thursday,
+        4: serv_req.service_needed_friday,
+        5: serv_req.service_needed_saturday,
+        6: serv_req.service_needed_sunday
+    }
+
+    days_of_service = serv_req.days_of_service
+    date = serv_req.start_date
+
+    # add 1 to start date for each day of service needed
+    while days_of_service > 0:
+        if days_service_needed[date.weekday()]:
+            days_of_service -= 1
+
+        if days_of_service > 0:
+            date += timedelta(days=1)
+
+    return date
 
 class JobPostingViewSet(viewsets.ModelViewSet):
     serializer_class = JobPostingSerializer
@@ -353,13 +381,13 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
         # get existing requests for this care taker and check if any times overlap
         existing_reqs = ServiceRequest.objects.filter(care_taker_id=serv_req.care_taker)
         new_req_start_date = serv_req.start_date
-        new_req_end_date = self.get_service_end_date(serv_req)
+        new_req_end_date = get_service_end_date(serv_req)
 
         # check if new request date overlaps with the dates of an existing request
         # if the dates overlap, check for overlap of times in the requests
         for req in existing_reqs:
             start_date = req.start_date
-            end_date = self.get_service_end_date(req)
+            end_date = get_service_end_date(req)
 
             is_start_date_overlapping = new_req_start_date <= end_date and new_req_start_date >= start_date
             is_end_date_overlapping = new_req_end_date >= start_date and new_req_end_date <= end_date
@@ -429,30 +457,6 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
             hours_per_day = diff.seconds / 60 / 60
 
         return hours_per_day
-
-    def get_service_end_date(self, serv_req: ServiceRequest):
-        days_service_needed = {
-            0: serv_req.service_needed_monday,
-            1: serv_req.service_needed_tuesday,
-            2: serv_req.service_needed_wednesday,
-            3: serv_req.service_needed_thursday,
-            4: serv_req.service_needed_friday,
-            5: serv_req.service_needed_saturday,
-            6: serv_req.service_needed_sunday
-        }
-
-        days_of_service = serv_req.days_of_service
-        date = serv_req.start_date
-
-        # add 1 to start date for each day of service needed
-        while days_of_service > 0:
-            if days_service_needed[date.weekday()]:
-                days_of_service -= 1
-
-            if days_of_service > 0:
-                date += timedelta(days=1)
-
-        return date
 
 
 class RetrieveServiceRequestHPViewSet(viewsets.ViewSet):
@@ -738,25 +742,163 @@ class HPViewSet(viewsets.ModelViewSet):
 
     # GET /api/hp_requests/
     def list(self, request):
-        healthPros = self.get_queryset()
+        health_pros = self.get_queryset()
 
         if request.query_params.get('gender'):
-            healthPros = healthPros.filter(gender__iexact=request.query_params.get('gender'))
+            health_pros = health_pros.filter(gender__iexact=request.query_params.get('gender'))
 
         if request.query_params.get('minAge'):
-            maxDob = self.get_date_of_birth_from_age(int(request.query_params.get('minAge')))
-            healthPros = healthPros.filter(date_of_birth__lte=maxDob)
+            max_dob = self.get_date_of_birth_from_age(int(request.query_params.get('minAge')))
+            health_pros = health_pros.filter(date_of_birth__lte=max_dob)
 
         if request.query_params.get('maxAge'):
-            minDob = self.get_date_of_birth_from_age(int(request.query_params.get('maxAge')))
-            healthPros = healthPros.filter(date_of_birth__gte=minDob)
+            min_dob = self.get_date_of_birth_from_age(int(request.query_params.get('maxAge')))
+            health_pros = health_pros.filter(date_of_birth__gte=min_dob)
 
         if request.query_params.get('serviceType'):
-            healthPros = healthPros.filter(service_type_id=int(request.query_params.get('serviceType')))
+            health_pros = health_pros.filter(service_type_id=int(request.query_params.get('serviceType')))
 
-        serializer = self.serializer_class(healthPros, many=True)
+        # this value should be a service request ID, the data will be filtered to only
+        # find healthcare professionals who match the criteria and have time in their schedule
+        if request.query_params.get('eligibleForRequest'):
+            health_pros = self.get_eligible_hps(int(request.query_params.get('eligibleForRequest')))
+
+        serializer = self.serializer_class(health_pros, many=True)
 
         return Response(serializer.data)
+
+    def get_eligible_hps(self, serv_req_id):
+        serv_req = ServiceRequest.objects.get(id=serv_req_id)
+        health_pros = HealthCareProfessional.objects.filter(service_type=serv_req.service_type)
+
+        # filter on any of the optional requests
+        if serv_req.hp_gender_required:
+            health_pros = health_pros.filter(gender__iexact=serv_req.patient_gender)
+        
+        if serv_req.hp_min_age:
+            max_dob = self.get_date_of_birth_from_age(serv_req.hp_min_age)
+            health_pros = health_pros.filter(date_of_birth__lte=max_dob)
+
+        if serv_req.hp_max_age:
+            min_dob = self.get_date_of_birth_from_age(serv_req.hp_max_age)
+            health_pros = health_pros.filter(date_of_birth__gte=min_dob)
+
+        # find healthcare professionals that have time available for this service request
+        if serv_req.flexible_hours:
+            # TODO: this will need to be based on what hours each type of hp can work
+            pass
+        else:
+            hp_ids = health_pros.values_list('id', flat=True)
+            days_service_needed = self.get_days_service_needed(serv_req)
+            eligible_hp_ids = []
+
+            for hp in hp_ids:
+                # for each healthcare professionals
+                # 1. check if they have existing assignments, if not, they are eligible
+                # 2. check if their existing assignments start/end date overlap with the new request
+                #       - if not, they are eligible
+                #       - if dates overlap, check if days/times overlap
+                current_assignments = ServiceAssignment.objects.filter(healthcare_professional_id=hp, service_request__is_completed=False)
+
+                if len(current_assignments) == 0:
+                    eligible_hp_ids.append(hp)
+                    continue
+
+                new_req_start_date = serv_req.start_date
+                new_req_end_date = get_service_end_date(serv_req)
+
+                current_requests = ServiceRequest.objects.filter(id__in=current_assignments.values_list('service_request_id', flat=True))
+                schedule_start_date = current_requests.aggregate(Min('start_date'))['start_date__min']
+                schedule_end_date = max([get_service_end_date(req) for req in current_requests])
+
+                if new_req_start_date >= schedule_start_date and new_req_end_date <= schedule_end_date:
+                    # check if there is time available in the scheudle to work on this request
+                    schedule = TimeSlot.objects.filter(service_assignment_id__in=current_assignments.values_list('id', flat=True))
+
+                    # if a time slot is found anywhere in their schedule, add the hp to the eligible list
+                    for day in days_service_needed:
+                        schedule_for_day = self.get_schedule_for_day(schedule.filter(day=day).order_by('start_time'))
+
+                        # because of the work done in get_schedule_for_day, this check is simplified
+                        # if the service request start time is earlier than their schedule start, they are available
+                        # if the service request end time is later than their schedule end, they are available
+                        # if the service request time span spans multiple block in their schedule, they are available
+                        #   (this is because separate time block means there is a gap in between)
+                        found_time_slot = False
+
+                        for sched in schedule_for_day:
+                            # this logic encompasses all the conditions mentioned above
+                            if serv_req.service_start_time < sched['start_time'] or serv_req.service_end_time > sched['end_time']:
+                                found_time_slot = True
+                                break
+
+                        if found_time_slot:
+                            eligible_hp_ids.append(hp)
+                            break
+                else:
+                    eligible_hp_ids.append(hp)
+                    continue
+
+        return HealthCareProfessional.objects.filter(id__in=eligible_hp_ids)
+                
+    def get_schedule_for_day(self, work_times):
+        # combine spans of time together to get the full schedule (regardless of request)
+        # for example, if they work 8:00 - 10:00 on one request and 10:00 - 12:00 on another,
+        # this schedule should contain a time block of 8:00 - 12:00
+        # schedule should be a TimeSlot query set filtered down to one day of the week
+        schedule = []
+        
+        for work_time in work_times:
+            if len(schedule) == 0:
+                schedule.append(
+                    {
+                        'start_time': work_time.start_time,
+                        'end_time': work_time.end_time
+                    }
+                )
+            
+            for i, timespan in enumerate(schedule):
+                if work_time.start_time == timespan['end_time']:
+                    schedule[i] = {
+                        'start_time': timespan['start_time'],
+                        'end_time': work_time.end_time
+                    }
+                else:
+                    schedule.append(
+                        {
+                            'start_time': work_time.start_time,
+                            'end_time': work_time.end_time
+                        }
+                    )
+
+        return schedule
+
+    def get_days_service_needed(self, serv_req):
+        # given a service request, create a list with days of service needed
+        # e.g. if service needed monday and wednesday, return [1, 3]
+        days_needed = []
+        if serv_req.service_needed_sunday:
+            days_needed.append(0)
+
+        if serv_req.service_needed_monday:
+            days_needed.append(1)
+
+        if serv_req.service_needed_tuesday:
+            days_needed.append(2)
+
+        if serv_req.service_needed_wednesday:
+            days_needed.append(3)
+
+        if serv_req.service_needed_thursday:
+            days_needed.append(4)
+
+        if serv_req.service_needed_friday:
+            days_needed.append(5)
+
+        if serv_req.service_needed_saturday:
+            days_needed.append(6)
+
+        return days_needed
 
     def get_date_of_birth_from_age(self, age):
         # given an age, calculate the maximum date of of birth they could have

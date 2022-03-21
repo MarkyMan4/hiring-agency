@@ -29,7 +29,7 @@ function ServiceRequestDetail() {
     useEffect(() => {
         const gender = serviceRequest?.hp_gender_required ? serviceRequest?.patient_gender : null;
 
-        getHPList(getAuthToken(), gender, serviceRequest.hp_min_age, serviceRequest?.hp_max_age, serviceRequest?.service_type?.id)
+        getHPList(getAuthToken(), serviceRequest?.id)
             .then(res => setHPList(res));
     }, [serviceRequest]);
 
