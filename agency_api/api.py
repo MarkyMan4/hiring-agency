@@ -19,6 +19,7 @@ from .serializers import (
     RetrieveServiceRequestSerializer,
     SecurityQuestionSerializer,
     SecurityQuestionAnswerSerializer,
+    TimeSlotSerializer,
     ViewStaffMemberSerializer,
     ViewCareTakerMemberSerializer,
     CreateServiceRequestSerializer,
@@ -539,9 +540,27 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
     # POST /api/create_service_assignment
     def create(self, request):
         data = request.data
+
+        service_assignment_data = {
+            'healthcare_professional': data['healthcare_professional'],
+            'service_request': data['service_request']
+        }
+
+        # create the service request
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        service_assignment_id = serializer.data['id']
+
+        # create the time slots that were specified
+        for ts in data['time_slots']:
+            ts_data = ts
+            ts_data.update({'service_assignment': service_assignment_id})
+
+            ts_serializer = TimeSlotSerializer(data=ts_data)
+            ts_serializer.is_valid(raise_exception=True)
+            ts_serializer.save()
 
         # update the service request to assigned
         service_request = ServiceRequest.objects.get(id=data.get('service_request'))

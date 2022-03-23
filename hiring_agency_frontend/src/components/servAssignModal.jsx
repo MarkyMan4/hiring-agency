@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function ServAssignModal({ buttonText }) {
+function ServAssignModal({ buttonText, healthProId, servReqId }) {
     const [display, setDisplay] = useState('none');
 
     let modalDisplay = {
@@ -13,6 +13,13 @@ function ServAssignModal({ buttonText }) {
         else
             setDisplay('none');
     }
+
+    // const assign = (event) => {
+    //     event.preventDefault();
+    //     assignHpToServiceRequest(getAuthToken(), id, event.target.value)
+    //         .then(res => setIsAssigned(true))
+    //         .catch(err => console.log(err.response.data));
+    // }
 
     return (
         <div>

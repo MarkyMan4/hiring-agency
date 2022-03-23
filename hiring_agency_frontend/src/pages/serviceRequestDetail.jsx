@@ -1,12 +1,8 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { assignHpToServiceRequest } from "../api/serviceAssignments";
-import { unassignHpToServiceRequest } from "../api/serviceAssignments";
-import { retrieveHPByServiceAsisgnment } from "../api/serviceAssignments";
 import { getHPList } from "../api/HPRequests";
 import { retrieveServiceRequest } from "../api/serviceRequests";
-import { getAllServiceRequests } from "../api/serviceRequests";
 import { getAuthToken } from "../utils/storage";
 import CancelButton from "../components/cancelButton";
 import ServAssignModal from "../components/servAssignModal";
@@ -104,22 +100,18 @@ function ServiceRequestDetail() {
         );
     }
 
-    const assign = (event) => {
-        event.preventDefault();
-        assignHpToServiceRequest(getAuthToken(), id, event.target.value)
-            .then(res => setIsAssigned(true))
-            .catch(err => console.log(err.response.data));
-    }
-
     const getAvailableHP = () => {
         return (<div className="mb-5">
             {
-                hpList?.map(goodHP => {
-            
+                hpList?.map(goodHP => {            
                     return(
                         <div class="row mt-2" data-id="goodHP.id" >
                             <div class="col ">
-                                <ServAssignModal buttonText={ `Name: ${goodHP.user.first_name}  ${goodHP.user.last_name}   |   Gender: ${goodHP.gender}` } />
+                                <ServAssignModal 
+                                    buttonText={ `Name: ${goodHP.user.first_name}  ${goodHP.user.last_name}   |   Gender: ${goodHP.gender}` }
+                                    healthProId={ goodHP.id }
+                                    servReqId={ id }
+                                />
                                 {/* <button type="button" className="service-request-hp-row btn btn-outline-secondary" value={goodHP.id} onClick={assign} >Name: {goodHP.user.first_name}  {goodHP.user.last_name}   |   Gender: {goodHP.gender}</button> */}
                             </div>
                         </div>

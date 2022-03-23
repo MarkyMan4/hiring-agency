@@ -15,6 +15,7 @@ from .models import (
     CareTakerRequest, 
     ServiceRequest,
     ServiceAssignment,
+    TimeSlot,
 )
 
 class HPJobApplicationSerializer(serializers.ModelSerializer):
@@ -153,3 +154,9 @@ class BillingAccountDetailSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('__all__')
         model = BillingAccount
+
+
+class TimeSlotSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TimeSlot
+        fields = ('__all__')
