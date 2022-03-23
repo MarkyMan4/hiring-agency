@@ -783,6 +783,8 @@ class HPViewSet(viewsets.ModelViewSet):
             min_dob = self.get_date_of_birth_from_age(serv_req.hp_max_age)
             health_pros = health_pros.filter(date_of_birth__gte=min_dob)
 
+        eligible_hp_ids = []
+
         # find healthcare professionals that have time available for this service request
         if serv_req.flexible_hours:
             # TODO: this will need to be based on what hours each type of hp can work
@@ -790,7 +792,6 @@ class HPViewSet(viewsets.ModelViewSet):
         else:
             hp_ids = health_pros.values_list('id', flat=True)
             days_service_needed = self.get_days_service_needed(serv_req)
-            eligible_hp_ids = []
 
             for hp in hp_ids:
                 # for each healthcare professionals

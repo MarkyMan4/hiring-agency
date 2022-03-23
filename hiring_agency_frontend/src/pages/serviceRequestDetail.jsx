@@ -9,6 +9,7 @@ import { retrieveServiceRequest } from "../api/serviceRequests";
 import { getAllServiceRequests } from "../api/serviceRequests";
 import { getAuthToken } from "../utils/storage";
 import CancelButton from "../components/cancelButton";
+import ServAssignModal from "../components/servAssignModal";
 
 const daySelectedStyle = {
     backgroundColor: 'rgb(5, 194, 68)',
@@ -27,8 +28,6 @@ function ServiceRequestDetail() {
     }, [id, isAssigned]);
 
     useEffect(() => {
-        const gender = serviceRequest?.hp_gender_required ? serviceRequest?.patient_gender : null;
-
         getHPList(getAuthToken(), serviceRequest?.id)
             .then(res => setHPList(res));
     }, [serviceRequest]);
@@ -120,7 +119,8 @@ function ServiceRequestDetail() {
                     return(
                         <div class="row mt-2" data-id="goodHP.id" >
                             <div class="col ">
-                                <button type="button" className="service-request-hp-row btn btn-outline-secondary" value={goodHP.id} onClick={assign} >Name: {goodHP.user.first_name}  {goodHP.user.last_name}   |   Gender: {goodHP.gender}</button>
+                                <ServAssignModal buttonText={ `Name: ${goodHP.user.first_name}  ${goodHP.user.last_name}   |   Gender: ${goodHP.gender}` } />
+                                {/* <button type="button" className="service-request-hp-row btn btn-outline-secondary" value={goodHP.id} onClick={assign} >Name: {goodHP.user.first_name}  {goodHP.user.last_name}   |   Gender: {goodHP.gender}</button> */}
                             </div>
                         </div>
                     )
