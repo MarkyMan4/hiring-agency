@@ -759,6 +759,85 @@ class HPViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
+    # GET /api/hp_requests/<id>/schedule
+    # retrieves the full schedule of a healthcare professionals for any active
+    # requests they are assigned to
+    # response is in the format:
+    # {
+    #   <date 1>: [
+    #       {
+    #          "start_time": <start time>,
+    #          "end_time": <end time>
+    #       },
+    #       ...
+    #   ],
+    #   <date 2>: ...
+    # }
+    @action(methods=['GET'], detail=True)
+    def schedule(self, request, pk):
+        assignments = ServiceAssignment.objects.filter(
+            healthcare_professional_id=pk, 
+            service_request__is_completed=False
+        )
+
+        schedule = {}
+
+        for assignment in assignments:
+            serv_req = assignment.service_request
+
+            dt = serv_req.start_date
+            end_date = get_service_end_date(serv_req)
+
+            while dt <= end_date:
+                weekday = dt.isoweekday()
+
+                # in the database dates are 0-6 (0 being sunday)
+                # convert 7 to 0 for sundays
+                if weekday == 7:
+                    weekday = 0
+
+                time_slots = TimeSlot.objects.filter(
+                    service_assignment_id=assignment.id,
+                    day=weekday
+                )
+
+                # check if any time is assigned on this day
+                if len(time_slots) > 0:
+                    dt_str = dt.strftime('%Y-%m-%d')
+
+                    if dt_str not in schedule:
+                        schedule.update({dt_str: []})
+                    
+                    print(dt_str)
+
+                    for ts in time_slots:
+                        print(ts.start_time)
+                        schedule[dt_str].append(
+                            {
+                                'start_time': ts.start_time,
+                                'end_time': ts.end_time
+                            }
+                        )
+
+                dt += timedelta(days=1)
+
+        # sort the schedule by keys (dates)
+        ordered = []
+        for date in schedule:
+            ordered.append((date, schedule[date]))
+
+        ordered.sort()
+        sorted_schedule = {}
+
+        for date, val in ordered:
+            sorted_schedule[date] = val
+
+        # sort times for each date in the schedule
+        for date in sorted_schedule:
+            sorted_schedule[date] = sorted(sorted_schedule[date], key=lambda x: x['start_time'])
+
+        return Response(sorted_schedule)
+
     # GET /api/hp_requests/
     def list(self, request):
         health_pros = self.get_queryset()
