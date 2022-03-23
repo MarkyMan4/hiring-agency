@@ -43,3 +43,17 @@ export const retrieveHP = async (token, hpID) => {
         .then(res => res.data)
         .catch(err => `Failed to retrieve service request with ID ${hpID}`);
 }
+
+export const getHpSchedule = async (token, hpId) => {
+    let url = `${baseUrl}api/hp_requests/${hpId}/schedule`;
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.get(url, config)
+        .then(res => res.data)
+        .catch(err => `Failed to retrieve schedule for HP with ID ${hpId}`);
+}

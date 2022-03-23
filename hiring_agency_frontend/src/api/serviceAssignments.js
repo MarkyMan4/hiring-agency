@@ -32,12 +32,13 @@ export const unassignHpToServiceRequest = async(token, serviceAssignmentID) => {
 }
 
 
-export const assignHpToServiceRequest = async (token, serviceRequestId, hpId) => {
+export const assignHpToServiceRequest = async (token, serviceRequestId, hpId, timeSlots) => {
     const url = baseUrl + 'api/create_service_assignment';
 
     const body = {
         healthcare_professional: hpId,
-        service_request: serviceRequestId
+        service_request: serviceRequestId,
+        time_slots: timeSlots
     }
 
     const config = {
