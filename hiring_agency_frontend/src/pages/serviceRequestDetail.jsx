@@ -105,12 +105,12 @@ function ServiceRequestDetail() {
             {
                 hpList?.map(goodHP => {            
                     return(
-                        <div class="row mt-2" data-id="goodHP.id" >
+                        <div class="row mt-2" key={ goodHP.id } >
                             <div class="col ">
                                 <ServAssignModal 
                                     buttonText={ `Name: ${goodHP.user.first_name}  ${goodHP.user.last_name}   |   Gender: ${goodHP.gender}` }
                                     healthProId={ goodHP.id }
-                                    servReqId={ id }
+                                    serviceRequest={ serviceRequest }
                                 />
                                 {/* <button type="button" className="service-request-hp-row btn btn-outline-secondary" value={goodHP.id} onClick={assign} >Name: {goodHP.user.first_name}  {goodHP.user.last_name}   |   Gender: {goodHP.gender}</button> */}
                             </div>

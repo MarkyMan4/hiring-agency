@@ -154,7 +154,6 @@ class SecurityQuestionAnswerViewSet(viewsets.ModelViewSet):
 
         count = SecurityQuestionAnswer.objects.filter(user_id=self.request.user.id).count()
         while count > 3:
-            print("hi")
             old_question = SecurityQuestionAnswer.objects.filter(user_id=request.user.id).order_by('id').first()
             old_question.delete()
             count = SecurityQuestionAnswer.objects.filter(user_id=self.request.user.id).count()
@@ -807,11 +806,8 @@ class HPViewSet(viewsets.ModelViewSet):
 
                     if dt_str not in schedule:
                         schedule.update({dt_str: []})
-                    
-                    print(dt_str)
 
                     for ts in time_slots:
-                        print(ts.start_time)
                         schedule[dt_str].append(
                             {
                                 'start_time': ts.start_time,
@@ -955,20 +951,27 @@ class HPViewSet(viewsets.ModelViewSet):
                         'end_time': work_time.end_time
                     }
                 )
+
+                continue
             
+            matched_existing_record = False
+
             for i, timespan in enumerate(schedule):
                 if work_time.start_time == timespan['end_time']:
                     schedule[i] = {
                         'start_time': timespan['start_time'],
                         'end_time': work_time.end_time
                     }
-                else:
-                    schedule.append(
-                        {
-                            'start_time': work_time.start_time,
-                            'end_time': work_time.end_time
-                        }
-                    )
+
+                    matched_existing_record = True
+
+            if not matched_existing_record:
+                schedule.append(
+                    {
+                        'start_time': work_time.start_time,
+                        'end_time': work_time.end_time
+                    }
+                )
 
         return schedule
 
