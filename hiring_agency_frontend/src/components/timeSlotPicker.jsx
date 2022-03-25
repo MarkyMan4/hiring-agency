@@ -9,14 +9,14 @@ for(let i = 0; i < 24; i++) {
     serviceTimeOptions.push(
         {
             twentyFourHourTime: `${ hour }:00`,
-            twelveHourTime: `${ i > 12 ? i - 12 : i }:00 ${ i > 12 ? 'PM' : 'AM' }`
+            twelveHourTime: `${ i > 12 ? i - 12 : i }:00 ${ i >= 12 ? 'PM' : 'AM' }`
         }
     );
 
     serviceTimeOptions.push(
         {
             twentyFourHourTime: `${ hour }:30`,
-            twelveHourTime: `${ i > 12 ? i - 12 : i }:30 ${ i > 12 ? 'PM' : 'AM' }`
+            twelveHourTime: `${ i > 12 ? i - 12 : i }:30 ${ i >= 12 ? 'PM' : 'AM' }`
         }
     );
 }

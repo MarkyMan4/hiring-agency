@@ -4,7 +4,7 @@ import { getAuthToken } from "../utils/storage";
 import TimeSlotPicker from "./timeSlotPicker";
 import { assignHpToServiceRequest } from "../api/serviceAssignments";
 
-function ServAssignModal({ buttonText, healthProId, serviceRequest }) {
+function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCallback }) {
     const [display, setDisplay] = useState('none');
     const [schedule, setSchedule] = useState({});
     const [serviceStartDate, setServiceStartDate] = useState();
@@ -397,7 +397,10 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest }) {
         }
 
         assignHpToServiceRequest(getAuthToken(), serviceRequest.id, healthProId, timeSlots)
-            .then(res => toggleModal());
+            .then(res => {
+                toggleModal();
+                assignedCallback();
+            });
     }
 
     return (

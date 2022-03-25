@@ -2,38 +2,11 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getHPList } from "../api/HPRequests";
-import { retrieveServiceRequest } from "../api/serviceRequests";
+import { getAssignedTimes, retrieveServiceRequest } from "../api/serviceRequests";
 import { getAuthToken } from "../utils/storage";
 import CancelButton from "../components/cancelButton";
 import ServAssignModal from "../components/servAssignModal";
 import { Chart } from "react-google-charts";
-
-const sampleData = [
-    [
-        { type: "string", id: "Day" },
-        { type: "string", id: "Name" },
-        { type: "date", id: "Start" },
-        { type: "date", id: "End" },
-    ],
-    [
-        "Monday",
-        "John Doe",
-        Date.parse('1-1-1 08:00'),
-        Date.parse('1-1-1 12:30'),
-    ],
-    [
-        "Monday",
-        "John Doe",
-        Date.parse('1-1-1 11:30'),
-        Date.parse('1-1-1 16:30'),
-    ],
-    [
-        "Tuesday",
-        "Test Person",
-        Date.parse('1-1-1 09:30'),
-        Date.parse('1-1-1 13:30'),
-    ]
-];
 
 const daySelectedStyle = {
     backgroundColor: 'rgb(5, 194, 68)',
@@ -45,6 +18,8 @@ function ServiceRequestDetail() {
     const [serviceRequest, setServiceRequest] = useState({});
     const [hpList, setHPList] = useState();
     const [isAssigned, setIsAssigned] = useState();
+    const [assignedTimes, setAssignedTimes] = useState([]);
+    const [assignedCallback, setAssignedCallback] = useState(false); // this is just a trigger for reloading the schedule
 
     useEffect(() => {
         retrieveServiceRequest(getAuthToken(), id)
@@ -55,6 +30,33 @@ function ServiceRequestDetail() {
         getHPList(getAuthToken(), serviceRequest?.id)
             .then(res => setHPList(res));
     }, [serviceRequest]);
+
+    useEffect(() => {
+        let times = [
+            [
+                { type: "string", id: "Day" },
+                { type: "string", id: "Name" },
+                { type: "date", id: "Start" },
+                { type: "date", id: "End" },
+            ]
+        ];
+
+        getAssignedTimes(getAuthToken(), id)
+            .then(res => {
+                res.forEach(time => {
+                    times.push(
+                        [
+                            time.day,
+                            time.name,
+                            Date.parse(`1-1-1 ${time.start_time}`),
+                            Date.parse(`1-1-1 ${time.end_time}`)
+                        ]
+                    )
+                });
+
+                setAssignedTimes(times);
+            });
+    }, [assignedCallback]);
 
     const isDataLoaded = () => {
         return Object.keys(serviceRequest).length > 0;
@@ -139,8 +141,8 @@ function ServiceRequestDetail() {
                                     buttonText={ `Name: ${goodHP.user.first_name}  ${goodHP.user.last_name}   |   Gender: ${goodHP.gender}` }
                                     healthProId={ goodHP.id }
                                     serviceRequest={ serviceRequest }
+                                    assignedCallback={ () => setAssignedCallback(!assignedCallback) }
                                 />
-                                {/* <button type="button" className="service-request-hp-row btn btn-outline-secondary" value={goodHP.id} onClick={assign} >Name: {goodHP.user.first_name}  {goodHP.user.last_name}   |   Gender: {goodHP.gender}</button> */}
                             </div>
                         </div>
                     )
@@ -228,26 +230,34 @@ function ServiceRequestDetail() {
     }
 
     return (
-        <div className="row animate__animated animate__fadeIn">
-            <div className="col-md-6">
-                <h1>Service request for a {isDataLoaded() ? serviceRequest.service_type.name.toLowerCase() : null}</h1>
+        <div className="animate__animated animate__fadeIn">
+            <div className="row">
+                <div className="col-md-6">
+                    <h1>Service request for a {isDataLoaded() ? serviceRequest.service_type.name.toLowerCase() : null}</h1>
+                </div>
+                <div className="col-md-6">
+                    <CancelButton returnUrl="/service_requests" style={{ float: 'right' }} />
+                </div>
+                <hr />
+                {getHtmlOrNone()}
             </div>
-            <div className="col-md-6">
-                <CancelButton returnUrl="/service_requests" style={{ float: 'right' }} />
-            </div>
-            <hr />
-            {getHtmlOrNone()}
             <hr className="mt-5 mb-5" />
 
-            <h3>Current assignments</h3>
-            <div className="col-md-12 mt-2">
-                <Chart
-                    chartType="Timeline"
-                    data={sampleData} 
-                />
-            </div>
-
-            <hr />
+            { 
+                assignedTimes.length > 1 ? 
+                    <div>
+                        <h3>Current assignments</h3>
+                        <div className="mt-2">
+                            <Chart
+                                chartType="Timeline"
+                                data={assignedTimes}
+                                options={{height: 300}}
+                            />
+                        </div>
+                        <hr />
+                    </div>
+                : null
+            }
 
             {getAssignedHPorForm()}
         </div>
