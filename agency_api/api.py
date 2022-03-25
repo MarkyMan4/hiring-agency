@@ -458,25 +458,6 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
 
         return hours_per_day
 
-
-class RetrieveServiceRequestHPViewSet(viewsets.ViewSet):
-    serializer_class = RetrieveServiceRequestSerializer
-    permission_classes = [CustomModelPermissions]
-
-    def get_queryset(self):
-        return ServiceRequest.objects.all()
-
-  
-
-# GET /api/retrieve_service_requests/<id>
-    def retrieve(self, request, pk):
-        service_request = self.get_queryset().get(id=pk) 
-        serializer = self.serializer_class(service_request, many=False)
-
-        return Response(serializer.data)
-
-
-
 class RetrieveServiceRequestViewSet(viewsets.ViewSet):
     serializer_class = RetrieveServiceRequestSerializer
     permission_classes = [CustomModelPermissions]
@@ -492,8 +473,6 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
         serializer = ServiceAssignmentDetailSerializer(queryset)
 
         return Response(serializer.data) 
-
-
 
     # GET /api/retrieve_service_requests
     def list(self, request):
@@ -525,6 +504,46 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
         serializer = self.serializer_class(service_request, many=False)
 
         return Response(serializer.data)
+
+    # [
+    #     "Monday",
+    #     "John Doe",
+    #     Date.parse('1-1-1 08:00'),
+    #     Date.parse('1-1-1 12:30'),
+    # ],
+
+    # GET /api/retrieve_service_requests/<id>/assigned_times
+    @action(methods=['GET'], detail=True)
+    def assigned_times(self, request, pk):
+        times = TimeSlot.objects.filter(service_assignment__service_request_id=pk).order_by('day')
+
+        day_map = {
+            0: 'Sunday',
+            1: 'Monday',
+            2: 'Tuesday',
+            3: 'Wednesday',
+            4: 'Thursday',
+            5: 'Friday',
+            6: 'Saturday'
+        }
+
+        assignments = []
+
+        for time in times:
+            first_name = time.service_assignment.healthcare_professional.user.first_name
+            last_name = time.service_assignment.healthcare_professional.user.last_name
+            name = first_name + ' ' + last_name
+
+            assignments.append(
+                {
+                    'day': day_map[time.day],
+                    'name': name,
+                    'start_time': time.start_time,
+                    'end_time': time.end_time
+                }
+            )
+
+        return Response(assignments)        
 
 # only used for creating service assignments since this requires a different serializer
 # i.e. only need IDs of healthcare pro and service request when creating this assignment

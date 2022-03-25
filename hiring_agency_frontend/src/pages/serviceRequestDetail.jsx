@@ -6,6 +6,34 @@ import { retrieveServiceRequest } from "../api/serviceRequests";
 import { getAuthToken } from "../utils/storage";
 import CancelButton from "../components/cancelButton";
 import ServAssignModal from "../components/servAssignModal";
+import { Chart } from "react-google-charts";
+
+const sampleData = [
+    [
+        { type: "string", id: "Day" },
+        { type: "string", id: "Name" },
+        { type: "date", id: "Start" },
+        { type: "date", id: "End" },
+    ],
+    [
+        "Monday",
+        "John Doe",
+        Date.parse('1-1-1 08:00'),
+        Date.parse('1-1-1 12:30'),
+    ],
+    [
+        "Monday",
+        "John Doe",
+        Date.parse('1-1-1 11:30'),
+        Date.parse('1-1-1 16:30'),
+    ],
+    [
+        "Tuesday",
+        "Test Person",
+        Date.parse('1-1-1 09:30'),
+        Date.parse('1-1-1 13:30'),
+    ]
+];
 
 const daySelectedStyle = {
     backgroundColor: 'rgb(5, 194, 68)',
@@ -210,6 +238,16 @@ function ServiceRequestDetail() {
             <hr />
             {getHtmlOrNone()}
             <hr className="mt-5 mb-5" />
+
+            <h3>Current assignments</h3>
+            <div className="col-md-12 mt-2">
+                <Chart
+                    chartType="Timeline"
+                    data={sampleData} 
+                />
+            </div>
+
+            <hr />
 
             {getAssignedHPorForm()}
         </div>
