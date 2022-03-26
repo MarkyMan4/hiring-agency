@@ -103,6 +103,12 @@ function NavMenu({ roles }) {
         }
     }
 
+    const getCareTakerServiceRequests = () => {
+        if(roles.includes('admin') || roles.includes('caretaker')) { 
+            return <Nav.Link className="nav-link" href="#/caretaker_view_service_request">View Service Requests</Nav.Link>
+        }
+    }
+
     const getServiceRequests = () => {
         if(roles.includes('admin') || roles.includes('staff')) { 
             return <Nav.Link className="nav-link" href="#/service_requests">Service Requests</Nav.Link>
@@ -135,6 +141,7 @@ function NavMenu({ roles }) {
                     { viewJobPosting() }
                     { viewJobRequest() }
                     { getCreateServiceRequest() }
+                    { getCareTakerServiceRequests()}
                     { getServiceRequests() }
                     { getBillingAccounts() }
                 </Nav>

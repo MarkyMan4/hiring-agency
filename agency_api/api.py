@@ -135,7 +135,7 @@ class CreateHPJobApplicationViewSet(viewsets.ViewSet):
     def get_queryset(self):
         return JobPosting.objects.all()
 
-    # POST /api/creataehrjobapplicationviewset
+    # POST /api/createhrjobapplicationviewset
     def create(self, request):
         data = request.data
         serializer = self.serializer_class(data=data)
