@@ -2,8 +2,8 @@ import axios from 'axios';
 import { baseUrl } from './config';
 
 
-export const retrieveHPByServiceAsisgnment = async (token, serviceAssignmentID) => {
-    let url = `${baseUrl}api/retrieve_service_requests/${serviceAssignmentID}/get_assign_by_request`;
+export const getAssignmentsForRequest = async (token, servReqId) => {
+    let url = `${baseUrl}api/retrieve_service_requests/${servReqId}/get_assign_by_request`;
 
     let config = {
         headers: {
@@ -13,7 +13,7 @@ export const retrieveHPByServiceAsisgnment = async (token, serviceAssignmentID) 
 
     return axios.get(url, config)
         .then(res => res.data)
-        .catch(err => `Failed to retrieve service request with ID ${serviceAssignmentID}`);
+        .catch(err => `Failed to retrieve service assignments for request ID ${servReqId}`);
 }
 
 

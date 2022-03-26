@@ -7,6 +7,7 @@ import { getAuthToken } from "../utils/storage";
 import CancelButton from "../components/cancelButton";
 import ServAssignModal from "../components/servAssignModal";
 import { Chart } from "react-google-charts";
+import { getAssignmentsForRequest } from "../api/serviceAssignments";
 
 const daySelectedStyle = {
     backgroundColor: 'rgb(5, 194, 68)',
@@ -17,14 +18,14 @@ function ServiceRequestDetail() {
     const { id } = useParams();
     const [serviceRequest, setServiceRequest] = useState({});
     const [hpList, setHPList] = useState();
-    const [isAssigned, setIsAssigned] = useState();
     const [assignedTimes, setAssignedTimes] = useState([]);
     const [assignedCallback, setAssignedCallback] = useState(false); // this is just a trigger for reloading the schedule
+    const [serviceAssignments, setServiceAssignments] = useState([]);
 
     useEffect(() => {
         retrieveServiceRequest(getAuthToken(), id)
             .then(res => setServiceRequest(res));
-    }, [id, isAssigned]);
+    }, [id]);
 
     useEffect(() => {
         getHPList(getAuthToken(), serviceRequest?.id)
@@ -41,6 +42,7 @@ function ServiceRequestDetail() {
             ]
         ];
 
+        // get time blocks of people assigned to this request
         getAssignedTimes(getAuthToken(), id)
             .then(res => {
                 res.forEach(time => {
@@ -56,6 +58,11 @@ function ServiceRequestDetail() {
 
                 setAssignedTimes(times);
             });
+
+        // get list of healthcare professionals assigned to this request
+        getAssignmentsForRequest(getAuthToken(), id)
+            .then(res => { setServiceAssignments(res); console.log(res); });
+
     }, [assignedCallback]);
 
     const isDataLoaded = () => {
@@ -219,14 +226,46 @@ function ServiceRequestDetail() {
         }
     }
 
-    const getAssignedHPorForm = () => {
-        return (
-            <div>
-                <h3>Assign a Health Care Professional to this Request from the list below</h3>
-                <h5>Available Health Care Professionals that meet the requirements</h5>
-                {getAvailableHP()}
-            </div>
-        );
+    const getAssignedOrNull = () => {
+        if(assignedTimes.length > 1) {
+            return (
+                <div>
+                    <h3>Current assignments</h3>
+                    <div>
+                        <Chart
+                            chartType="Timeline"
+                            data={assignedTimes}
+                            options={{height: 300}}
+                        />
+                    </div>
+                    <table className="table table-striped mb-5">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Day of week</th>
+                                <th>Start time</th>
+                                <th>End time</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            { serviceAssignments.map(sa => {
+                                return (
+                                    <tr>
+                                        <td>{sa.healthcare_professional.user.first_name} {sa.healthcare_professional.user.last_name}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                );
+                            }) }
+                        </tbody>
+                    </table>
+                    <hr />
+                </div>
+            );
+        }
     }
 
     return (
@@ -243,23 +282,13 @@ function ServiceRequestDetail() {
             </div>
             <hr className="mt-5 mb-5" />
 
-            { 
-                assignedTimes.length > 1 ? 
-                    <div>
-                        <h3>Current assignments</h3>
-                        <div className="mt-2">
-                            <Chart
-                                chartType="Timeline"
-                                data={assignedTimes}
-                                options={{height: 300}}
-                            />
-                        </div>
-                        <hr />
-                    </div>
-                : null
-            }
+            { getAssignedOrNull() }
 
-            {getAssignedHPorForm()}
+            <div>
+                <h3>Assign a Health Care Professional to this Request from the list below</h3>
+                <h5>Available Health Care Professionals that meet the requirements</h5>
+                { getAvailableHP() }
+            </div>
         </div>
     );
 }

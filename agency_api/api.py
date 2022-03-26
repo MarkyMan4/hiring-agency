@@ -464,13 +464,12 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
 
     def get_queryset(self):
         return ServiceRequest.objects.all()
-
   
     # GET /api/retrieve_service_requests/<id>/get_assign_by_request
     @action(methods=['GET'], detail=True)
     def get_assign_by_request(self, request, pk):
-        queryset = ServiceAssignment.objects.get(service_request_id = pk)
-        serializer = ServiceAssignmentDetailSerializer(queryset)
+        queryset = ServiceAssignment.objects.filter(service_request_id=pk)
+        serializer = ServiceAssignmentDetailSerializer(queryset, many=True)
 
         return Response(serializer.data) 
 
@@ -614,9 +613,6 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-
-
-
 # used for any operations around a service request except for creation
 class ServiceAssignmentViewSet(viewsets.ViewSet):
     serializer_class = ServiceAssignmentDetailSerializer
@@ -653,8 +649,6 @@ class ServiceAssignmentViewSet(viewsets.ViewSet):
 
 
         return Response() 
-        
-
 
 
 class HPJobApplicationViewSet(viewsets.ModelViewSet):
