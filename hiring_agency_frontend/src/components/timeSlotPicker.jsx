@@ -81,9 +81,6 @@ function TimeSlotPicker({ day, schedule, serviceStartDate, serviceEndDate, start
     const validateStartTimeSelection = (event) => {
         let selection = event.target.value;
 
-        console.log(serviceStartDate);
-        console.log(serviceEndDate);
-
         if(isTimeOverlapping(selection, true)) {
             setStartTimeMsg('Selected start time overlaps with an existing assignment');
             conflictCallback(true);

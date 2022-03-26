@@ -129,8 +129,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
-                    startTimeCallback={ startTime => setStartTimeSunday(startTime) }
-                    endTimeCallback={ endTime => setEndTimeSunday(endTime) }
+                    startTimeCallback={ startTime => setStartTimeSunday(startTime === '--select--' ? null : startTime) }
+                    endTimeCallback={ endTime => setEndTimeSunday(endTime === '--select--' ? null : endTime) }
                     conflictCallback={ hasConflict => setConflictSunday(hasConflict) }
                 />
             );
@@ -143,8 +143,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
-                    startTimeCallback={ startTime => setStartTimeMonday(startTime) }
-                    endTimeCallback={ endTime => setEndTimeMonday(endTime) }
+                    startTimeCallback={ startTime => setStartTimeMonday(startTime === '--select--' ? null : startTime) }
+                    endTimeCallback={ endTime => setEndTimeMonday(endTime === '--select--' ? null : endTime) }
                     conflictCallback={ hasConflict => setConflictMonday(hasConflict) }
                 />
             );
@@ -157,8 +157,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
-                    startTimeCallback={ startTime => setStartTimeTuesday(startTime) }
-                    endTimeCallback={ endTime => setEndTimeTuesday(endTime) }
+                    startTimeCallback={ startTime => setStartTimeTuesday(startTime === '--select--' ? null : startTime) }
+                    endTimeCallback={ endTime => setEndTimeTuesday(endTime === '--select--' ? null : endTime) }
                     conflictCallback={ hasConflict => setConflictTuesday(hasConflict) }
                 />
             );
@@ -171,8 +171,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
-                    startTimeCallback={ startTime => setStartTimeWednesday(startTime) }
-                    endTimeCallback={ endTime => setEndTimeWednesday(endTime) }
+                    startTimeCallback={ startTime => setStartTimeWednesday(startTime === '--select--' ? null : startTime) }
+                    endTimeCallback={ endTime => setEndTimeWednesday(endTime === '--select--' ? null : endTime) }
                     conflictCallback={ hasConflict => setConflictWednesday(hasConflict) }
                 />
             );
@@ -185,8 +185,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
-                    startTimeCallback={ startTime => setStartTimeThursday(startTime) }
-                    endTimeCallback={ endTime => setEndTimeThursday(endTime) }
+                    startTimeCallback={ startTime => setStartTimeThursday(startTime === '--select--' ? null : startTime) }
+                    endTimeCallback={ endTime => setEndTimeThursday(endTime === '--select--' ? null : endTime) }
                     conflictCallback={ hasConflict => setConflictThursday(hasConflict) }
                 />
             );
@@ -199,8 +199,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
-                    startTimeCallback={ startTime => setStartTimeFriday(startTime) }
-                    endTimeCallback={ endTime => setEndTimeFriday(endTime) }
+                    startTimeCallback={ startTime => setStartTimeFriday(startTime === '--select--' ? null : startTime) }
+                    endTimeCallback={ endTime => setEndTimeFriday(endTime === '--select--' ? null : endTime) }
                     conflictCallback={ hasConflict => setConflictFriday(hasConflict) }
                 />
             );
@@ -213,8 +213,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
-                    startTimeCallback={ startTime => setStartTimeSaturday(startTime) }
-                    endTimeCallback={ endTime => setEndTimeSaturday(endTime) }
+                    startTimeCallback={ startTime => setStartTimeSaturday(startTime === '--select--' ? null : startTime) }
+                    endTimeCallback={ endTime => setEndTimeSaturday(endTime === '--select--' ? null : endTime) }
                     conflictCallback={ hasConflict => setConflictSaturday(hasConflict) }
                 />
             );
@@ -264,8 +264,6 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
             startTimeSaturday,
             endTimeSaturday
         ];
-
-        console.log(selections.some(s => s));
 
         if(!selections.some(s => s)) {
             return false;
