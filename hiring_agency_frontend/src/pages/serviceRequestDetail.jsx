@@ -7,7 +7,7 @@ import { getAuthToken } from "../utils/storage";
 import CancelButton from "../components/cancelButton";
 import ServAssignModal from "../components/servAssignModal";
 import { Chart } from "react-google-charts";
-import { getAssignmentsForRequest } from "../api/serviceAssignments";
+import { getAssignmentsForRequest, unassignHpToServiceRequest } from "../api/serviceAssignments";
 
 const daySelectedStyle = {
     backgroundColor: 'rgb(5, 194, 68)',
@@ -226,6 +226,11 @@ function ServiceRequestDetail() {
         }
     }
 
+    const unassignHpFromRequest = (servAssignId) => {
+        unassignHpToServiceRequest(getAuthToken(), servAssignId)
+            .then(res => setAssignedCallback(!assignedCallback));
+    }
+
     const getAssignedOrNull = () => {
         if(assignedTimes.length > 1) {
             return (
@@ -238,30 +243,22 @@ function ServiceRequestDetail() {
                             options={{height: 300}}
                         />
                     </div>
-                    <table className="table table-striped mb-5">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Day of week</th>
-                                <th>Start time</th>
-                                <th>End time</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            { serviceAssignments.map(sa => {
-                                return (
-                                    <tr>
-                                        <td>{sa.healthcare_professional.user.first_name} {sa.healthcare_professional.user.last_name}</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                );
-                            }) }
-                        </tbody>
-                    </table>
+                    <div className="mb-5">
+                        { serviceAssignments.map(sa => {
+                            return (
+                                <div className="card shadow p-2 mb-2 w-50">
+                                    <div className="row">
+                                        <div className="col-md-6">
+                                            {sa.healthcare_professional.user.first_name} {sa.healthcare_professional.user.last_name}
+                                        </div>
+                                        <div className="col-md-5">
+                                            <button onClick={ () => unassignHpFromRequest(sa.id) } style={{float: 'right'}} className="btn btn-warning">Unassign</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        }) }
+                    </div>
                     <hr />
                 </div>
             );

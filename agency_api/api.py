@@ -558,11 +558,6 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
     def create(self, request):
         data = request.data
 
-        service_assignment_data = {
-            'healthcare_professional': data['healthcare_professional'],
-            'service_request': data['service_request']
-        }
-
         # only create the assignment if this combination of HP and service request doesn't exist
         if ServiceAssignment.objects.filter(healthcare_professional_id=data['healthcare_professional'], service_request_id=data['service_request']).count() == 0:
             serializer = self.serializer_class(data=data)
@@ -641,17 +636,17 @@ class ServiceAssignmentViewSet(viewsets.ViewSet):
 
         return Response(serializer.data) 
 
-    #DELETE /api/service_assignments/<id>
+    # DELETE /api/service_assignments/<id>
     def destroy(self, request, pk):
         serv_assign = self.get_queryset().get(id=pk)
-
-        # update the service request to assigned
-        service_request = ServiceRequest.objects.get(id=serv_assign.service_request.id)
-        service_request.is_assigned = False
-        service_request.save()
+        serv_req_id = serv_assign.service_request.id
         serv_assign.delete()
 
-
+        # if there are no more service assignments referencing the request, mark the request as unassigned
+        if ServiceAssignment.objects.filter(service_request_id=serv_req_id).count() == 0:
+            service_request = ServiceRequest.objects.get(id=serv_req_id)
+            service_request.is_assigned = False
+            service_request.save()
 
         return Response() 
 

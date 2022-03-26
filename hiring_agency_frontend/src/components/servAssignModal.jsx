@@ -37,7 +37,7 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
     useEffect(() => {
         getHpSchedule(getAuthToken(), healthProId)
             .then(res => setSchedule(res));
-    }, []);
+    }, [display]);
 
     useEffect(() => {
         if(Object.keys(serviceRequest).length > 0) {
