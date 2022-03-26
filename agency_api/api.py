@@ -563,12 +563,17 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
             'service_request': data['service_request']
         }
 
-        # create the service request
-        serializer = self.serializer_class(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        # only create the assignment if this combination of HP and service request doesn't exist
+        if ServiceAssignment.objects.filter(healthcare_professional_id=data['healthcare_professional'], service_request_id=data['service_request']).count() == 0:
+            serializer = self.serializer_class(data=data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
-        service_assignment_id = serializer.data['id']
+        serv_assign = ServiceAssignment.objects.get(
+            healthcare_professional_id=data['healthcare_professional'], 
+            service_request_id=data['service_request']
+        )
+        service_assignment_id = serv_assign.id
 
         # create the time slots that were specified
         for ts in data['time_slots']:
@@ -602,7 +607,7 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
         amt_to_be_paid = hours_per_day * total_days * hourly_rate
 
 
-        # create a service account
+        # create a billing account
         BillingAccount.objects.create(
             service_request=service_request,
             hourly_rate=hourly_rate,
@@ -610,7 +615,7 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
             amt_to_be_paid=amt_to_be_paid
         )
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({'result': 'assignment successful'}, status=status.HTTP_201_CREATED)
 
 
 # used for any operations around a service request except for creation
