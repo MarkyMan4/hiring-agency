@@ -15,7 +15,7 @@ class SecurityQuestion(models.Model):
 class ServiceType(models.Model):
     name = models.CharField(null=False, max_length=30)
     hourly_rate = models.DecimalField(null=False, max_digits=5, decimal_places=2)
-
+    
 # other tables
 class SecurityQuestionAnswer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -58,6 +58,7 @@ class HealthCareProfessional(models.Model):
     address = models.CharField(null=False, max_length=500)
     phone_number = models.BigIntegerField(null=False)
     email = models.CharField(null=False, max_length=200)
+    hourly_rate = models.DecimalField(null=False, max_digits=5, decimal_places=2)
     
     
 class ServiceRequest(models.Model):

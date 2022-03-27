@@ -1,20 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import { viewAdvertisementRequestById } from "../api/advertisementRequest";
+import { approveJobRequest } from "../api/advertisementRequest";
 import { getAuthToken } from "../utils/storage";
 
 function JobRequestDetail(){
     const { id } = useParams();
     const navigate = useNavigate();
     const [request, setRequest] = useState({});
+    const [email, setEmail] = useState();
+    const [salary , setSalary] = useState('');
+    const [message, setMessage] = useState('');
 
     useEffect(() => {
         viewAdvertisementRequestById(getAuthToken(), id)
             .then(res => setRequest(res));
     }, []);
 
+    const handleSalary  = (event) =>{
+        setSalary(event.target.value);
+    }
+
     const approve = () =>{
-        navigate(`/hp_job_application/${id}/approve`);
+        if(salary==""){
+            setMessage('Please enter salary');
+        }
+        else{
+            if(salary > request.service_type.hourly_rate)
+            {
+                setMessage('Salary show lower than hourly rate');
+            }
+            else{
+                approveJobRequest(getAuthToken(), id, salary)
+                .then(res => setEmail(res.email))
+                .catch(err => console.log(err));
+            navigate(`/hp_job_application/${id}/approve`);
+            }  
+        }
+        
     }
 
     const reject = () =>{
@@ -56,9 +79,14 @@ function JobRequestDetail(){
                 <p><b>Education institution: </b>{ request.education_institution }</p>
                 <p><b>Graduation month and year: </b>{ request.graduation_month } / {request.graduation_year}</p>
                 <p><b>Experience year(s): </b>{ request.years_of_experience }</p>
+                <hr/>
+                <p><b>If you want to hire this healthcare professional, please enter the hourly rate of this user</b></p>
+                <p><b>The fee of { request.service_type.name } is { request.service_type.hourly_rate } /hour, the salary should lower than this rate.</b></p>
+                <input placeholder="enter salary here" onChange={ handleSalary } className="form-control w-25 mt-2"></input><br />
+                <div className="mt-3" ><p>{ message }</p></div>
                 <button onClick={ approve } className="btn btn-outline-success">Approve</button>
                 <button onClick={ reject } className="btn btn-outline-danger m-3">Reject</button>
-
+                
             </div>
         );
     }
