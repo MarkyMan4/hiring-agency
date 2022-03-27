@@ -220,6 +220,7 @@ function CreateServiceRequest({ roles }) {
                 <select value={ serviceType } onChange={ event => setServiceType(event.target.value) } className="form-select">
                     <option value="1">Nurse</option>
                     <option value="2">Physiotherapist</option>
+                    <option value="3">Psychiatrists</option>
                 </select>
 
                 <label className="mt-3"><span className="text-danger">*</span>Select days service needed:</label><br />

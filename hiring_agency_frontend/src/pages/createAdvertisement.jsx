@@ -2,6 +2,39 @@ import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { sendJobForm } from "../api/jobApi";
 
+const educationTypeLookup = {
+    '1': [
+        {
+            id: '1',
+            value: 'Bachelors'
+        },
+        {
+            id: '2',
+            value: 'Masters'
+        }
+    ],
+    '2': [
+        {
+            id: '1',
+            value: 'Bachelors'
+        },
+        {
+            id: '2',
+            value: 'Masters'
+        }
+    ],
+    '3': [
+        {
+            id: '2',
+            value: 'Masters'
+        },
+        {
+            id: '3',
+            value: 'PHD'
+        }
+    ]
+}
+
 function CreateAdvertisement() {
     const [serviceType, setServiceType] = useState(1);
     const [educationType, setEducationType] = useState(1);
@@ -63,12 +96,12 @@ function CreateAdvertisement() {
                 <select onChange={serviceTypeChanged} name="serviceType" className="form-select mt-2" required>
                     <option value="1">Nurse</option>
                     <option value="2">Physiotherapist</option>
+                    <option value="3">Psychiatrists</option>
                 </select>
 
                 <label className="mt-3">Education Level Required</label>
                 <select onChange={educationTypeChanged} className="form-select mt-2" required>
-                    <option value="1">Bachelors</option>
-                    <option value="2">Masters</option>
+                    { educationTypeLookup[serviceType].map(e => <option value={e.id}>{ e.value }</option>) }
                 </select>
 
                 <label className="mt-3">Experience Required (Years)</label>
