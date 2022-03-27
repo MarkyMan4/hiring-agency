@@ -389,8 +389,6 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
             patient_email=serv_req.patient_email
         )
 
-        print(existing_reqs)
-
         new_req_start_date = serv_req.start_date
         new_req_end_date = get_service_end_date(serv_req)
 
