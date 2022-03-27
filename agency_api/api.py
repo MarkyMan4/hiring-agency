@@ -430,7 +430,16 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
                 serv_req1.service_end_time <= serv_req2.service_end_time
             )
 
-            if start_times_overlap or end_times_overlap:
+            # check if new service request starts before and ends after an existing request
+            all_times_overlap = (
+                (serv_req1.service_start_time <= serv_req2.service_start_time and
+                    serv_req1.service_start_time >= serv_req2.service_end_time)
+                or
+                (serv_req2.service_start_time <= serv_req1.service_start_time and
+                    serv_req2.service_start_time >= serv_req1.service_end_time)
+            )
+
+            if start_times_overlap or end_times_overlap or all_times_overlap:
                 return True
         else: # at least one request has flexible hours, so make sure the total hours don't exceed 24
             serv_req1_hours_per_day = self.get_hours_of_service_per_day(serv_req1)
@@ -480,6 +489,7 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
         # if user is a care taker, only get service requests they created
         # for admin or staff, retrieve all service requests
         if user.groups.filter(name='caretaker'):
+            print('yea')
             queryset = self.get_queryset().filter(care_taker_id=user.id)
         else:
             queryset = self.get_queryset()
