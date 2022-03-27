@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { assignHpToServiceRequest } from "../api/serviceAssignments";
 import { unassignHpToServiceRequest } from "../api/serviceAssignments";
-import { retrieveHPByServiceAsisgnment } from "../api/serviceAssignments";
+import { getAssignmentsForRequest } from "../api/serviceAssignments";
 import { getHPList } from "../api/HPRequests";
 import { retrieveServiceRequest } from "../api/serviceRequests";
 import { getAllServiceRequests } from "../api/serviceRequests";
@@ -188,7 +188,7 @@ function CTServiceRequestDetail() {
     const getAssignedHPorForm = () => {
         if (isDataLoaded() && serviceRequest.is_assigned === true && hp === undefined) {
             // console.log("http assigned hp");
-            retrieveHPByServiceAsisgnment(getAuthToken(), serviceRequest.id)
+            getAssignmentsForRequest(getAuthToken(), serviceRequest.id)
                 .then(res => {setHP(res);})
                 .catch(err => console.log(err.response.data));
             return (<div></div>)
@@ -213,8 +213,13 @@ function CTServiceRequestDetail() {
                 <div className="col">
                     <div className="assigned-HP-servicecard shadow animate__animated animate__fadeInLeft">
                         <h3> Currently Assigned Healthcare Professional </h3>
-                        <p> Name: {hp.healthcare_professional.user.first_name} {hp.healthcare_professional.user.last_name} </p>
-                        <p> Gender: {hp.healthcare_professional.gender}</p>
+                        {hp.map(h => (
+                            <div>
+                                <p> Name: {h.healthcare_professional.user.first_name} {h.healthcare_professional.user.last_name} </p>
+                                <p> Gender: {h.healthcare_professional.gender}</p>
+                                <hr />
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
