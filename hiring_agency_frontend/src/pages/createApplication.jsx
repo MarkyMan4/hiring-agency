@@ -3,6 +3,39 @@ import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { sendApplication } from "../api/applicationApi";
 
+const educationTypeLookup = {
+    '1': [
+        {
+            id: '1',
+            value: 'Bachelors'
+        },
+        {
+            id: '2',
+            value: 'Masters'
+        }
+    ],
+    '2': [
+        {
+            id: '1',
+            value: 'Bachelors'
+        },
+        {
+            id: '2',
+            value: 'Masters'
+        }
+    ],
+    '3': [
+        {
+            id: '2',
+            value: 'Masters'
+        },
+        {
+            id: '3',
+            value: 'PHD'
+        }
+    ]
+}
+
 function CreateAdvertisement() {
     const [email, setEmail] = useState('');
     const [gender, setGender] = useState('Male');
@@ -136,12 +169,12 @@ function CreateAdvertisement() {
                 <select id="gender" onChange={serviceTypeChanged} name="gender" className="form-select mt-2" required>
                     <option value="1">Nurse</option>
                     <option value="2">Physiotherapist</option>
+                    <option value="3">Psychiatrists</option>
                 </select>
         
                 <label className="mt-3">Education Type </label><br />
                 <select id="gender" onChange={educationTypeChanged} name="gender" className="form-select mt-2" required>
-                    <option value="1">Masters</option>
-                    <option value="2">Bachelors</option>
+                { educationTypeLookup[serviceType].map(e => <option value={e.id}>{ e.value }</option>) }
                 </select>
                 
                 <label className="mt-3">Educational Institution</label><br />

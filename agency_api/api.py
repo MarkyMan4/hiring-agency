@@ -1,3 +1,4 @@
+from urllib import request
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -508,7 +509,7 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)        
 
-    @action(methods=['PUT'], detail=True)
+    @action(methods=['POST'], detail=True)
     def approve(self, request, pk):
         queryset = self.get_queryset()
 
@@ -520,7 +521,7 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
         job_request.is_pending = False
         job_request.save()
 
-        username, email = self.register_hp(job_request)
+        username, email = self.register_hp(job_request, request.data['salary'])
         return Response({
             'username' :username ,
             'email' :email
@@ -539,7 +540,7 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
 
         return Response()
 
-    def register_hp(self, job_request):
+    def register_hp(self, job_request, salary):
         generated_password = gen_rand_pass()
 
         user_data = {
@@ -572,7 +573,8 @@ class HPJobApplicationViewSet(viewsets.ModelViewSet):
             'years_of_experience':job_request.years_of_experience,
             'address':job_request.address,
             'phone_number':job_request.phone_number,
-            'email':job_request.email
+            'email':job_request.email,
+            'hourly_rate':salary
         }
 
         HCP_serializer = HealthCareProfessionalSerializer(data=hp_data)

@@ -29,15 +29,19 @@ export const viewAdvertisementRequestById = async (token, id) =>{
         .catch(err => console.log('Failed to find job request'));
 }
 
-export const approveJobRequest = async (token, requestId) =>{
+export const approveJobRequest = async (token, requestId, salary) =>{
     let url = `${baseUrl}api/hp_job_application/${requestId}/approve`;
+
+    let body = {
+        salary: salary
+    };
 
     let config ={
         headers: {
             'Authorization': 'Token ' + token
         }
     }
-    return axios.put(url,{}, config)
+    return axios.post(url,body, config )
         .then(res => res.data)
 }
 
