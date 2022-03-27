@@ -46,6 +46,8 @@ import MyMenu from './pages/myMenu';
 import BillingAccounts from './pages/billingAccounts';
 import BillingAccountDetail from './pages/billingAccountDetail';
 import CTServiceRequests from './pages/careTakerViewServiceRequests.jsx';
+import CTServiceRequestDetail from './pages/cTServiceRequestDetail';
+
 
 function App() {
   const [accountLocked, setAccountLocked] = useState(false);
@@ -94,6 +96,7 @@ function App() {
           <Route path="/caretaker_view_service_request" element={ <CareTakerRoute roles={ roles }><CTServiceRequests roles={ roles } /></CareTakerRoute> } />
           <Route path="/service_requests" element={ <StaffRoute roles={ roles }><ServiceRequests /></StaffRoute> } />
           <Route path="/service_requests/:id" element={ <StaffRoute roles={ roles }><ServiceRequestDetail /></StaffRoute> } />
+          <Route path="/ct_service_requests/:id" element={ <CareTakerRoute roles={ roles }><CTServiceRequestDetail /></CareTakerRoute> } /> 
           <Route path="/hp_job_application" element={<StaffRoute roles={ roles }><JobRequestList /> </StaffRoute>} /> 
           <Route path="/hp_job_application/:id" element={<StaffRoute roles={ roles }><JobRequesDetail /></StaffRoute>} /> 
           <Route path="/hp_job_application/:id/approve" element={<StaffRoute roles={ roles }><JobRequesApproved /></StaffRoute>} /> 

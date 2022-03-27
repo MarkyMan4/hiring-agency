@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { getAllServiceRequests } from "../api/serviceRequests";
 import { getAuthToken } from "../utils/storage";
-import ServiceRequestCard from "../components/serviceRequestCard";
+import CTServiceRequestCard from "../components/cTServiceRequestCard";
 
 function CTServiceRequests() {
     const [serviceRequests, setServiceRequests] = useState([]);
@@ -23,7 +23,7 @@ function CTServiceRequests() {
             return (
                 <div>
                     { serviceRequests.map(req => (
-                        <ServiceRequestCard 
+                        <CTServiceRequestCard 
                             requestId={ req.id }
                             patientName={ req.patient_first_name + ' ' + req.patient_last_name }
                             requesterName={ req.care_taker.user.first_name + ' ' + req.care_taker.user.last_name }

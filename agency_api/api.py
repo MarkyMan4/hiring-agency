@@ -135,7 +135,7 @@ class CreateHPJobApplicationViewSet(viewsets.ViewSet):
     def get_queryset(self):
         return JobPosting.objects.all()
 
-    # POST /api/createhrjobapplicationviewset
+    # POST /api/creataehrjobapplicationviewset
     def create(self, request):
         data = request.data
         serializer = self.serializer_class(data=data)
@@ -365,11 +365,11 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
     # GET /api/retrieve_service_requests
     def list(self, request):
         user = request.user
-
+        
         # if user is a care taker, only get service requests they created
         # for admin or staff, retrieve all service requests
         if user.groups.filter(name='caretaker'):
-            queryset = self.get_queryset().filter(care_taker_id=user.id)
+            queryset = self.get_queryset().filter(care_taker_id__user_id=user.id)  #__ means to join and then filter whatever after
         else:
             queryset = self.get_queryset()
 
@@ -383,7 +383,7 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
             queryset = queryset.filter(is_completed=True if value.lower() == 'true' else False)
         
         serializer = self.serializer_class(queryset, many=True)
-
+        print(serializer.data)
         return Response(serializer.data)
 
     # GET /api/retrieve_service_requests/<id>
