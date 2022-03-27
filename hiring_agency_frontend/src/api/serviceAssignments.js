@@ -2,8 +2,8 @@ import axios from 'axios';
 import { baseUrl } from './config';
 
 
-export const retrieveHPByServiceAsisgnment = async (token, serviceAssignmentID) => {
-    let url = `${baseUrl}api/retrieve_service_requests/${serviceAssignmentID}/get_assign_by_request`;
+export const getAssignmentsForRequest = async (token, servReqId) => {
+    let url = `${baseUrl}api/retrieve_service_requests/${servReqId}/get_assign_by_request`;
 
     let config = {
         headers: {
@@ -13,7 +13,7 @@ export const retrieveHPByServiceAsisgnment = async (token, serviceAssignmentID) 
 
     return axios.get(url, config)
         .then(res => res.data)
-        .catch(err => `Failed to retrieve service request with ID ${serviceAssignmentID}`);
+        .catch(err => `Failed to retrieve service assignments for request ID ${servReqId}`);
 }
 
 
@@ -32,12 +32,13 @@ export const unassignHpToServiceRequest = async(token, serviceAssignmentID) => {
 }
 
 
-export const assignHpToServiceRequest = async (token, serviceRequestId, hpId) => {
+export const assignHpToServiceRequest = async (token, serviceRequestId, hpId, timeSlots) => {
     const url = baseUrl + 'api/create_service_assignment';
 
     const body = {
         healthcare_professional: hpId,
-        service_request: serviceRequestId
+        service_request: serviceRequestId,
+        time_slots: timeSlots
     }
 
     const config = {

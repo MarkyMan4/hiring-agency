@@ -86,3 +86,19 @@
   margin-right: 5px;
   display: inline-block;
 }
+
+.modal {
+  z-index: 1; 
+  overflow: auto;
+  background-color: rgb(0,0,0); 
+  background-color: rgba(0,0,0,0.4); 
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 50px;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 70%;
+  overflow: scroll;
+}

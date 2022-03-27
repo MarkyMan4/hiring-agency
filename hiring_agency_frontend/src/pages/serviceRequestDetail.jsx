@@ -1,14 +1,13 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { assignHpToServiceRequest } from "../api/serviceAssignments";
-import { unassignHpToServiceRequest } from "../api/serviceAssignments";
-import { retrieveHPByServiceAsisgnment } from "../api/serviceAssignments";
 import { getHPList } from "../api/HPRequests";
-import { retrieveServiceRequest } from "../api/serviceRequests";
-import { getAllServiceRequests } from "../api/serviceRequests";
+import { getAssignedTimes, retrieveServiceRequest } from "../api/serviceRequests";
 import { getAuthToken } from "../utils/storage";
 import CancelButton from "../components/cancelButton";
+import ServAssignModal from "../components/servAssignModal";
+import { Chart } from "react-google-charts";
+import { getAssignmentsForRequest, unassignHpToServiceRequest } from "../api/serviceAssignments";
 
 const daySelectedStyle = {
     backgroundColor: 'rgb(5, 194, 68)',
@@ -18,34 +17,57 @@ const daySelectedStyle = {
 function ServiceRequestDetail() {
     const { id } = useParams();
     const [serviceRequest, setServiceRequest] = useState({});
-    const [hp, setHP] = useState();
     const [hpList, setHPList] = useState();
-    const [servAssignList, setServAssignList] = useState();
-    const [isAssigned, setIsAssigned] = useState();
+    const [assignedTimes, setAssignedTimes] = useState([]);
+    const [assignedCallback, setAssignedCallback] = useState(false); // this is just a trigger for reloading the schedule
+    const [serviceAssignments, setServiceAssignments] = useState([]);
 
     useEffect(() => {
         retrieveServiceRequest(getAuthToken(), id)
             .then(res => setServiceRequest(res));
-    }, [id, isAssigned]);
+    }, [id]);
 
     useEffect(() => {
-        getHPList(getAuthToken())  //could be moved elsewhere for performance if needed
-            .then(res => { setHPList(res); });
-
-    }, []);
+        getHPList(getAuthToken(), serviceRequest?.id)
+            .then(res => setHPList(res));
+    }, [serviceRequest, assignedCallback]);
 
     useEffect(() => {
-        getAllServiceRequests(getAuthToken(), true, false)  //could be moved elsewhere for performance if needed
-            .then(res => { setServAssignList(res); });
+        let times = [
+            [
+                { type: "string", id: "Day" },
+                { type: "string", id: "Name" },
+                { type: "date", id: "Start" },
+                { type: "date", id: "End" },
+            ]
+        ];
 
-    }, []);
+        // get time blocks of people assigned to this request
+        getAssignedTimes(getAuthToken(), id)
+            .then(res => {
+                res.forEach(time => {
+                    times.push(
+                        [
+                            time.day,
+                            time.name,
+                            Date.parse(`1-1-1 ${time.start_time}`),
+                            Date.parse(`1-1-1 ${time.end_time}`)
+                        ]
+                    )
+                });
 
+                setAssignedTimes(times);
+            });
+
+        // get list of healthcare professionals assigned to this request
+        getAssignmentsForRequest(getAuthToken(), id)
+            .then(res => { setServiceAssignments(res); console.log(res); });
+
+    }, [assignedCallback]);
 
     const isDataLoaded = () => {
         return Object.keys(serviceRequest).length > 0;
     }
-
-
 
     // if flexible hours, we only show the hours needed per day, else show start and end time of service
     const getHoursOrTimes = () => {
@@ -115,198 +137,19 @@ function ServiceRequestDetail() {
         );
     }
 
-    const assign = (event) => {
-        event.preventDefault();
-        assignHpToServiceRequest(getAuthToken(), id, event.target.value)
-            .then(res => setIsAssigned(true))
-            .catch(err => console.log(err.response.data));
-    }
-
-    const unassign = (event) =>{
-        event.preventDefault();
-        unassignHpToServiceRequest(getAuthToken(), hp.id)
-            .then(res => setIsAssigned(false))
-            .catch(err => console.log(err.response.data));
-    }
-
-    const getAvailableHP = () => { //also does validation
-        let goodHPs = [];
-        
-        hpList.forEach(curHP => {
-            //gender
-            if (serviceRequest.hp_gender_required === true) {
-                // console.log("comparing");
-                // console.log(curHP.gender);
-                // console.log(serviceRequest.patient_gender);
-                // console.log(curHP.gender !== serviceRequest.patient_gender);
-                if (curHP.gender !== serviceRequest.patient_gender) {
-                    return; //TODO standardize male and female insead of M or F
-                }
-            }
-            //age
-            let parsedDate = curHP.date_of_birth.split("-");
-            var dob = new Date(parsedDate[0], parseInt(parsedDate[1]) - 1, parsedDate[2]);  // prob will cause error 
-            var month_diff = Date.now() - dob.getTime();
-            var age_dt = new Date(month_diff);
-            var year = age_dt.getUTCFullYear();
-            //now calculate the age of the HP  
-            var age = Math.abs(year - 1970);
-            if (serviceRequest.hp_max_age !== null) {
-                if (age > serviceRequest.hp_max_age) {
-                    return;
-                }
-            }
-            if (serviceRequest.hp_min_age !== null) {
-                if (age < serviceRequest.hp_min_age) {
-                    return;
-                }
-            }
-            //schedule
-            let hoursWorked = [0, 0, 0, 0, 0, 0, 0]; //a worker can work a max of 8 hours a day
-
-            //load all hours worked by current assignments per day 
-            servAssignList.forEach(thisServ => {//possibly a better way to do this
-                if (thisServ.care_taker.id !== curHP.id) {
-                    return;
-                }
-
-                if (thisServ.service_needed_sunday) {
-                    if (thisServ.hours_of_service_daily === null) {
-                        let t2 = thisServ.service_end_time.split(":");
-                        let t1 = thisServ.service_start_time.split(":");
-                        hoursWorked[0] += parseInt(t2[0]) - parseInt(t1[0]);
-                    } else {
-                        hoursWorked[0] += thisServ.hours_of_service_daily;
-                    }
-                }
-                if (thisServ.service_needed_monday) {
-                    if (thisServ.hours_of_service_daily === null) {
-                        let t2 = thisServ.service_end_time.split(":");
-                        let t1 = thisServ.service_start_time.split(":");
-                        hoursWorked[1] += parseInt(t2[0]) - parseInt(t1[0]);
-                    } else {
-                        hoursWorked[1] += thisServ.hours_of_service_daily;
-                    }
-                }
-                if (thisServ.service_needed_tuesday) {
-                    if (thisServ.hours_of_service_daily === null) {
-                        let t2 = thisServ.service_end_time.split(":");
-                        let t1 = thisServ.service_start_time.split(":");
-                        hoursWorked[2] += parseInt(t2[0]) - parseInt(t1[0]);
-                    } else {
-                        hoursWorked[2] += thisServ.hours_of_service_daily;
-                    }
-                }
-                if (thisServ.service_needed_wednesday) {
-                    if (thisServ.hours_of_service_daily === null) {
-                        let t2 = thisServ.service_end_time.split(":");
-                        let t1 = thisServ.service_start_time.split(":");
-                        hoursWorked[3] += parseInt(t2[0]) - parseInt(t1[0]);
-                    } else {
-                        hoursWorked[3] += thisServ.hours_of_service_daily;
-                    }
-                }
-                if (thisServ.service_needed_thursday) {
-                    if (thisServ.hours_of_service_daily === null) {
-                        let t2 = thisServ.service_end_time.split(":");
-                        let t1 = thisServ.service_start_time.split(":");
-                        hoursWorked[4] += parseInt(t2[0]) - parseInt(t1[0]);
-                    } else {
-                        hoursWorked[4] += thisServ.hours_of_service_daily;
-                    }
-                }
-                if (thisServ.service_needed_friday) {
-                    if (thisServ.hours_of_service_daily === null) {
-                        let t2 = thisServ.service_end_time.split(":");
-                        let t1 = thisServ.service_start_time.split(":");
-                        hoursWorked[5] += parseInt(t2[0]) - parseInt(t1[0]);
-                    } else {
-                        hoursWorked[5] += thisServ.hours_of_service_daily;
-                    }
-                }
-                if (thisServ.service_needed_saturday) {
-                    if (thisServ.hours_of_service_daily === null) {
-                        let t2 = thisServ.service_end_time.split(":");
-                        let t1 = thisServ.service_start_time.split(":");
-                        hoursWorked[6] += parseInt(t2[0]) - parseInt(t1[0]);
-                    } else {
-                        hoursWorked[6] += thisServ.hours_of_service_daily;
-                    }
-                }
-            })
-            // console.log("loaded existing schedules");
-            // console.log(hoursWorked);
-            //schedule - check if any conflicts with requested days/times 
-            let timeRequested = 0;
-            if (serviceRequest.hours_of_service_daily === undefined) {
-                let t1 = serviceRequest.service_end_time.split(":");
-                let t2 = serviceRequest.service_start_time.split(":");
-                timeRequested = parseInt(t2[0]) - parseInt(t1[0]);
-            } else {
-                timeRequested = serviceRequest.hours_of_service_daily;
-            }
-            // console.log("time requested is ");
-            // console.log(timeRequested);
-
-            if (serviceRequest.service_needed_sunday) {
-                if (timeRequested + hoursWorked[0] > 8) {
-                    return;
-                }
-            }
-
-            if (serviceRequest.service_needed_monday) {
-                if (timeRequested + hoursWorked[1] > 8) {
-                    return;
-                }
-            }
-
-            if (serviceRequest.service_needed_tuesday) {
-                if (timeRequested + hoursWorked[2] > 8) {
-                    return;
-                }
-            }
-
-            if (serviceRequest.service_needed_wednesday) {
-                if (timeRequested + hoursWorked[3] > 8) {
-                    return;
-                }
-            }
-
-            if (serviceRequest.service_needed_thursday) {
-                if (timeRequested + hoursWorked[4] > 8) {
-                    return;
-                }
-            }
-
-            if (serviceRequest.service_needed_friday) {
-                if (timeRequested + hoursWorked[5] > 8) {
-                    return;
-                }
-            }
-
-            if (serviceRequest.service_needed_saturday) {
-                if (timeRequested + hoursWorked[6] > 8) {
-                    return;
-                }
-            }
-            // console.log("we like this guys");
-            goodHPs.push(curHP);
-        })
-
-        // console.log("made the hp avialable list here it is");
-        // console.log(goodHPs);
-
-
-
-
+    const getAvailableHP = () => {
         return (<div className="mb-5">
             {
-                goodHPs.map(goodHP => {
-            
+                hpList?.map(goodHP => {            
                     return(
-                        <div class="row mt-2" data-id="goodHP.id" >
+                        <div class="row mt-2" key={ goodHP.id } >
                             <div class="col ">
-                                <button type="button" className="service-request-hp-row btn btn-outline-secondary" value={goodHP.id} onClick={assign} >Name: {goodHP.user.first_name}  {goodHP.user.last_name}   |   Gender: {goodHP.gender}</button>
+                                <ServAssignModal 
+                                    buttonText={ `Name: ${goodHP.user.first_name}  ${goodHP.user.last_name}   |   Gender: ${goodHP.gender}` }
+                                    healthProId={ goodHP.id }
+                                    serviceRequest={ serviceRequest }
+                                    assignedCallback={ () => setAssignedCallback(!assignedCallback) }
+                                />
                             </div>
                         </div>
                     )
@@ -357,6 +200,8 @@ function ServiceRequestDetail() {
                             <p>{serviceRequest.service_type.name}</p>
                             <b>Service location</b>
                             <p>{serviceRequest.service_location}</p>
+                            <b>Start date</b>
+                            <p>{serviceRequest.start_date}</p>
                             {getHoursOrTimes()}
                             <b>Days service needed</b>
                             <div className="mt-2 mb-3">
@@ -381,76 +226,66 @@ function ServiceRequestDetail() {
         }
     }
 
-    const getAssignedHPorForm = () => {
-        if (isDataLoaded() && serviceRequest.is_assigned === true && hp === undefined) {
-            // console.log("http assigned hp");
-            retrieveHPByServiceAsisgnment(getAuthToken(), serviceRequest.id)
-                .then(res => {setHP(res);})
-                .catch(err => console.log(err.response.data));
-            return (<div></div>)
+    const unassignHpFromRequest = (servAssignId) => {
+        unassignHpToServiceRequest(getAuthToken(), servAssignId)
+            .then(res => setAssignedCallback(!assignedCallback));
+    }
 
-        } else if(isDataLoaded() && serviceRequest.is_assigned === true && hp !== undefined){
-            // console.log("getting assigned hp data")
+    const getAssignedOrNull = () => {
+        if(assignedTimes.length > 1) {
             return (
                 <div>
-                    {getHPHtml()}
+                    <h3>Current assignments</h3>
+                    <div>
+                        <Chart
+                            chartType="Timeline"
+                            data={assignedTimes}
+                            options={{height: 300}}
+                        />
+                    </div>
+                    <div className="mb-5">
+                        { serviceAssignments.map(sa => {
+                            return (
+                                <div className="card shadow p-2 mb-2 w-50">
+                                    <div className="row">
+                                        <div className="col-md-6">
+                                            {sa.healthcare_professional.user.first_name} {sa.healthcare_professional.user.last_name}
+                                        </div>
+                                        <div className="col-md-5">
+                                            <button onClick={ () => unassignHpFromRequest(sa.id) } style={{float: 'right'}} className="btn btn-warning">Unassign</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        }) }
+                    </div>
+                    <hr />
                 </div>
-                )
-        } else if (!isDataLoaded()) {
-            // console.log("case notdataloaded");
-            return;
-
-        } else if (hpList !== undefined && servAssignList !== undefined) {
-            // console.log("Case hp loaded");
-            return (
-                <div>
-                    <h3>Assign a Health Care Professional to this Request from the list below</h3>
-                    <h5>Available Health Care Professionals that meet the requirements</h5>
-                    {getAvailableHP()}
-                </div>
-            )
+            );
         }
     }
 
-
-
-    const getHPHtml = () => {
-        return (
-            <div className="row mt-4">
-                <div className="col">
-                    <div className="assigned-HP-servicecard shadow animate__animated animate__fadeInLeft">
-                        <h3> Currently Assigned Healthcare Professional </h3>
-                        <p> Name: {hp.healthcare_professional.user.first_name} {hp.healthcare_professional.user.last_name} </p>
-                        <p> Gender: {hp.healthcare_professional.gender}</p>
-                        <button type="button" className="btn btn-warning" onClick={unassign}> UnAssign</button>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
-
-
-
-
-
     return (
-        <div className="row animate__animated animate__fadeIn">
-            <div className="col-md-6">
-                <h1>Service request for a {isDataLoaded() ? serviceRequest.service_type.name.toLowerCase() : null}</h1>
+        <div className="animate__animated animate__fadeIn">
+            <div className="row">
+                <div className="col-md-6">
+                    <h1>Service request for a {isDataLoaded() ? serviceRequest.service_type.name.toLowerCase() : null}</h1>
+                </div>
+                <div className="col-md-6">
+                    <CancelButton returnUrl="/service_requests" style={{ float: 'right' }} />
+                </div>
+                <hr />
+                {getHtmlOrNone()}
             </div>
-            <div className="col-md-6">
-                <CancelButton returnUrl="/service_requests" style={{ float: 'right' }} />
-            </div>
-            <hr />
-            {getHtmlOrNone()}
             <hr className="mt-5 mb-5" />
 
-            {/* TODO: delete this, the hpId state and the assign function. using this as a placeholder so the billing account work can get started */}
+            { getAssignedOrNull() }
 
-            {getAssignedHPorForm()}
-
-
+            <div>
+                <h3>Assign a Health Care Professional to this Request from the list below</h3>
+                <h5>Available Health Care Professionals that meet the requirements</h5>
+                { getAvailableHP() }
+            </div>
         </div>
     );
 }

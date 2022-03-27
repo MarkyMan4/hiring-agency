@@ -70,6 +70,7 @@ class ServiceRequest(models.Model):
     patient_phone_number = models.BigIntegerField(null=True, validators=[validate_phone])
     patient_email = models.EmailField(null=True, max_length=200)
     service_location = models.CharField(null=False, max_length=500)
+    start_date = models.DateField(null=False)
     flexible_hours = models.BooleanField(null=False)
     service_start_time = models.TimeField(null=True) # start and end time only specified if not using flexible hours
     service_end_time = models.TimeField(null=True)
@@ -117,6 +118,12 @@ class HPJobApplication(models.Model):
 class ServiceAssignment(models.Model):
     healthcare_professional = models.ForeignKey(HealthCareProfessional, on_delete=models.CASCADE)
     service_request = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE)
+
+class TimeSlot(models.Model):
+    service_assignment = models.ForeignKey(ServiceAssignment, on_delete=models.CASCADE)
+    day = models.IntegerField(null=False)
+    start_time = models.TimeField(null=False)
+    end_time = models.TimeField(null=False)
 
 class BillingAccount(models.Model):
     service_request = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE)
