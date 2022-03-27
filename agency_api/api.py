@@ -378,8 +378,19 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
             return Response({'error': 'this overlaps with an existing service request'}, status=status.HTTP_400_BAD_REQUEST)
 
     def is_request_time_available(self, serv_req: ServiceRequest):
-        # get existing requests for this care taker and check if any times overlap
-        existing_reqs = ServiceRequest.objects.filter(care_taker_id=serv_req.care_taker)
+        # get existing requests for this patient and check if any times overlap
+        existing_reqs = ServiceRequest.objects.filter(
+            care_taker_id=serv_req.care_taker,
+            patient_first_name=serv_req.patient_first_name,
+            patient_last_name=serv_req.patient_last_name,
+            patient_gender=serv_req.patient_gender,
+            patient_date_of_birth=serv_req.patient_date_of_birth,
+            patient_phone_number=serv_req.patient_phone_number,
+            patient_email=serv_req.patient_email
+        )
+
+        print(existing_reqs)
+
         new_req_start_date = serv_req.start_date
         new_req_end_date = get_service_end_date(serv_req)
 
