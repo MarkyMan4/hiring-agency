@@ -48,7 +48,7 @@ function NavMenu({ roles }) {
 
     const viewJobPosting = () => {
         if(roles.length === 0) {
-            return <NavDropdown.Item className="nav-link" href="#/view_job" >Careers</NavDropdown.Item>
+            return <Nav.Link className="nav-link" href="#/view_job" >Careers</Nav.Link>
         }
     }
     const viewJobRequest = () => {
@@ -86,6 +86,7 @@ function NavMenu({ roles }) {
                     { getAddStaff() }
                     { viewStaffList() }
                     { viewCareTakerList() }
+                    { getCareTakerAccountRequest() }
                 </NavDropdown>
             );
         }
@@ -93,13 +94,19 @@ function NavMenu({ roles }) {
 
     const getCareTakerAccountRequest = () => {
         if(roles.includes('admin') || roles.includes('staff')) { 
-            return <Nav.Link className="nav-link" href="#/pending_caretaker_requests">Care Taker Account Requests</Nav.Link>
+            return <NavDropdown.Item className="nav-link" href="#/pending_caretaker_requests">Care Taker Account Requests</NavDropdown.Item>
         }
     }
 
     const getCreateServiceRequest = () => {
         if(roles.includes('admin') || roles.includes('caretaker')) { 
             return <NavDropdown.Item className="nav-link" href="#/create_service_request">New Service Request</NavDropdown.Item>
+        }
+    }
+
+    const getCareTakerServiceRequests = () => {
+        if(roles.includes('admin') || roles.includes('caretaker')) { 
+            return <Nav.Link className="nav-link" href="#/caretaker_view_service_request">View Service Requests</Nav.Link>
         }
     }
 
@@ -164,7 +171,7 @@ function NavMenu({ roles }) {
                     { getJobManagement() }
                     { viewJobPosting() }
                     { getServiceManagement() }
-                    { getCareTakerAccountRequest() }
+                    { getCareTakerServiceRequests()}
                 </Nav>
             </Navbar.Collapse>
             <span className="navbar-text" style={ {marginRight: '20px'} }>

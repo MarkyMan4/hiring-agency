@@ -59,8 +59,10 @@ function CreateServiceRequest({ roles }) {
         // if no days of service are selected, make them pick one
         if(!(serviceSunday || serviceMonday || serviceTuesday || serviceWednesday || serviceThursday || serviceFriday || serviceSaturday)) {
             setMessage({error: 'You must pick at least one day of service'});
+            console.log("1Care taker user name is " + careTakerUsername);
         }
         else {
+            console.log("2Care taker user name is " + careTakerUsername);
             requestNewService(
                 getAuthToken(),
                 careTakerUsername,
