@@ -106,7 +106,7 @@ function NavMenu({ roles }) {
 
     const getCareTakerServiceRequests = () => {
         if(roles.includes('admin') || roles.includes('caretaker')) { 
-            return <Nav.Link className="nav-link" href="#/caretaker_view_service_request">View Service Requests</Nav.Link>
+            return <NavDropdown.Item className="nav-link" href="#/caretaker_view_service_request">View Service Requests</NavDropdown.Item>
         }
     }
 
@@ -144,7 +144,7 @@ function NavMenu({ roles }) {
     }
 
     const getServiceManagement = () => {
-        if(roles.includes('admin') || roles.includes('staff')) { 
+        if(roles.includes('admin') || roles.includes('staff') || roles.includes('caretaker')) { 
             return (
                 <NavDropdown
                     id="nav2-dropdown-dark-example"
@@ -154,6 +154,7 @@ function NavMenu({ roles }) {
                     { getCreateServiceRequest() }
                     { getServiceRequests() }
                     { getBillingAccounts() }
+                    { getCareTakerServiceRequests()}
                 </NavDropdown>
             );
         }
@@ -171,7 +172,6 @@ function NavMenu({ roles }) {
                     { getJobManagement() }
                     { viewJobPosting() }
                     { getServiceManagement() }
-                    { getCareTakerServiceRequests()}
                 </Nav>
             </Navbar.Collapse>
             <span className="navbar-text" style={ {marginRight: '20px'} }>
