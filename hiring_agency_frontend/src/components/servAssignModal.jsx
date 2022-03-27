@@ -122,6 +122,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
         let timeFriday = null;
         let timeSaturday = null;
 
+        // TODO: for min and max times for flexible hours request,
+        //       it should be the allowable working hours for that hp type
         if(serviceRequest.service_needed_sunday) {
             timeSunday = (
                 <TimeSlotPicker 
@@ -129,6 +131,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
+                    minTime={ serviceRequest.flexible_hours ? '00:00' : serviceRequest.service_start_time }
+                    maxTime={ serviceRequest.flexible_hours ? '23:30' : serviceRequest.service_end_time }
                     startTimeCallback={ startTime => setStartTimeSunday(startTime === '--select--' ? null : startTime) }
                     endTimeCallback={ endTime => setEndTimeSunday(endTime === '--select--' ? null : endTime) }
                     conflictCallback={ hasConflict => setConflictSunday(hasConflict) }
@@ -143,6 +147,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
+                    minTime={ serviceRequest.flexible_hours ? '00:00' : serviceRequest.service_start_time }
+                    maxTime={ serviceRequest.flexible_hours ? '23:30' : serviceRequest.service_end_time }
                     startTimeCallback={ startTime => setStartTimeMonday(startTime === '--select--' ? null : startTime) }
                     endTimeCallback={ endTime => setEndTimeMonday(endTime === '--select--' ? null : endTime) }
                     conflictCallback={ hasConflict => setConflictMonday(hasConflict) }
@@ -157,6 +163,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
+                    minTime={ serviceRequest.flexible_hours ? '00:00' : serviceRequest.service_start_time }
+                    maxTime={ serviceRequest.flexible_hours ? '23:30' : serviceRequest.service_end_time }
                     startTimeCallback={ startTime => setStartTimeTuesday(startTime === '--select--' ? null : startTime) }
                     endTimeCallback={ endTime => setEndTimeTuesday(endTime === '--select--' ? null : endTime) }
                     conflictCallback={ hasConflict => setConflictTuesday(hasConflict) }
@@ -171,6 +179,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
+                    minTime={ serviceRequest.flexible_hours ? '00:00' : serviceRequest.service_start_time }
+                    maxTime={ serviceRequest.flexible_hours ? '23:30' : serviceRequest.service_end_time }
                     startTimeCallback={ startTime => setStartTimeWednesday(startTime === '--select--' ? null : startTime) }
                     endTimeCallback={ endTime => setEndTimeWednesday(endTime === '--select--' ? null : endTime) }
                     conflictCallback={ hasConflict => setConflictWednesday(hasConflict) }
@@ -185,6 +195,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
+                    minTime={ serviceRequest.flexible_hours ? '00:00' : serviceRequest.service_start_time }
+                    maxTime={ serviceRequest.flexible_hours ? '23:30' : serviceRequest.service_end_time }
                     startTimeCallback={ startTime => setStartTimeThursday(startTime === '--select--' ? null : startTime) }
                     endTimeCallback={ endTime => setEndTimeThursday(endTime === '--select--' ? null : endTime) }
                     conflictCallback={ hasConflict => setConflictThursday(hasConflict) }
@@ -199,6 +211,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
+                    minTime={ serviceRequest.flexible_hours ? '00:00' : serviceRequest.service_start_time }
+                    maxTime={ serviceRequest.flexible_hours ? '23:30' : serviceRequest.service_end_time }
                     startTimeCallback={ startTime => setStartTimeFriday(startTime === '--select--' ? null : startTime) }
                     endTimeCallback={ endTime => setEndTimeFriday(endTime === '--select--' ? null : endTime) }
                     conflictCallback={ hasConflict => setConflictFriday(hasConflict) }
@@ -213,6 +227,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
+                    minTime={ serviceRequest.flexible_hours ? '00:00' : serviceRequest.service_start_time }
+                    maxTime={ serviceRequest.flexible_hours ? '23:30' : serviceRequest.service_end_time }
                     startTimeCallback={ startTime => setStartTimeSaturday(startTime === '--select--' ? null : startTime) }
                     endTimeCallback={ endTime => setEndTimeSaturday(endTime === '--select--' ? null : endTime) }
                     conflictCallback={ hasConflict => setConflictSaturday(hasConflict) }

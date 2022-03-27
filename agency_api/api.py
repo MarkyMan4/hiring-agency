@@ -951,7 +951,7 @@ class HPViewSet(viewsets.ModelViewSet):
                         # if the service request end time is later than their schedule end, they are available
                         # if the service request time span spans multiple block in their schedule, they are available
                         #   (this is because separate time block means there is a gap in between)
-                        found_time_slot = False
+                        found_time_slot = True if len(schedule_for_day) == 0 else False
 
                         for sched in schedule_for_day:
                             # this logic encompasses all the conditions mentioned above

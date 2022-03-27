@@ -30,7 +30,7 @@ function ServiceRequestDetail() {
     useEffect(() => {
         getHPList(getAuthToken(), serviceRequest?.id)
             .then(res => setHPList(res));
-    }, [serviceRequest]);
+    }, [serviceRequest, assignedCallback]);
 
     useEffect(() => {
         let times = [

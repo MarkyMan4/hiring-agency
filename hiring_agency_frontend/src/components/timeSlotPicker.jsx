@@ -1,26 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-// TODO: move this to a util file
-const serviceTimeOptions = [];
-
-// create all times in 30 minute increments
-for(let i = 0; i < 24; i++) {
-    let hour = i.toString().padStart(2, '0');
-    serviceTimeOptions.push(
-        {
-            twentyFourHourTime: `${ hour }:00`,
-            twelveHourTime: `${ i > 12 ? i - 12 : i }:00 ${ i >= 12 ? 'PM' : 'AM' }`
-        }
-    );
-
-    serviceTimeOptions.push(
-        {
-            twentyFourHourTime: `${ hour }:30`,
-            twelveHourTime: `${ i > 12 ? i - 12 : i }:30 ${ i >= 12 ? 'PM' : 'AM' }`
-        }
-    );
-}
-
 const dayMap = {
     0: 'Sunday',
     1: 'Monday',
@@ -32,9 +11,44 @@ const dayMap = {
 };
 
 // day should be 0 - 6 with 0 being sunday
-function TimeSlotPicker({ day, schedule, serviceStartDate, serviceEndDate, startTimeValue, endTimeValue, startTimeCallback, endTimeCallback, conflictCallback }) {
+function TimeSlotPicker({ day, schedule, serviceStartDate, serviceEndDate, minTime, maxTime, startTimeCallback, endTimeCallback, conflictCallback }) {
     const [startTimeMsg, setStartTimeMsg] = useState();
     const [endTimeMsg, setEndTimeMsg] = useState();
+    const [serviceTimeOptions, setServiceTimeOptions] = useState([]);
+
+    useEffect(() => {
+        let options = [];
+
+        // create all times in 30 minute increments
+        for(let i = 0; i < 24; i++) {
+            let hour = i.toString().padStart(2, '0');
+            options.push(
+                {
+                    twentyFourHourTime: `${ hour }:00`,
+                    twelveHourTime: `${ i > 12 ? i - 12 : i }:00 ${ i >= 12 ? 'PM' : 'AM' }`
+                }
+            );
+
+            options.push(
+                {
+                    twentyFourHourTime: `${ hour }:30`,
+                    twelveHourTime: `${ i > 12 ? i - 12 : i }:30 ${ i >= 12 ? 'PM' : 'AM' }`
+                }
+            );
+        }
+
+        let min = removeMicroSecondsFromTime(minTime);
+        let max = removeMicroSecondsFromTime(maxTime);
+        
+        options = options.filter(o => o.twentyFourHourTime >= min && o.twentyFourHourTime <= max);
+        setServiceTimeOptions(options);
+    }, [minTime, maxTime]);
+
+    const removeMicroSecondsFromTime = (timeStr) => {
+        let timeParts = timeStr.split(':');
+
+        return `${timeParts[0]}:${timeParts[1]}`;
+    }
 
     const parseTime = (timeStr) => {
         let timeParts = timeStr.split(':');
