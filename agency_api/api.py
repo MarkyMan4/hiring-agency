@@ -513,7 +513,7 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
             queryset = queryset.filter(is_completed=True if value.lower() == 'true' else False)
         
         serializer = self.serializer_class(queryset, many=True)
-        print(serializer.data)
+        
         return Response(serializer.data)
 
     # GET /api/retrieve_service_requests/<id>
