@@ -15,6 +15,8 @@ class SecurityQuestion(models.Model):
 class ServiceType(models.Model):
     name = models.CharField(null=False, max_length=30)
     hourly_rate = models.DecimalField(null=False, max_digits=5, decimal_places=2)
+    earliest_work_time = models.TimeField(null=False)
+    latest_work_time = models.TimeField(null=False)
     
 # other tables
 class SecurityQuestionAnswer(models.Model):

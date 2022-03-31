@@ -14,7 +14,10 @@ const dayMap = {
 function TimeSlotPicker({ day, schedule, serviceStartDate, serviceEndDate, minTime, maxTime, startTimeCallback, endTimeCallback, conflictCallback }) {
     const [startTimeMsg, setStartTimeMsg] = useState();
     const [endTimeMsg, setEndTimeMsg] = useState();
+    const [fullTimeOverlapMsg, setFullTimeOverlapMsg] = useState();
     const [serviceTimeOptions, setServiceTimeOptions] = useState([]);
+    const [selectedStartTime, setSelectedStartTime] = useState();
+    const [selectedEndTime, setSelectedEndTime] = useState();
 
     useEffect(() => {
         let options = [];
@@ -56,6 +59,7 @@ function TimeSlotPicker({ day, schedule, serviceStartDate, serviceEndDate, minTi
     }
 
     // setting isStartDate determines how the checks for overlapping times are performed
+    // TODO: this function and hasFullTimeOverlap could be combined into one
     const isTimeOverlapping = (selection, isStartDate) => {
         let selectedTime = parseTime(selection);
 
@@ -92,8 +96,50 @@ function TimeSlotPicker({ day, schedule, serviceStartDate, serviceEndDate, minTi
         return false;
     }
 
+    const hasFullTimeOverlap = (start, end) => {
+        let selStartTime = parseTime(start);
+        let selEndTime = parseTime(end);
+
+        let dates = Object.keys(schedule);
+
+        for(let i = 0; i < dates.length; i++) {
+            let d = dates[i];
+            let dateParts = d.split('-');
+            let year = parseInt(dateParts[0]);
+            let month = parseInt(dateParts[1]) - 1;
+            let dayOfMonth = parseInt(dateParts[2]);
+            let date = new Date(year, month, dayOfMonth);
+            
+            if(date >= serviceStartDate && date <= serviceEndDate && date.getDay() === day) {
+                for(let j = 0; j < schedule[d].length; j++) {
+                    let time = schedule[d][j];
+                    let startTime = parseTime(time.start_time);
+                    let endTime = parseTime(time.end_time);
+
+                    if(selStartTime < startTime && selEndTime > endTime) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     const validateStartTimeSelection = (event) => {
         let selection = event.target.value;
+        setSelectedStartTime(selection === '' ? null : selection);
+
+        if(selection !== '' && selectedEndTime && hasFullTimeOverlap(selection, selectedEndTime)) {
+            setStartTimeMsg(null);
+            setFullTimeOverlapMsg('Selected times overlap with an existing assignment');
+            conflictCallback(true);
+            return;
+        }
+        else {
+            setFullTimeOverlapMsg(null);
+            conflictCallback(false);
+        }
 
         if(isTimeOverlapping(selection, true)) {
             setStartTimeMsg('Selected start time overlaps with an existing assignment');
@@ -102,12 +148,24 @@ function TimeSlotPicker({ day, schedule, serviceStartDate, serviceEndDate, minTi
         else {
             conflictCallback(false);
             setStartTimeMsg(null);
-            startTimeCallback(selection);
+            startTimeCallback(selection === '' ? null : selection);
         }
     }
 
     const validateEndTimeSelection = (event) => {
         let selection = event.target.value;
+        setSelectedEndTime(selection === '' ? null : selection);
+
+        if(selection !== '' && selectedStartTime && hasFullTimeOverlap(selectedStartTime, selection)) {
+            setEndTimeMsg(null);
+            setFullTimeOverlapMsg('Selected times overlap with an existing assignment');
+            conflictCallback(true);
+            return;
+        }
+        else {
+            setFullTimeOverlapMsg(null);
+            conflictCallback(false);
+        }
 
         if(isTimeOverlapping(selection, false)) {
             setEndTimeMsg('Selected end time overlaps with an existing assignment');
@@ -116,7 +174,7 @@ function TimeSlotPicker({ day, schedule, serviceStartDate, serviceEndDate, minTi
         else {
             conflictCallback(false);
             setEndTimeMsg(null);
-            endTimeCallback(selection);
+            endTimeCallback(selection === '' ? null : selection);
         }
     }
 
@@ -127,7 +185,7 @@ function TimeSlotPicker({ day, schedule, serviceStartDate, serviceEndDate, minTi
                 <div className="col-md-2">
                     <label>Service start time</label>
                     <select onChange={ validateStartTimeSelection } className="form-select">
-                        <option value={ null }>--select--</option>
+                        <option value=''>--select--</option>
                         { serviceTimeOptions.map((time, indx) => <option value={ time.twentyFourHourTime } key={ indx }>{ time.twelveHourTime }</option>) }
                     </select>
                 </div>
@@ -135,7 +193,7 @@ function TimeSlotPicker({ day, schedule, serviceStartDate, serviceEndDate, minTi
                 <div className="col-md-2">
                     <label>Service end time</label>
                     <select onChange={ validateEndTimeSelection } className="form-select">
-                        <option value={ null }>--select--</option>
+                        <option value=''>--select--</option>
                         { serviceTimeOptions.map((time, indx) => <option value={ time.twentyFourHourTime } key={ indx }>{ time.twelveHourTime }</option>) }
                     </select>
                 </div>
@@ -143,6 +201,7 @@ function TimeSlotPicker({ day, schedule, serviceStartDate, serviceEndDate, minTi
 
             { startTimeMsg ? <p className="text-danger">{ startTimeMsg }</p> : null }
             { endTimeMsg ? <p className="text-danger">{ endTimeMsg }</p> : null }
+            { fullTimeOverlapMsg ? <p className="text-danger">{ fullTimeOverlapMsg }</p> : null }
         </div>
     );
 }

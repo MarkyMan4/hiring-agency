@@ -9,7 +9,8 @@ from .api import (
     SecurityQuestionViewSet, 
     SecurityQuestionAnswerViewSet, 
     JobPostingViewSet,
-    ServiceAssignmentViewSet, 
+    ServiceAssignmentViewSet,
+    ServiceTypeViewSet, 
     ViewHPJobApplicationViewSet,
     CreateHPJobApplicationViewSet,
     CreateCareTakerRequestViewSet, 
@@ -25,6 +26,7 @@ from .api import (
 # viewsets can be registered here
 router = routers.DefaultRouter(trailing_slash=False)
 router.register('api/educationtypes', EducationTypeViewSet, 'education-type')
+router.register('api/service_types', ServiceTypeViewSet, 'service-types')
 router.register('api/securityquestions', SecurityQuestionViewSet, 'security-questions')
 router.register('api/securityquestionanswers', SecurityQuestionAnswerViewSet, 'security-question-answers')
 router.register('api/jobposting', JobPostingViewSet, 'job-posting')
@@ -40,6 +42,7 @@ router.register('api/hp_requests', HPViewSet, 'job-application')
 router.register('api/view_staff_list',StaffManageViewSet, 'staff-list')
 router.register('api/view_caretaker_list',CareTakerManageViewSet, 'care-taker-list')
 router.register('api/billing_accounts', BillingAccountViewSet, 'billing-accounts')
+
 
 # put non-viewset urls here
 urlpatterns = [
