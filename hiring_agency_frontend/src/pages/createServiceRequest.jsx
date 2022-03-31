@@ -1,29 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { requestNewService } from "../api/serviceRequests";
+import { getServiceTypes } from "../api/staticDataRequests";
 import { getAuthToken } from "../utils/storage";
 
-
-const serviceTimeOptions = [];
-
-// create all times in 30 minute increments
-for(let i = 0; i < 24; i++) {
-    let hour = i.toString().padStart(2, '0');
-    serviceTimeOptions.push(
-        {
-            twentyFourHourTime: `${ hour }:00`,
-            twelveHourTime: `${ i > 12 ? i - 12 : i }:00 ${ i > 12 ? 'PM' : 'AM' }`
-        }
-    );
-
-    serviceTimeOptions.push(
-        {
-            twentyFourHourTime: `${ hour }:30`,
-            twelveHourTime: `${ i > 12 ? i - 12 : i }:30 ${ i > 12 ? 'PM' : 'AM' }`
-        }
-    );
-}
 
 const getCurrentDateStr = () => {
     const today = new Date();
@@ -46,8 +27,8 @@ function CreateServiceRequest({ roles }) {
     const [serviceLocation, setServiceLocation] = useState('');
     const [startDate, setStartDate] = useState();
     const [flexibleHours, setFlexibleHours] = useState(false);
-    const [serviceStartTime, setServiceStartTime] = useState(serviceTimeOptions[0].twentyFourHourTime);
-    const [serviceEndTime, setServiceEndTime] = useState(serviceTimeOptions[0].twentyFourHourTime);
+    const [serviceStartTime, setServiceStartTime] = useState();
+    const [serviceEndTime, setServiceEndTime] = useState();
     const [hoursOfService, setHoursOfService] = useState();
     const [serviceType, setServiceType] = useState(1);
     const [serviceSunday, setServiceSunday] = useState(false);
@@ -62,6 +43,67 @@ function CreateServiceRequest({ roles }) {
     const [hpMinAge, setHpMinAge] = useState();
     const [hpMaxAge, setHpMaxAge] = useState();
     const [message, setMessage] = useState('');
+
+    const [serviceTypeInfo, setServiceTypeInfo] = useState({});
+    const [serviceTimeOptions, setServiceTimeOptions] = useState([]);
+
+    useEffect(() => {
+        // retrieve service types
+        getServiceTypes()
+            .then(res => {
+                // format the data so it's easier to lookup service types
+                // each key is the service type ID and the value is the details as an object
+                let info = {};
+
+                res.forEach(r => {
+                    info[r.id] = r;
+                });
+
+                setServiceTypeInfo(info);
+            });
+    }, []);
+
+    // filter service time options whenever a service type is selected
+    useEffect(() => {
+        // create all times in 30 minute increments
+        let timeOptions = [];
+
+        for(let i = 0; i < 24; i++) {
+            let hour = i.toString().padStart(2, '0');
+            timeOptions.push(
+                {
+                    twentyFourHourTime: `${ hour }:00`,
+                    twelveHourTime: `${ i > 12 ? i - 12 : i }:00 ${ i >= 12 ? 'PM' : 'AM' }`
+                }
+            );
+
+            timeOptions.push(
+                {
+                    twentyFourHourTime: `${ hour }:30`,
+                    twelveHourTime: `${ i > 12 ? i - 12 : i }:30 ${ i >= 12 ? 'PM' : 'AM' }`
+                }
+            );
+        }
+
+        timeOptions = timeOptions.filter(o => {
+            return (
+                o.twentyFourHourTime >= removeMicroSecondsFromTime(serviceTypeInfo[serviceType]?.earliest_work_time)
+                && o.twentyFourHourTime <= removeMicroSecondsFromTime(serviceTypeInfo[serviceType]?.latest_work_time)
+            );
+        });
+
+        setServiceTimeOptions(timeOptions);
+
+        // update selected times
+        setServiceStartTime(timeOptions[0].twentyFourHourTime);
+        setServiceEndTime(timeOptions[0].twentyFourHourTime);
+    }, [serviceType]);
+
+    const removeMicroSecondsFromTime = (timeStr) => {
+        let timeParts = timeStr.split(':');
+
+        return `${timeParts[0]}:${timeParts[1]}`;
+    }
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
