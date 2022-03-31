@@ -20,6 +20,7 @@ from .serializers import (
     RetrieveServiceRequestSerializer,
     SecurityQuestionSerializer,
     SecurityQuestionAnswerSerializer,
+    ServiceTypeSerializer,
     TimeSlotSerializer,
     ViewStaffMemberSerializer,
     ViewCareTakerMemberSerializer,
@@ -78,6 +79,27 @@ def get_service_end_date(serv_req: ServiceRequest):
             date += timedelta(days=1)
 
     return date
+
+class ServiceTypeViewSet(viewsets.ViewSet):
+    serializer_class = ServiceTypeSerializer
+
+    def get_queryset(self):
+        return ServiceType.objects.all()
+
+    # GET /api/service_types
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
+
+        return Response(serializer.data)
+
+    # POST /api/creataehrjobapplicationviewset
+    def create(self, request):
+        data = request.data
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class JobPostingViewSet(viewsets.ModelViewSet):
     serializer_class = JobPostingSerializer
