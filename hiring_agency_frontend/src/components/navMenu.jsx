@@ -75,6 +75,12 @@ function NavMenu({ roles }) {
         }
     }
 
+    const getHealthCareProfessionals = () => {
+        if(roles.includes('admin') || roles.includes('staff')) { 
+            return <NavDropdown.Item className="nav-link" href="#/healthcare_professionals">Healthcare Professionals</NavDropdown.Item>
+        }
+    }
+
     const getUserManagement = () => {
         if(roles.includes('admin') || roles.includes('staff')) { 
             return (
@@ -87,6 +93,7 @@ function NavMenu({ roles }) {
                     { viewStaffList() }
                     { viewCareTakerList() }
                     { getCareTakerAccountRequest() }
+                    { getHealthCareProfessionals() }
                 </NavDropdown>
             );
         }

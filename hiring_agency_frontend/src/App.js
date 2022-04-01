@@ -47,6 +47,7 @@ import BillingAccounts from './pages/billingAccounts';
 import BillingAccountDetail from './pages/billingAccountDetail';
 import CTServiceRequests from './pages/careTakerViewServiceRequests.jsx';
 import CTServiceRequestDetail from './pages/cTServiceRequestDetail';
+import HealthcareProfessionals from './pages/healthcareProfessionals';
 
 
 function App() {
@@ -110,6 +111,7 @@ function App() {
           <Route path="/user_menu" element={ <MyMenu /> } />
           <Route path="/billing_accounts" element={<StaffRoute roles={ roles }> <BillingAccounts /></StaffRoute>} /> 
           <Route path="/billing_accounts/:id" element={<StaffRoute roles={ roles }> <BillingAccountDetail /></StaffRoute>} /> 
+          <Route path="/healthcare_professionals" element={<StaffRoute roles={ roles }> <HealthcareProfessionals /></StaffRoute>} /> 
         </Routes>
       );
     }
