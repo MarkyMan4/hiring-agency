@@ -17,7 +17,14 @@ function HealthcareProfessionals() {
             <div className="row">
                 <div className="col-md-3"></div>
                 <div className="col-md-6">
-                    { healthPros.map(hp => <HpCard name={ hp.user.first_name + ' ' + hp.user.last_name } />) }
+                    { healthPros.map(hp => {
+                        return <HpCard 
+                            key={ hp.id } 
+                            hpId={ hp.id } 
+                            name={ hp.user.first_name + ' ' + hp.user.last_name } 
+                        />
+                        }
+                    )}
                 </div>
             </div>
         </div>
