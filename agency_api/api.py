@@ -865,6 +865,8 @@ class HPViewSet(viewsets.ModelViewSet):
                     for ts in time_slots:
                         schedule[dt_str].append(
                             {
+                                'service_request_id': ts.service_assignment.service_request.id,
+                                'patient': f'{ts.service_assignment.service_request.patient_first_name} {ts.service_assignment.service_request.patient_last_name}',
                                 'start_time': ts.start_time,
                                 'end_time': ts.end_time
                             }

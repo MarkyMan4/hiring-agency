@@ -1,6 +1,7 @@
 import './App.css';
 import 'animate.css';
 import 'bootstrap/dist/css/bootstrap.css';
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import Login from './pages/login';
 import Home from './pages/home';
 import NavMenu from './components/navMenu';
