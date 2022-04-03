@@ -433,9 +433,26 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                             Select the days and times you want to assign for this healthcare professional. 
                             For any days you don't want to assign, leave the start and end time as --select--
                         </p>
-                        { getTimeSlotForm() }
-                        <button onClick={ assign } className="btn btn-primary mt-4">Assign</button>
-                        { errorMsg ? <p className="text-danger mt-3">{ errorMsg }</p> : null }
+
+                        <div className="row">
+                            <div className="col-md-6 mt-2">
+                                { getTimeSlotForm() }
+                                <button onClick={ assign } className="btn btn-primary mt-4">Assign</button>
+                                { errorMsg ? <p className="text-danger mt-3">{ errorMsg }</p> : null }
+                            </div>
+                            <div className="col-md-6 mt-2">
+                                <h4>Current schedule</h4>
+                                <hr />
+                                { Object.keys(schedule).map(d => {
+                                    return (
+                                        <div>
+                                            <b>{ d }</b>
+                                            { schedule[d].map(s => <p>{ s.start_time } - { s.end_time }</p>) }
+                                        </div>
+                                    );
+                                }) }
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
