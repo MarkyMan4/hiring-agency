@@ -61,7 +61,7 @@ function ServiceRequestDetail() {
 
         // get list of healthcare professionals assigned to this request
         getAssignmentsForRequest(getAuthToken(), id)
-            .then(res => { setServiceAssignments(res); console.log(res); });
+            .then(res => setServiceAssignments(res));
 
     }, [assignedCallback]);
 

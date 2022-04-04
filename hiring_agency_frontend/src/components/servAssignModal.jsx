@@ -4,6 +4,18 @@ import { getAuthToken } from "../utils/storage";
 import TimeSlotPicker from "./timeSlotPicker";
 import { assignHpToServiceRequest } from "../api/serviceAssignments";
 
+// mapping from day index to name
+// used to get day name from the getDay() function
+const dayNames = {
+    0: 'Sunday',
+    1: 'Monday',
+    2: 'Tuesday',
+    3: 'Wednesday',
+    4: 'Thursday',
+    5: 'Friday',
+    6: 'Saturday'
+}
+
 function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCallback }) {
     const [display, setDisplay] = useState('none');
     const [schedule, setSchedule] = useState({});
@@ -417,6 +429,11 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
             });
     }
 
+    const getDayName = (dateStr) => {
+        let parsed = new Date(`${dateStr}T00:00:00`); // add 0s for time so it doesn't apply time zones
+        return dayNames[parsed.getDay()];
+    }
+
     return (
         <div>
             <button onClick={toggleModal} className="btn btn-outline-secondary">{buttonText}</button>
@@ -446,8 +463,10 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                                 { Object.keys(schedule).map(d => {
                                     return (
                                         <div>
-                                            <b>{ d }</b>
-                                            { schedule[d].map(s => <p>{ s.start_time } - { s.end_time }</p>) }
+                                            <b>{ getDayName(d) } { d }</b>
+                                            <ul>
+                                                { schedule[d].map(s => <li>{ s.start_time } - { s.end_time }</li>) }
+                                            </ul>
                                         </div>
                                     );
                                 }) }
