@@ -4,6 +4,18 @@ import { getAuthToken } from "../utils/storage";
 import TimeSlotPicker from "./timeSlotPicker";
 import { assignHpToServiceRequest } from "../api/serviceAssignments";
 
+// mapping from day index to name
+// used to get day name from the getDay() function
+const dayNames = {
+    0: 'Sunday',
+    1: 'Monday',
+    2: 'Tuesday',
+    3: 'Wednesday',
+    4: 'Thursday',
+    5: 'Friday',
+    6: 'Saturday'
+}
+
 function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCallback }) {
     const [display, setDisplay] = useState('none');
     const [schedule, setSchedule] = useState({});
@@ -417,6 +429,11 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
             });
     }
 
+    const getDayName = (dateStr) => {
+        let parsed = new Date(`${dateStr}T00:00:00`); // add 0s for time so it doesn't apply time zones
+        return dayNames[parsed.getDay()];
+    }
+
     return (
         <div>
             <button onClick={toggleModal} className="btn btn-outline-secondary">{buttonText}</button>
@@ -433,9 +450,28 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                             Select the days and times you want to assign for this healthcare professional. 
                             For any days you don't want to assign, leave the start and end time as --select--
                         </p>
-                        { getTimeSlotForm() }
-                        <button onClick={ assign } className="btn btn-primary mt-4">Assign</button>
-                        { errorMsg ? <p className="text-danger mt-3">{ errorMsg }</p> : null }
+
+                        <div className="row">
+                            <div className="col-md-6 mt-2">
+                                { getTimeSlotForm() }
+                                <button onClick={ assign } className="btn btn-primary mt-4">Assign</button>
+                                { errorMsg ? <p className="text-danger mt-3">{ errorMsg }</p> : null }
+                            </div>
+                            <div className="col-md-6 mt-2">
+                                <h4>Current schedule</h4>
+                                <hr />
+                                { Object.keys(schedule).map(d => {
+                                    return (
+                                        <div>
+                                            <b>{ getDayName(d) } { d }</b>
+                                            <ul>
+                                                { schedule[d].map(s => <li>{ s.start_time } - { s.end_time }</li>) }
+                                            </ul>
+                                        </div>
+                                    );
+                                }) }
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

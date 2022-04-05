@@ -865,6 +865,8 @@ class HPViewSet(viewsets.ModelViewSet):
                     for ts in time_slots:
                         schedule[dt_str].append(
                             {
+                                'service_request_id': ts.service_assignment.service_request.id,
+                                'patient': f'{ts.service_assignment.service_request.patient_first_name} {ts.service_assignment.service_request.patient_last_name}',
                                 'start_time': ts.start_time,
                                 'end_time': ts.end_time
                             }
@@ -936,7 +938,8 @@ class HPViewSet(viewsets.ModelViewSet):
 
         # find healthcare professionals that have time available for this service request
         if serv_req.flexible_hours:
-            # TODO: this will need to be based on what hours each type of hp can work
+            # check if a healthcare professional has any time slots available between their earliest
+            # start time and latest end time (based on service type)
             pass
         else:
             hp_ids = health_pros.values_list('id', flat=True)

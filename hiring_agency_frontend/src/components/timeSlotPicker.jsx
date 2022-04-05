@@ -182,7 +182,7 @@ function TimeSlotPicker({ day, schedule, serviceStartDate, serviceEndDate, minTi
         <div>
             <div className="mb-4 row">
                 <h4><b>{ dayMap[day] }</b></h4>
-                <div className="col-md-2">
+                <div className="col-md-4">
                     <label>Service start time</label>
                     <select onChange={ validateStartTimeSelection } className="form-select">
                         <option value=''>--select--</option>
@@ -190,7 +190,7 @@ function TimeSlotPicker({ day, schedule, serviceStartDate, serviceEndDate, minTi
                     </select>
                 </div>
 
-                <div className="col-md-2">
+                <div className="col-md-4">
                     <label>Service end time</label>
                     <select onChange={ validateEndTimeSelection } className="form-select">
                         <option value=''>--select--</option>
