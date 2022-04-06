@@ -911,14 +911,6 @@ class HPViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-    # given two datetime.time objects, return the difference in hours
-    def time_diff(start_time, end_time):
-        date = datetime.datetime(1, 1, 1)
-        start = datetime.datetime.combine(date, start_time)
-        end = datetime.datetime.combine(date, end_time)
-        diff = start - end
-
-        return diff.seconds / 60 / 60
 
     def get_eligible_hps(self, serv_req_id):
         serv_req = ServiceRequest.objects.get(id=serv_req_id)
@@ -946,8 +938,6 @@ class HPViewSet(viewsets.ModelViewSet):
             days_service_needed = self.get_days_service_needed(serv_req)
             serv_type = ServiceType.objects.get(id=serv_req.service_type.id)
             max_hours = time_diff(serv_type.earliest_work_time, serv_type.latest_work_time)
-
-            print(hp_ids)
 
             for hp in hp_ids:
                 # for each healthcare professionals
