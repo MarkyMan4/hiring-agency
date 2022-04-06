@@ -94,6 +94,12 @@ class ServiceTypeViewSet(viewsets.ViewSet):
 
         return Response(serializer.data)
 
+    def retrieve(self, request, pk):
+        queryset = self.get_queryset().get(id=pk)
+        serializer = self.serializer_class(queryset)
+
+        return Response(serializer.data)
+
     # POST /api/creataehrjobapplicationviewset
     def create(self, request):
         data = request.data
