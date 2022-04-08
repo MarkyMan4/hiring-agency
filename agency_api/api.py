@@ -403,6 +403,12 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
 
+            # create a billing account
+            BillingAccount.objects.create(
+                service_request=ServiceRequest.objects.get(id=serializer.data['id']),
+                amt_paid=0.00,
+            )
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response({'error': 'this overlaps with an existing service request'}, status=status.HTTP_400_BAD_REQUEST)
@@ -627,28 +633,6 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
         service_request = ServiceRequest.objects.get(id=data.get('service_request'))
         service_request.is_assigned = True
         service_request.save()
-
-        # calculate the total amount to be paid based on hourly rate, hours per day
-        # and total days of service requested
-        hourly_rate = float(service_request.service_type.hourly_rate)
-        hours_per_day = 0
-
-        if service_request.flexible_hours:
-            hours_per_day = service_request.hours_of_service_daily
-        else:
-            hours_per_day = time_diff(service_request.service_start_time, service_request.service_end_time)
-        
-        total_days = service_request.days_of_service
-        amt_to_be_paid = hours_per_day * total_days * hourly_rate
-
-
-        # create a billing account
-        BillingAccount.objects.create(
-            service_request=service_request,
-            hourly_rate=hourly_rate,
-            amt_paid=0.00,
-            amt_to_be_paid=amt_to_be_paid
-        )
 
         return Response({'result': 'assignment successful'}, status=status.HTTP_201_CREATED)
 
