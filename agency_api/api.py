@@ -406,7 +406,7 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
             # create a billing account
             BillingAccount.objects.create(
                 service_request=ServiceRequest.objects.get(id=serializer.data['id']),
-                amt_paid=0.00,
+                amt_paid=0.00
             )
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -1180,7 +1180,16 @@ class BillingAccountViewSet(viewsets.ViewSet):
 
     # GET /api/billing_accounts
     def list(self, request):
+        user = request.user
         data = self.get_queryset()
+
+        if user.groups.filter(name='caretaker'):
+            care_taker = CareTaker.objects.get(user_id=user.id)
+            print(care_taker)
+            requests_by_user = ServiceRequest.objects.filter(care_taker_id=care_taker.id).values_list('id', flat=True)
+            print(requests_by_user)
+            data = data.filter(service_request_id__in=requests_by_user)
+
         serializer = self.serializer_class(data, many=True)
 
         return Response(serializer.data)
@@ -1189,5 +1198,20 @@ class BillingAccountViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk):
         queryset = self.get_queryset().get(id=pk)
         serializer = self.serializer_class(queryset)
+        billing_acct = serializer.data
 
-        return Response(serializer.data)
+        # TODO: calculate amount to be paid based on service entries
+        # calculate the total amount to be paid based on hourly rate, hours per day
+        # and total days of service requested
+        # hourly_rate = float(service_request.service_type.hourly_rate)
+        # hours_per_day = 0
+
+        # if service_request.flexible_hours:
+        #     hours_per_day = service_request.hours_of_service_daily
+        # else:
+        #     hours_per_day = time_diff(service_request.service_start_time, service_request.service_end_time)
+        
+        # total_days = service_request.days_of_service
+        # amt_to_be_paid = hours_per_day * total_days * hourly_rate
+
+        return Response(billing_acct)

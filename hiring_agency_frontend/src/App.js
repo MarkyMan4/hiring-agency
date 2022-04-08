@@ -28,6 +28,7 @@ import StaffRoute from './routes/staffRoute';
 import AdminRoute from './routes/adminRoute';
 import UnauthenticatedRoute from './routes/unauthenticatedRoute';
 import CareTakerRoute from './routes/careTakerRoute';
+import CareOrStaffRoute from './routes/careOrStaffRoute';
 import CreateServiceRequest from './pages/createServiceRequest';
 import CreateServiceRequestSuccess from './pages/createServiceRequestSuccess';
 import ServiceRequests from './pages/serviceRequests';
@@ -111,8 +112,8 @@ function App() {
           <Route path="/view_caretaker_list/:id" element={ <StaffRoute roles={ roles }><CareTakerDetail/></StaffRoute> } />
           <Route path="/view_caretaker_list/:id/status" element={ <StaffRoute roles={ roles }><CareTakerStatusChanged/></StaffRoute> } />
           <Route path="/user_menu" element={ <MyMenu /> } />
-          <Route path="/billing_accounts" element={<StaffRoute roles={ roles }> <BillingAccounts /></StaffRoute>} /> 
-          <Route path="/billing_accounts/:id" element={<StaffRoute roles={ roles }> <BillingAccountDetail /></StaffRoute>} /> 
+          <Route path="/billing_accounts" element={<CareOrStaffRoute roles={ roles }> <BillingAccounts /></CareOrStaffRoute>} /> 
+          <Route path="/billing_accounts/:id" element={<CareOrStaffRoute roles={ roles }> <BillingAccountDetail /></CareOrStaffRoute>} /> 
           <Route path="/healthcare_professionals" element={<StaffRoute roles={ roles }> <HealthcareProfessionals /></StaffRoute>} /> 
           <Route path="/healthcare_professionals/:id" element={<StaffRoute roles={ roles }> <HealthcareProDetail /></StaffRoute>} />
         </Routes>
