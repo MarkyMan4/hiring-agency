@@ -41,7 +41,7 @@ const loadHPServs = () => {
         <div>
             <h1>{ healthPro?.user?.first_name } { healthPro?.user?.last_name }</h1>
             <hr />
-            <HpCalendar hpId={ healthPro.id} />
+            { healthPro.id ? <HpCalendar hpId={ healthPro.id} /> : null}
             <h1> Assigned Service Requests </h1>
             { loadHPServs()}
         </div>
