@@ -85,19 +85,21 @@ function CreateServiceRequest({ roles }) {
             );
         }
 
-        timeOptions = timeOptions.filter(o => {
-            return (
-                o.twentyFourHourTime >= removeMicroSecondsFromTime(serviceTypeInfo[serviceType]?.earliest_work_time)
-                && o.twentyFourHourTime <= removeMicroSecondsFromTime(serviceTypeInfo[serviceType]?.latest_work_time)
-            );
-        });
+        if(Object.keys(serviceTypeInfo).length > 0) {
+            timeOptions = timeOptions.filter(o => {
+                return (
+                    o.twentyFourHourTime >= removeMicroSecondsFromTime(serviceTypeInfo[serviceType]?.earliest_work_time)
+                    && o.twentyFourHourTime <= removeMicroSecondsFromTime(serviceTypeInfo[serviceType]?.latest_work_time)
+                );
+            });
+        }
 
         setServiceTimeOptions(timeOptions);
 
         // update selected times
         setServiceStartTime(timeOptions[0].twentyFourHourTime);
         setServiceEndTime(timeOptions[0].twentyFourHourTime);
-    }, [serviceType]);
+    }, [serviceType, serviceTypeInfo]);
 
     const removeMicroSecondsFromTime = (timeStr) => {
         let timeParts = timeStr.split(':');

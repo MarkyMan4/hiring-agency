@@ -30,8 +30,6 @@ function BillingAccountDetail() {
                         <div className="service-detail-card shadow animate__animated animate__fadeInLeft">
                             <h3 className="mt-4">Billing Account info</h3>
                             <hr />
-                            <b>Hourly rate</b>
-                            <p>${ billingAccount.hourly_rate }</p>
                             <b>Amount paid</b>
                             <p>${ billingAccount.amt_paid }</p>
                             <b>Amount to be paid</b>

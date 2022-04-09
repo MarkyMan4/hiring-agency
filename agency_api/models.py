@@ -129,12 +129,11 @@ class TimeSlot(models.Model):
 
 class BillingAccount(models.Model):
     service_request = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE)
-    hourly_rate = models.DecimalField(null=False, max_digits=5, decimal_places=2)
     amt_paid = models.DecimalField(null=False, max_digits=20, decimal_places=2)
-    amt_to_be_paid = models.DecimalField(null=False, max_digits=20, decimal_places=2)
 
 class ServiceEntry(models.Model):
     billing_account = models.ForeignKey(BillingAccount, on_delete=models.CASCADE)
+    healthcare_professional = models.ForeignKey(HealthCareProfessional, on_delete=models.CASCADE)
     start_time = models.TimeField(null=False)
     end_time = models.TimeField(null=False)
 

@@ -47,6 +47,7 @@ from .models import (
     User
 )
 from .utils.account import gen_rand_pass
+from .utils.utils import time_diff
 import datetime
 from dateutil.relativedelta import relativedelta
 from datetime import timedelta
@@ -90,6 +91,12 @@ class ServiceTypeViewSet(viewsets.ViewSet):
     def list(self, request):
         queryset = self.get_queryset()
         serializer = self.serializer_class(queryset, many=True)
+
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk):
+        queryset = self.get_queryset().get(id=pk)
+        serializer = self.serializer_class(queryset)
 
         return Response(serializer.data)
 
@@ -396,6 +403,12 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
 
+            # create a billing account
+            BillingAccount.objects.create(
+                service_request=ServiceRequest.objects.get(id=serializer.data['id']),
+                amt_paid=0.00
+            )
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response({'error': 'this overlaps with an existing service request'}, status=status.HTTP_400_BAD_REQUEST)
@@ -491,11 +504,7 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
         if serv_req.flexible_hours:
             hours_per_day = serv_req.hours_of_service_daily
         else:
-            dt = datetime.date(1,1,1)
-            start_time = datetime.datetime.combine(dt, serv_req.service_start_time)
-            end_time = datetime.datetime.combine(dt, serv_req.service_end_time)
-            diff = end_time - start_time
-            hours_per_day = diff.seconds / 60 / 60
+            hours_per_day = time_diff(serv_req.service_start_time, serv_req.service_end_time)
 
         return hours_per_day
 
@@ -624,32 +633,6 @@ class CreateServiceAssignmentViewSet(viewsets.ViewSet):
         service_request = ServiceRequest.objects.get(id=data.get('service_request'))
         service_request.is_assigned = True
         service_request.save()
-
-        # calculate the total amount to be paid based on hourly rate, hours per day
-        # and total days of service requested
-        hourly_rate = float(service_request.service_type.hourly_rate)
-        hours_per_day = 0
-
-        if service_request.flexible_hours:
-            hours_per_day = service_request.hours_of_service_daily
-        else:
-            date = datetime.date(1,1,1)
-            start_time = datetime.datetime.combine(date, service_request.service_start_time)
-            end_time = datetime.datetime.combine(date, service_request.service_end_time)
-            diff = end_time - start_time # difference is given in seconds
-            hours_per_day = diff.seconds / 60 / 60
-        
-        total_days = service_request.days_of_service
-        amt_to_be_paid = hours_per_day * total_days * hourly_rate
-
-
-        # create a billing account
-        BillingAccount.objects.create(
-            service_request=service_request,
-            hourly_rate=hourly_rate,
-            amt_paid=0.00,
-            amt_to_be_paid=amt_to_be_paid
-        )
 
         return Response({'result': 'assignment successful'}, status=status.HTTP_201_CREATED)
 
@@ -918,6 +901,7 @@ class HPViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
+
     def get_eligible_hps(self, serv_req_id):
         serv_req = ServiceRequest.objects.get(id=serv_req_id)
         health_pros = HealthCareProfessional.objects.filter(service_type=serv_req.service_type)
@@ -940,7 +924,54 @@ class HPViewSet(viewsets.ModelViewSet):
         if serv_req.flexible_hours:
             # check if a healthcare professional has any time slots available between their earliest
             # start time and latest end time (based on service type)
-            pass
+            hp_ids = health_pros.values_list('id', flat=True)
+            days_service_needed = self.get_days_service_needed(serv_req)
+            serv_type = ServiceType.objects.get(id=serv_req.service_type.id)
+            max_hours = time_diff(serv_type.earliest_work_time, serv_type.latest_work_time)
+
+            for hp in hp_ids:
+                # for each healthcare professionals
+                # 1. check if they have existing assignments, if not, they are eligible
+                # 2. check if their existing assignments start/end date overlap with the new request
+                #       - if not, they are eligible
+                #       - if dates overlap, check if days/times overlap
+                current_assignments = ServiceAssignment.objects.filter(healthcare_professional_id=hp, service_request__is_completed=False)
+
+                if len(current_assignments) == 0:
+                    eligible_hp_ids.append(hp)
+                    continue
+
+                new_req_start_date = serv_req.start_date
+                new_req_end_date = get_service_end_date(serv_req)
+
+                current_requests = ServiceRequest.objects.filter(id__in=current_assignments.values_list('service_request_id', flat=True))
+                schedule_start_date = current_requests.aggregate(Min('start_date'))['start_date__min']
+                schedule_end_date = max([get_service_end_date(req) for req in current_requests])
+
+                if new_req_start_date >= schedule_start_date and new_req_end_date <= schedule_end_date:
+                    # check if there is time available in the scheudle to work on this request
+                    schedule = TimeSlot.objects.filter(service_assignment_id__in=current_assignments.values_list('id', flat=True))
+
+                    # if a time slot is found anywhere in their schedule, add the hp to the eligible list
+                    for day in days_service_needed:
+                        schedule_for_day = self.get_schedule_for_day(schedule.filter(day=day).order_by('start_time'))
+                        found_time_slot = True if len(schedule_for_day) == 0 else False
+                        hours_assigned_for_day = 0
+
+                        # for flexibly hours, all we need to do is make sure the total hours of work assigned for the given
+                        # day is less than max_hours
+                        for sched in schedule_for_day:
+                            hours_assigned_for_day += time_diff(sched['start_time'], sched['end_time'])
+
+                        if hours_assigned_for_day < max_hours:
+                            found_time_slot = True
+
+                        if found_time_slot:
+                            eligible_hp_ids.append(hp)
+                            break
+                else:
+                    eligible_hp_ids.append(hp)
+                    continue
         else:
             hp_ids = health_pros.values_list('id', flat=True)
             days_service_needed = self.get_days_service_needed(serv_req)
@@ -1149,7 +1180,16 @@ class BillingAccountViewSet(viewsets.ViewSet):
 
     # GET /api/billing_accounts
     def list(self, request):
+        user = request.user
         data = self.get_queryset()
+
+        if user.groups.filter(name='caretaker'):
+            care_taker = CareTaker.objects.get(user_id=user.id)
+            print(care_taker)
+            requests_by_user = ServiceRequest.objects.filter(care_taker_id=care_taker.id).values_list('id', flat=True)
+            print(requests_by_user)
+            data = data.filter(service_request_id__in=requests_by_user)
+
         serializer = self.serializer_class(data, many=True)
 
         return Response(serializer.data)
@@ -1158,5 +1198,20 @@ class BillingAccountViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk):
         queryset = self.get_queryset().get(id=pk)
         serializer = self.serializer_class(queryset)
+        billing_acct = serializer.data
 
-        return Response(serializer.data)
+        # TODO: calculate amount to be paid based on service entries
+        # calculate the total amount to be paid based on hourly rate, hours per day
+        # and total days of service requested
+        # hourly_rate = float(service_request.service_type.hourly_rate)
+        # hours_per_day = 0
+
+        # if service_request.flexible_hours:
+        #     hours_per_day = service_request.hours_of_service_daily
+        # else:
+        #     hours_per_day = time_diff(service_request.service_start_time, service_request.service_end_time)
+        
+        # total_days = service_request.days_of_service
+        # amt_to_be_paid = hours_per_day * total_days * hourly_rate
+
+        return Response(billing_acct)

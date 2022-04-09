@@ -128,9 +128,8 @@ function NavMenu({ roles }) {
         }
     }
     
-
     const getBillingAccounts = () => {
-        if(roles.includes('admin') || roles.includes('staff')) { 
+        if(roles.includes('admin') || roles.includes('staff') || roles.includes('caretaker')) { 
             return <NavDropdown.Item className="nav-link" href="#/billing_accounts">Billing Accounts</NavDropdown.Item>
         }
     }
