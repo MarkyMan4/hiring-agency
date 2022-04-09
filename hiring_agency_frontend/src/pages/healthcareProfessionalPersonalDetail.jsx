@@ -4,29 +4,30 @@ import { retrieveHP } from "../api/HPRequests";
 import HpCalendar from "../components/hpCalendar";
 import { getAuthToken } from "../utils/storage";
 import  {getAllServiceRequests} from "../api/serviceRequests";
-function HealthcareProDetail() {
-    const { id } = useParams();
+import {getUser} from "../api/authRequests"
+import {getHPList} from "../api/HPRequests"
+function HealthcareProPersonalDetail() {
+    const [id, setID] = useState();
     const [healthPro, setHealthPro] = useState({});
     const [servRequests, setServRequests] = useState();
     useEffect(() => {
-        retrieveHP(getAuthToken(), id)
-            .then(res => setHealthPro(res) );
-    }, [id]);
+        getUser(getAuthToken())
+            .then(res =>{ getHPList(getAuthToken()).then(r=>{console.log("our thing"); console.log(r); setHealthPro(r); })});
+    }, []);
     useEffect(() => {
-        getAllServiceRequests(getAuthToken(), true, false, id)
-            .then(res => {console.log("test"); console.log(res);setServRequests(res)} );
-    }, [id]);
+        getAllServiceRequests(getAuthToken(), true, false)
+            .then(res => {console.log(res);setServRequests(res)} );
+    }, [healthPro]);
 
     // TODO: useEffect to retrieve schedule of HP
 
     
 const loadHPServs = () => {
     if(servRequests){
-        console.log("running");
         return servRequests.map(srv => {
             return <div>
                     <h4 >{srv.patient_first_name + " " + srv.patient_last_name} </h4>
-                    <a className="btn btn-primary mb-3" href={"#/service_requests/" + srv.id}>See Details</a>
+                    <a className="btn btn-primary mb-3" href={"#/hp_service_requests/" + srv.id}>See Details</a>
 
                 </div>
             }
@@ -40,7 +41,7 @@ const loadHPServs = () => {
         <div>
             <h1>{ healthPro?.user?.first_name } { healthPro?.user?.last_name }</h1>
             <hr />
-            <HpCalendar hpId={ id } />
+            <HpCalendar hpId={ healthPro.id} />
             <h1> Assigned Service Requests </h1>
             { loadHPServs()}
         </div>
@@ -49,4 +50,4 @@ const loadHPServs = () => {
 
 
 }
-export default HealthcareProDetail;
+export default HealthcareProPersonalDetail;

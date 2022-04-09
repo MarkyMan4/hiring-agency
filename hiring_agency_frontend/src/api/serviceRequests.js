@@ -45,7 +45,7 @@ export const requestNewService = async (
         .then(res => res.data);
 }
 
-export const getAllServiceRequests = async (token, onlyGetAssigned=null, onlyGetCompleted=null) => {
+export const getAllServiceRequests = async (token, onlyGetAssigned=null, onlyGetCompleted=null, hpId=null) => {
     let url = baseUrl + 'api/retrieve_service_requests';
 
     let query_params = [];
@@ -56,6 +56,10 @@ export const getAllServiceRequests = async (token, onlyGetAssigned=null, onlyGet
 
     if(onlyGetCompleted !== null) {
         query_params.push('is_completed=' + (onlyGetCompleted ? 'true' : 'false'));
+    }
+
+    if(hpId){
+        query_params.push('hp='+ hpId)
     }
 
     if(query_params.length > 0) {

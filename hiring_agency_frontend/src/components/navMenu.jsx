@@ -173,6 +173,12 @@ function NavMenu({ roles }) {
         }
     }
 
+    const getHPSchedule = () =>{
+        if(roles.includes('healthcareprofessional') && !roles.includes('admin')) {
+            return <Nav.Link className="nav-link" href="#/healthcare_professional_personal">{"My Schedule"} </Nav.Link>
+        }
+    }
+
     return (
         <Navbar className="navbar-dark mb-5 py-2 site-navbar" bg="dark" expand="lg">
             <Navbar.Brand href="#/" className="ml-5">Cowley Hiring Agency</Navbar.Brand>
@@ -187,6 +193,9 @@ function NavMenu({ roles }) {
                     { getServiceManagement() }
                 </Nav>
             </Navbar.Collapse>
+            <span className="navbar-text" style={ {marginRight: '20px'} } >
+                { getHPSchedule() }
+            </span>
             <span className="navbar-text" style={ {marginRight: '20px'} }>
                 { userChangePassword() }
             </span>
