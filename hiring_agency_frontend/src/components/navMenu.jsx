@@ -128,9 +128,8 @@ function NavMenu({ roles }) {
         }
     }
     
-
     const getBillingAccounts = () => {
-        if(roles.includes('admin') || roles.includes('staff')) { 
+        if(roles.includes('admin') || roles.includes('staff') || roles.includes('caretaker')) { 
             return <NavDropdown.Item className="nav-link" href="#/billing_accounts">Billing Accounts</NavDropdown.Item>
         }
     }
@@ -150,8 +149,14 @@ function NavMenu({ roles }) {
         }
     }
 
+    const getCreateServiceEntry = () => {
+        if(roles.includes('admin') || roles.includes('healthcareprofessional')) { 
+            return <NavDropdown.Item className="nav-link" href="#/enter_service">Enter Hours Worked</NavDropdown.Item>
+        }
+    }
+
     const getServiceManagement = () => {
-        if(roles.includes('admin') || roles.includes('staff') || roles.includes('caretaker')) { 
+        if(roles.includes('admin') || roles.includes('staff') || roles.includes('caretaker') || roles.includes('healthcareprofessional')) { 
             return (
                 <NavDropdown
                     id="nav2-dropdown-dark-example"
@@ -162,6 +167,7 @@ function NavMenu({ roles }) {
                     { getServiceRequests() }
                     { getBillingAccounts() }
                     { getCareTakerServiceRequests()}
+                    { getCreateServiceEntry() }
                 </NavDropdown>
             );
         }

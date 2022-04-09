@@ -3,6 +3,7 @@ import { getHpSchedule } from "../api/HPRequests";
 import { getAuthToken } from "../utils/storage";
 import TimeSlotPicker from "./timeSlotPicker";
 import { assignHpToServiceRequest } from "../api/serviceAssignments";
+import { getServiceTypes } from "../api/staticDataRequests";
 
 // mapping from day index to name
 // used to get day name from the getDay() function
@@ -21,6 +22,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
     const [schedule, setSchedule] = useState({});
     const [serviceStartDate, setServiceStartDate] = useState();
     const [serviceEndDate, setServiceEndDate] = useState();
+    const [minWorkTime, setMinWorkTime] = useState('00:00');
+    const [maxWorkTime, setMaxWorkTime] = useState('00:00');
 
     const [startTimeSunday, setStartTimeSunday] = useState(null);
     const [endTimeSunday, setEndTimeSunday] = useState(null);
@@ -53,42 +56,62 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
 
     useEffect(() => {
         if(Object.keys(serviceRequest).length > 0) {
-            let daysServiceNeeded = {
-                0: serviceRequest.service_needed_sunday,
-                1: serviceRequest.service_needed_monday,
-                2: serviceRequest.service_needed_tuesday,
-                3: serviceRequest.service_needed_wednesday,
-                4: serviceRequest.service_needed_thursday,
-                5: serviceRequest.service_needed_friday,
-                6: serviceRequest.service_needed_saturday
-            };
-
-            let daysOfService = serviceRequest.days_of_service;
-            let dateParts = serviceRequest.start_date.split('-');
-
-            let year = parseInt(dateParts[0]);
-            let month = parseInt(dateParts[1]) - 1;
-            let dayOfMonth = parseInt(dateParts[2]);
-            let startDate = new Date(year, month, dayOfMonth);
-
-            setServiceStartDate(startDate);
-
-            let date = new Date(year, month, dayOfMonth);
-
-            while(daysOfService >= 0) {
-                if(daysServiceNeeded[date.getDay()]) {
-                    daysOfService -= 1;
-                }
-
-                if(daysOfService > 0) {
-                    date.setDate(date.getDate() + 1);
-                }
-            }
-
-            setServiceEndDate(date);
+            calculateStartAndEndDates();
+            setMinAndMaxWorkTimes();
         }
 
     }, [serviceRequest]);
+
+    const calculateStartAndEndDates = () => {
+        let daysServiceNeeded = {
+            0: serviceRequest.service_needed_sunday,
+            1: serviceRequest.service_needed_monday,
+            2: serviceRequest.service_needed_tuesday,
+            3: serviceRequest.service_needed_wednesday,
+            4: serviceRequest.service_needed_thursday,
+            5: serviceRequest.service_needed_friday,
+            6: serviceRequest.service_needed_saturday
+        };
+
+        let daysOfService = serviceRequest.days_of_service;
+        let dateParts = serviceRequest.start_date.split('-');
+
+        let year = parseInt(dateParts[0]);
+        let month = parseInt(dateParts[1]) - 1;
+        let dayOfMonth = parseInt(dateParts[2]);
+        let startDate = new Date(year, month, dayOfMonth);
+
+        setServiceStartDate(startDate);
+
+        let date = new Date(year, month, dayOfMonth);
+
+        while(daysOfService >= 0) {
+            if(daysServiceNeeded[date.getDay()]) {
+                daysOfService -= 1;
+            }
+
+            if(daysOfService > 0) {
+                date.setDate(date.getDate() + 1);
+            }
+        }
+
+        setServiceEndDate(date);
+    }
+
+    const setMinAndMaxWorkTimes = () => {
+        if(serviceRequest.flexible_hours) {
+            getServiceTypes(serviceRequest.service_type.id)
+                .then(res => {
+                    console.log(res);
+                    setMinWorkTime(res.earliest_work_time);
+                    setMaxWorkTime(res.latest_work_time);
+                });
+        }
+        else {
+            setMinWorkTime(serviceRequest.service_start_time);
+            setMaxWorkTime(serviceRequest.service_end_time);
+        }
+    }
 
     let modalDisplay = {
         display: display
@@ -143,8 +166,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
-                    minTime={ serviceRequest.flexible_hours ? '00:00' : serviceRequest.service_start_time }
-                    maxTime={ serviceRequest.flexible_hours ? '23:30' : serviceRequest.service_end_time }
+                    minTime={ minWorkTime }
+                    maxTime={ maxWorkTime }
                     startTimeCallback={ setStartTimeSunday }
                     endTimeCallback={ setEndTimeSunday }
                     conflictCallback={ hasConflict => setConflictSunday(hasConflict) }
@@ -159,8 +182,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
-                    minTime={ serviceRequest.flexible_hours ? '00:00' : serviceRequest.service_start_time }
-                    maxTime={ serviceRequest.flexible_hours ? '23:30' : serviceRequest.service_end_time }
+                    minTime={ minWorkTime }
+                    maxTime={ maxWorkTime }
                     startTimeCallback={ setStartTimeMonday }
                     endTimeCallback={ setEndTimeMonday }
                     conflictCallback={ hasConflict => setConflictMonday(hasConflict) }
@@ -175,8 +198,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
-                    minTime={ serviceRequest.flexible_hours ? '00:00' : serviceRequest.service_start_time }
-                    maxTime={ serviceRequest.flexible_hours ? '23:30' : serviceRequest.service_end_time }
+                    minTime={ minWorkTime }
+                    maxTime={ maxWorkTime }
                     startTimeCallback={ setStartTimeTuesday }
                     endTimeCallback={ setEndTimeTuesday }
                     conflictCallback={ hasConflict => setConflictTuesday(hasConflict) }
@@ -191,8 +214,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
-                    minTime={ serviceRequest.flexible_hours ? '00:00' : serviceRequest.service_start_time }
-                    maxTime={ serviceRequest.flexible_hours ? '23:30' : serviceRequest.service_end_time }
+                    minTime={ minWorkTime }
+                    maxTime={ maxWorkTime }
                     startTimeCallback={ setStartTimeWednesday }
                     endTimeCallback={ setEndTimeWednesday }
                     conflictCallback={ hasConflict => setConflictWednesday(hasConflict) }
@@ -207,8 +230,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
-                    minTime={ serviceRequest.flexible_hours ? '00:00' : serviceRequest.service_start_time }
-                    maxTime={ serviceRequest.flexible_hours ? '23:30' : serviceRequest.service_end_time }
+                    minTime={ minWorkTime }
+                    maxTime={ maxWorkTime }
                     startTimeCallback={ setStartTimeThursday }
                     endTimeCallback={ setEndTimeThursday }
                     conflictCallback={ hasConflict => setConflictThursday(hasConflict) }
@@ -223,8 +246,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
-                    minTime={ serviceRequest.flexible_hours ? '00:00' : serviceRequest.service_start_time }
-                    maxTime={ serviceRequest.flexible_hours ? '23:30' : serviceRequest.service_end_time }
+                    minTime={ minWorkTime }
+                    maxTime={ maxWorkTime }
                     startTimeCallback={ setStartTimeFriday }
                     endTimeCallback={ setEndTimeFriday }
                     conflictCallback={ hasConflict => setConflictFriday(hasConflict) }
@@ -239,8 +262,8 @@ function ServAssignModal({ buttonText, healthProId, serviceRequest, assignedCall
                     schedule={ schedule }
                     serviceStartDate={ serviceStartDate }
                     serviceEndDate={ serviceEndDate }
-                    minTime={ serviceRequest.flexible_hours ? '00:00' : serviceRequest.service_start_time }
-                    maxTime={ serviceRequest.flexible_hours ? '23:30' : serviceRequest.service_end_time }
+                    minTime={ minWorkTime }
+                    maxTime={ maxWorkTime }
                     startTimeCallback={ setStartTimeSaturday }
                     endTimeCallback={ setEndTimeSaturday }
                     conflictCallback={ hasConflict => setConflictSaturday(hasConflict) }

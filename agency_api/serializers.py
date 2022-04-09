@@ -6,7 +6,8 @@ from .models import (
     CareTaker, 
     HPJobApplication, 
     HealthCareProfessional, 
-    EducationType, 
+    EducationType,
+    ServiceEntry, 
     ServiceType, 
     StaffMember, 
     SecurityQuestion, 
@@ -159,4 +160,17 @@ class BillingAccountDetailSerializer(serializers.ModelSerializer):
 class TimeSlotSerializer(serializers.ModelSerializer):
     class Meta:
         model = TimeSlot
+        fields = ('__all__')
+
+class ServiceEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceEntry
+        fields = ('__all__')
+
+class ServiceEntryDetailSerializer(serializers.ModelSerializer):
+    billing_account = BillingAccountDetailSerializer(many=False)
+    healthcare_professional = HealthCareProfessionalDetailSerializer(many=False)
+
+    class Meta:
+        model = ServiceEntry
         fields = ('__all__')
