@@ -51,6 +51,10 @@ import CTServiceRequests from './pages/careTakerViewServiceRequests.jsx';
 import CTServiceRequestDetail from './pages/cTServiceRequestDetail';
 import HealthcareProfessionals from './pages/healthcareProfessionals';
 import HealthcareProDetail from './pages/healthcareProfessionalDetail';
+import HealthProRoute from './routes/healthProRoute';
+import HealthProAssignedReqs from './pages/healthProAssignedReqs';
+import CreateServiceEntry from './pages/createServiceEntry';
+import ServiceEntrySuccess from './pages/serviceEntrySuccess';
 
 
 function App() {
@@ -116,6 +120,9 @@ function App() {
           <Route path="/billing_accounts/:id" element={<CareOrStaffRoute roles={ roles }> <BillingAccountDetail /></CareOrStaffRoute>} /> 
           <Route path="/healthcare_professionals" element={<StaffRoute roles={ roles }> <HealthcareProfessionals /></StaffRoute>} /> 
           <Route path="/healthcare_professionals/:id" element={<StaffRoute roles={ roles }> <HealthcareProDetail /></StaffRoute>} />
+          <Route path="/enter_service" element={<HealthProRoute roles={ roles }> <HealthProAssignedReqs /></HealthProRoute>} />
+          <Route path="/enter_service/:id" element={<HealthProRoute roles={ roles }> <CreateServiceEntry /></HealthProRoute>} />
+          <Route path="/enter_service/:id/success" element={<HealthProRoute roles={ roles }> <ServiceEntrySuccess /></HealthProRoute>} />
         </Routes>
       );
     }

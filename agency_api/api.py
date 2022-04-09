@@ -1237,7 +1237,10 @@ class ServiceEntryViewSet(viewsets.ViewSet):
     def create(self, request):
         data = request.data
         data['billing_account'] = BillingAccount.objects.get(service_request_id=data['service_request']).id
-        data['healthcare_professional'] = HealthCareProfessional.objects.get(user_id=request.user.id).id
+
+        if not request.user.is_superuser:
+            data['healthcare_professional'] = HealthCareProfessional.objects.get(user_id=request.user.id).id
+
         serializer = ServiceEntrySerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -1245,8 +1248,12 @@ class ServiceEntryViewSet(viewsets.ViewSet):
 
     # GET /api/service_entry
     def list(self, request):
-        hp_id = HealthCareProfessional.objects.get(user_id=request.user.id)
-        entries = ServiceEntry.objects.filter(healthcare_professional=hp_id)
+        if request.user.is_superuser:
+            entries = self.get_queryset()
+        else:
+            hp_id = HealthCareProfessional.objects.get(user_id=request.user.id)
+            entries = ServiceEntry.objects.filter(healthcare_professional=hp_id)
+
         serializer = ServiceEntrySerializer(entries, many=True)
 
         return Response(serializer.data)
@@ -1254,10 +1261,12 @@ class ServiceEntryViewSet(viewsets.ViewSet):
     # GET /api/service_entry/<id>
     def retrieve(self, request, pk):
         entry = ServiceEntry.objects.get(id=pk)
-        hp_id = HealthCareProfessional.objects.get(user_id=request.user.id).id
 
-        if entry.healthcare_professional.id != hp_id:
-            return Response({'error': 'you do not have access to this service entry'})
+        if not request.user.is_superuser:
+            hp_id = HealthCareProfessional.objects.get(user_id=request.user.id).id
+
+            if entry.healthcare_professional.id != hp_id:
+                return Response({'error': 'you do not have access to this service entry'})
 
         serializer = ServiceEntryDetailSerializer(entry)
 
