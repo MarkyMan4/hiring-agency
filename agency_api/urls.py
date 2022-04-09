@@ -10,6 +10,7 @@ from .api import (
     SecurityQuestionAnswerViewSet, 
     JobPostingViewSet,
     ServiceAssignmentViewSet,
+    ServiceEntryViewSet,
     ServiceTypeViewSet, 
     ViewHPJobApplicationViewSet,
     CreateHPJobApplicationViewSet,
@@ -42,6 +43,7 @@ router.register('api/hp_requests', HPViewSet, 'job-application')
 router.register('api/view_staff_list',StaffManageViewSet, 'staff-list')
 router.register('api/view_caretaker_list',CareTakerManageViewSet, 'care-taker-list')
 router.register('api/billing_accounts', BillingAccountViewSet, 'billing-accounts')
+router.register('api/service_entry', ServiceEntryViewSet, 'service-entry')
 
 
 # put non-viewset urls here

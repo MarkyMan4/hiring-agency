@@ -134,6 +134,7 @@ class BillingAccount(models.Model):
 class ServiceEntry(models.Model):
     billing_account = models.ForeignKey(BillingAccount, on_delete=models.CASCADE)
     healthcare_professional = models.ForeignKey(HealthCareProfessional, on_delete=models.CASCADE)
+    date_of_service = models.DateField(null=False)
     start_time = models.TimeField(null=False)
     end_time = models.TimeField(null=False)
 

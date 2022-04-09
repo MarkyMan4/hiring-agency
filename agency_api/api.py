@@ -20,6 +20,7 @@ from .serializers import (
     RetrieveServiceRequestSerializer,
     SecurityQuestionSerializer,
     SecurityQuestionAnswerSerializer,
+    ServiceEntrySerializer,
     ServiceTypeSerializer,
     TimeSlotSerializer,
     ViewStaffMemberSerializer,
@@ -38,6 +39,7 @@ from .models import (
     SecurityQuestion, 
     SecurityQuestionAnswer, 
     JobPosting,
+    ServiceEntry,
     ServiceType, 
     StaffMember,
     CareTaker,
@@ -1215,3 +1217,26 @@ class BillingAccountViewSet(viewsets.ViewSet):
         # amt_to_be_paid = hours_per_day * total_days * hourly_rate
 
         return Response(billing_acct)
+
+class ServiceEntryViewSet(viewsets.ViewSet):
+    serializer_class = ServiceEntrySerializer
+    permission_classes = [CustomModelPermissions]
+
+    def get_queryset(self):
+        return ServiceEntry.objects.all()
+
+    # POST /api/service_entry
+    # body of request should follow this schema:
+    # {
+    #   service_request: <req_id>
+    #   start_time: HH:MM
+    #   end_time: HH:MM
+    # }
+    def create(self, request):
+        data = request.data
+        data['billing_account'] = BillingAccount.objects.get(service_request_id=data['service_request']).id
+        data['healthcare_professional'] = HealthCareProfessional.objects.get(user_id=request.user.id).id
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
