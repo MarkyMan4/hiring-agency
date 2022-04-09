@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import { changeCareTakerStatus } from "../api/careTakerManage";
 import { getAuthToken } from "../utils/storage";
@@ -7,9 +7,13 @@ import { getAuthToken } from "../utils/storage";
 function CareTakerStatusChanged() {
     const { id } = useParams();
     const navigate = useNavigate();
-    
+    const [message, setMessage] = useState('');
+
     useEffect(() => {
         changeCareTakerStatus(getAuthToken(), id)
+        .then(res => {
+            setMessage(res.error);
+        })
     },[]);
 
     const back = () =>{
@@ -19,7 +23,7 @@ function CareTakerStatusChanged() {
         <div>
             <div className="row">
                     <div className="col-md-6">
-                        <h1>You just change the status of this care taker</h1>
+                        <h1>{ message }</h1>
                     </div>
                     <div className="col-md-6">
                         <button onClick={ back } className="btn btn-outline-primary" style={ {float: 'right'} }>Back</button>
