@@ -100,3 +100,17 @@ export const getAssignedTimes = async (token, requestId) => {
         .then(res => res.data)
         .catch(err => `Failed to retrieve assigned times for request ID ${requestId}`);
 }
+
+export const getHoursRemaining = async (token, requestId) => {
+    let url = `${baseUrl}api/retrieve_service_requests/${requestId}/hours_remaining`;
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.get(url, config)
+        .then(res => res.data)
+        .catch(err => `Failed to retrieve hours remaining for request ID ${requestId}`);
+}

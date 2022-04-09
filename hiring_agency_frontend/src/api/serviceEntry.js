@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { baseUrl } from './config';
 
-export const createServiceEntry = async (token, serviceRequestId, dateOfService, startTime, endTime, hpId = null) => {
+export const saveServiceEntry = async (token, serviceRequestId, dateOfService, startTime, endTime, hpId = null) => {
     const url = baseUrl + 'api/service_entry';
 
     const body = {

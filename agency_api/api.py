@@ -547,9 +547,14 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
         elif user.groups.filter(name='healthcareprofessional'):
             hp_id = HealthCareProfessional.objects.get(user_id=user.id)
             assignments = ServiceAssignment.objects.filter(healthcare_professional=hp_id).values_list('service_request_id', flat=True)
-            queryset = self.get_queryset().filter(id__in=assignments)
+            queryset = self.get_queryset().filter(id__in=assignments, is_assigned=True)
         else:
             queryset = self.get_queryset()
+
+            if request.query_params.get('hp'):
+                hp_id = request.query_params.get('hp')
+                assignments = ServiceAssignment.objects.filter(healthcare_professional=hp_id).values_list('service_request_id', flat=True)
+                queryset = queryset.filter(id__in=assignments)
 
         # filter based on any query params that were provided
         if request.query_params.get('is_assigned'):
@@ -1249,6 +1254,7 @@ class ServiceEntryViewSet(viewsets.ViewSet):
     #   end_time: HH:MM
     # }
     def create(self, request):
+        # TODO: if total hours worked on this request exceeds hours requested, close the request
         data = request.data
         data['billing_account'] = BillingAccount.objects.get(service_request_id=data['service_request']).id
 

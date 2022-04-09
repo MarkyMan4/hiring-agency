@@ -35,12 +35,14 @@ def get_hours_of_service_remaining(serv_req: ServiceRequest):
     for se in service_entries:
         hours_worked += time_diff(se.start_time, se.end_time)
 
+    hours_worked = round(hours_worked, 2)
+
     if serv_req.flexible_hours:
         hours_per_day_requested = serv_req.hours_of_service_daily
     else:
         hours_per_day_requested = time_diff(serv_req.service_start_time, serv_req.service_end_time)
 
     total_hours_requested = hours_per_day_requested * serv_req.days_of_service
-    hours_remaining = total_hours_requested - hours_worked
+    hours_remaining = round(total_hours_requested - hours_worked, 2)
 
     return total_hours_requested, hours_worked, hours_remaining
