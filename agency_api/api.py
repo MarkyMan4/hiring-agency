@@ -20,6 +20,7 @@ from .serializers import (
     RetrieveServiceRequestSerializer,
     SecurityQuestionSerializer,
     SecurityQuestionAnswerSerializer,
+    ServiceEntryDetailSerializer,
     ServiceEntrySerializer,
     ServiceTypeSerializer,
     TimeSlotSerializer,
@@ -1221,7 +1222,6 @@ class BillingAccountViewSet(viewsets.ViewSet):
         return Response(billing_acct)
 
 class ServiceEntryViewSet(viewsets.ViewSet):
-    serializer_class = ServiceEntrySerializer
     permission_classes = [CustomModelPermissions]
 
     def get_queryset(self):
@@ -1238,7 +1238,27 @@ class ServiceEntryViewSet(viewsets.ViewSet):
         data = request.data
         data['billing_account'] = BillingAccount.objects.get(service_request_id=data['service_request']).id
         data['healthcare_professional'] = HealthCareProfessional.objects.get(user_id=request.user.id).id
-        serializer = self.serializer_class(data=data)
+        serializer = ServiceEntrySerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    # GET /api/service_entry
+    def list(self, request):
+        hp_id = HealthCareProfessional.objects.get(user_id=request.user.id)
+        entries = ServiceEntry.objects.filter(healthcare_professional=hp_id)
+        serializer = ServiceEntrySerializer(entries, many=True)
+
+        return Response(serializer.data)
+
+    # GET /api/service_entry/<id>
+    def retrieve(self, request, pk):
+        entry = ServiceEntry.objects.get(id=pk)
+        hp_id = HealthCareProfessional.objects.get(user_id=request.user.id).id
+
+        if entry.healthcare_professional.id != hp_id:
+            return Response({'error': 'you do not have access to this service entry'})
+
+        serializer = ServiceEntryDetailSerializer(entry)
+
+        return Response(serializer.data)
