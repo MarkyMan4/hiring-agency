@@ -827,6 +827,8 @@ class HPViewSet(viewsets.ModelViewSet):
     #   ],
     #   <date 2>: ...
     # }
+
+
     @action(methods=['GET'], detail=True)
     def schedule(self, request, pk):
         assignments = ServiceAssignment.objects.filter(
