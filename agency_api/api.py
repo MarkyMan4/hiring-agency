@@ -503,6 +503,11 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
             
             if not assignments.filter(service_request=serv_req.id).exists():
                 return False
+        elif user.groups.filter(name='caretaker'):
+            care_taker_id = CareTaker.objects.get(user_id=user.id).id
+
+            if serv_req.care_taker_id != care_taker_id:
+                return False
 
         return True
 
@@ -1264,6 +1269,14 @@ class ServiceEntryViewSet(viewsets.ViewSet):
         serializer = ServiceEntrySerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        serv_req = ServiceRequest.objects.get(id=data['service_request'])
+        total_hours_requested, hours_worked, hours_remaining = get_hours_of_service_remaining(serv_req)
+
+        if hours_worked >= total_hours_requested:
+            serv_req.is_completed = True
+            serv_req.save()
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     # GET /api/service_entry
