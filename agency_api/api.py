@@ -530,9 +530,14 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
         user = request.user
         
         # if user is a care taker, only get service requests they created
+        # for healthcare pro, only get service requests they are assigned to
         # for admin or staff, retrieve all service requests
         if user.groups.filter(name='caretaker'):
             queryset = self.get_queryset().filter(care_taker_id__user_id=user.id)  #__ means to join and then filter whatever after
+        elif user.groups.filter(name='healthcareprofessional'):
+            hp_id = HealthCareProfessional.objects.get(user_id=user.id)
+            assignments = ServiceAssignment.objects.filter(healthcare_professional=hp_id).values_list('service_request_id', flat=True)
+            queryset = self.get_queryset().filter(id__in=assignments)
         else:
             queryset = self.get_queryset()
 
@@ -1169,9 +1174,6 @@ class CareTakerManageViewSet(viewsets.ModelViewSet):
         user.is_active = not user.is_active
         user.save()
         return Response()
-
-
-
 
 class BillingAccountViewSet(viewsets.ViewSet):
     serializer_class = BillingAccountDetailSerializer
