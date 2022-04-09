@@ -6,6 +6,8 @@ import { getAuthToken } from "../utils/storage";
 import  {getAllServiceRequests} from "../api/serviceRequests";
 import {getUser} from "../api/authRequests"
 import {getHPList} from "../api/HPRequests"
+import HealthProInfo from "../components/healthProInfo";
+
 function HealthcareProPersonalDetail() {
     const [id, setID] = useState();
     const [healthPro, setHealthPro] = useState({});
@@ -44,6 +46,8 @@ const loadHPServs = () => {
             { healthPro.id ? <HpCalendar hpId={ healthPro.id} /> : null}
             <h1> Assigned Service Requests </h1>
             { loadHPServs()}
+            <hr />
+            <HealthProInfo healthPro={ healthPro } />
         </div>
     );
 

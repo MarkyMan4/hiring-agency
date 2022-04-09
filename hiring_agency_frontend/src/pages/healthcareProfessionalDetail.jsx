@@ -4,6 +4,8 @@ import { retrieveHP } from "../api/HPRequests";
 import HpCalendar from "../components/hpCalendar";
 import { getAuthToken } from "../utils/storage";
 import  {getAllServiceRequests} from "../api/serviceRequests";
+import HealthProInfo from "../components/healthProInfo";
+
 function HealthcareProDetail() {
     const { id } = useParams();
     const [healthPro, setHealthPro] = useState({});
@@ -43,6 +45,8 @@ const loadHPServs = () => {
             <HpCalendar hpId={ id } />
             <h1> Assigned Service Requests </h1>
             { loadHPServs()}
+            <hr />
+            <HealthProInfo healthPro={ healthPro } />
         </div>
     );
 
