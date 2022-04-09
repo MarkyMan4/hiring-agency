@@ -24,7 +24,7 @@ function CreateServiceEntry() {
         <div>
             <div className="row animate__animated animate__fadeIn">
                 <div className="col-md-6">
-                    <h1>Create service entry for service { id }</h1>
+                    <h1>Enter hours worked</h1>
                 </div>
                 <div className="col-md-6">
                     <CancelButton returnUrl="/enter_service" style={ {float: 'right'} } />
