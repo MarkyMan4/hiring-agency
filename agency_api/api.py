@@ -1127,15 +1127,19 @@ class CareTakerManageViewSet(viewsets.ModelViewSet):
         queryset = self.get_queryset()
 
         if not queryset.filter(id=pk).exists():
-            return Response({'error':'Staff is not exist'})
+            return Response({'error':'Caretaker is not exist'})
         
-        staff = queryset.get(id=pk)
-        user_id = staff.user_id
+        caretaker = queryset.get(id=pk)
+        user_id = caretaker.user_id
         user = User.objects.get(id=user_id)
-        
-        user.is_active = not user.is_active
-        user.save()
-        return Response()
+        userService = ServiceRequest.objects.filter(care_taker__user_id = user_id, is_completed = False)
+        if (userService.exists()):
+            return Response({'error':'This care taker can`t be change status beacuse this user has in-complete service request'})
+        else:
+            user.is_active = not user.is_active
+            user.save()
+            return Response({'error':'You just change the status of this care taker'})
+           
 
 
 
