@@ -5,6 +5,7 @@ from rest_framework.decorators import action
 from django.db.models import Min
 from django.contrib.auth.models import Group
 from agency_api.auth.auth_serializers import RegisterUserSerializer, UserSerializer
+from agency_api.utils.service_requests import get_hours_of_service_remaining, get_service_end_date
 from .permissions import CustomModelPermissions
 from .serializers import (
     BillingAccountDetailSerializer,
@@ -20,6 +21,7 @@ from .serializers import (
     RetrieveServiceRequestSerializer,
     SecurityQuestionSerializer,
     SecurityQuestionAnswerSerializer,
+    ServiceEntryDetailSerializer,
     ServiceEntrySerializer,
     ServiceTypeSerializer,
     TimeSlotSerializer,
@@ -57,31 +59,6 @@ from .utils.templates import email_template
 from django.core.mail import send_mail
 from django.conf import settings
 
-
-# given a service request, calculate the end date
-def get_service_end_date(serv_req: ServiceRequest):
-    days_service_needed = {
-        0: serv_req.service_needed_monday,
-        1: serv_req.service_needed_tuesday,
-        2: serv_req.service_needed_wednesday,
-        3: serv_req.service_needed_thursday,
-        4: serv_req.service_needed_friday,
-        5: serv_req.service_needed_saturday,
-        6: serv_req.service_needed_sunday
-    }
-
-    days_of_service = serv_req.days_of_service
-    date = serv_req.start_date
-
-    # add 1 to start date for each day of service needed
-    while days_of_service > 0:
-        if days_service_needed[date.weekday()]:
-            days_of_service -= 1
-
-        if days_of_service > 0:
-            date += timedelta(days=1)
-
-    return date
 
 class ServiceTypeViewSet(viewsets.ViewSet):
     serializer_class = ServiceTypeSerializer
@@ -516,6 +493,19 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
 
     def get_queryset(self):
         return ServiceRequest.objects.all()
+
+    # check if a healthcare professional has access to a service request
+    # TODO: implement a check for care takers
+    def user_has_access(self, user, serv_req):
+        if user.groups.filter(name='healthcareprofessional'):
+            hp_id = HealthCareProfessional.objects.get(user_id=user.id)
+            assignments = ServiceAssignment.objects.filter(healthcare_professional=hp_id).values_list('service_request_id', flat=True)
+            
+            if not assignments.filter(service_request=serv_req.id).exists():
+                return False
+
+        return True
+
   
     # GET /api/retrieve_service_requests/<id>/get_assign_by_request
     @action(methods=['GET'], detail=True)
@@ -525,16 +515,46 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
 
         return Response(serializer.data) 
 
+    # GET /api/retrieve_service_requests/<id>/hours_remaining
+    @action(methods=['GET'], detail=True)
+    def hours_remaining(self, request, pk):
+        serv_req = self.get_queryset().get(id=pk)
+
+        # if healthcare professional, make sure they have access to this request
+        if not self.user_has_access(request.user, serv_req):
+            return Response({'error': 'you do not have access to this request'}, status=status.HTTP_403_FORBIDDEN)
+
+        
+        total_hrs_requested, hrs_worked, hrs_remaining = get_hours_of_service_remaining(serv_req)
+
+        hours_info = {
+            'hours_requested': total_hrs_requested,
+            'hours_worked': hrs_worked,
+            'hours_remaining': hrs_remaining
+        }
+
+        return Response(hours_info)
+
     # GET /api/retrieve_service_requests
     def list(self, request):
         user = request.user
         
         # if user is a care taker, only get service requests they created
+        # for healthcare pro, only get service requests they are assigned to
         # for admin or staff, retrieve all service requests
         if user.groups.filter(name='caretaker'):
             queryset = self.get_queryset().filter(care_taker_id__user_id=user.id)  #__ means to join and then filter whatever after
+        elif user.groups.filter(name='healthcareprofessional'):
+            hp_id = HealthCareProfessional.objects.get(user_id=user.id)
+            assignments = ServiceAssignment.objects.filter(healthcare_professional=hp_id).values_list('service_request_id', flat=True)
+            queryset = self.get_queryset().filter(id__in=assignments, is_assigned=True)
         else:
             queryset = self.get_queryset()
+
+            if request.query_params.get('hp'):
+                hp_id = request.query_params.get('hp')
+                assignments = ServiceAssignment.objects.filter(healthcare_professional=hp_id).values_list('service_request_id', flat=True)
+                queryset = queryset.filter(id__in=assignments)
 
         # filter based on any query params that were provided
         if request.query_params.get('is_assigned'):
@@ -552,6 +572,11 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
     # GET /api/retrieve_service_requests/<id>
     def retrieve(self, request, pk):
         service_request = self.get_queryset().get(id=pk)
+
+        # if healthcare professional, make sure they have access to this request
+        if not self.user_has_access(request.user, service_request):
+            return Response({'error': 'you do not have access to this request'}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.serializer_class(service_request, many=False)
 
         return Response(serializer.data)
@@ -1170,9 +1195,6 @@ class CareTakerManageViewSet(viewsets.ModelViewSet):
         user.save()
         return Response()
 
-
-
-
 class BillingAccountViewSet(viewsets.ViewSet):
     serializer_class = BillingAccountDetailSerializer
     permission_classes = [CustomModelPermissions]
@@ -1219,7 +1241,6 @@ class BillingAccountViewSet(viewsets.ViewSet):
         return Response(billing_acct)
 
 class ServiceEntryViewSet(viewsets.ViewSet):
-    serializer_class = ServiceEntrySerializer
     permission_classes = [CustomModelPermissions]
 
     def get_queryset(self):
@@ -1233,10 +1254,40 @@ class ServiceEntryViewSet(viewsets.ViewSet):
     #   end_time: HH:MM
     # }
     def create(self, request):
+        # TODO: if total hours worked on this request exceeds hours requested, close the request
         data = request.data
         data['billing_account'] = BillingAccount.objects.get(service_request_id=data['service_request']).id
-        data['healthcare_professional'] = HealthCareProfessional.objects.get(user_id=request.user.id).id
-        serializer = self.serializer_class(data=data)
+
+        if not request.user.is_superuser:
+            data['healthcare_professional'] = HealthCareProfessional.objects.get(user_id=request.user.id).id
+
+        serializer = ServiceEntrySerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    # GET /api/service_entry
+    def list(self, request):
+        if request.user.is_superuser:
+            entries = self.get_queryset()
+        else:
+            hp_id = HealthCareProfessional.objects.get(user_id=request.user.id)
+            entries = ServiceEntry.objects.filter(healthcare_professional=hp_id)
+
+        serializer = ServiceEntrySerializer(entries, many=True)
+
+        return Response(serializer.data)
+
+    # GET /api/service_entry/<id>
+    def retrieve(self, request, pk):
+        entry = ServiceEntry.objects.get(id=pk)
+
+        if not request.user.is_superuser:
+            hp_id = HealthCareProfessional.objects.get(user_id=request.user.id).id
+
+            if entry.healthcare_professional.id != hp_id:
+                return Response({'error': 'you do not have access to this service entry'})
+
+        serializer = ServiceEntryDetailSerializer(entry)
+
+        return Response(serializer.data)

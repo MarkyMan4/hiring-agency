@@ -138,6 +138,9 @@ class ServiceEntry(models.Model):
     start_time = models.TimeField(null=False)
     end_time = models.TimeField(null=False)
 
+    class Meta:
+        ordering = ['-date_of_service', '-start_time']
+
 class AccountStatus(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_locked = models.BooleanField(null=False)
