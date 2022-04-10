@@ -1227,7 +1227,8 @@ class BillingAccountViewSet(viewsets.ViewSet):
             # calculate amount to be paid based on service entries
             serv_req = ServiceRequest.objects.get(id=ba['service_request']['id'])
             total_hours_requested, hours_worked, hours_remaining = get_hours_of_service_remaining(serv_req)
-            ba['amt_to_be_paid'] = round(hours_worked * float(ba['service_request']['service_type']['hourly_rate']), 2)
+            total_bill = round(hours_worked * float(ba['service_request']['service_type']['hourly_rate']), 2)
+            ba['amt_to_be_paid'] = str(total_bill - float(ba['amt_paid']))
 
         return Response(serializer.data)
 
@@ -1240,9 +1241,20 @@ class BillingAccountViewSet(viewsets.ViewSet):
         # calculate amount to be paid based on service entries
         serv_req = ServiceRequest.objects.get(id=billing_acct['service_request']['id'])
         total_hours_requested, hours_worked, hours_remaining = get_hours_of_service_remaining(serv_req)
-        billing_acct['amt_to_be_paid'] = round(hours_worked * float(billing_acct['service_request']['service_type']['hourly_rate']), 2)
+
+        total_bill = round(hours_worked * float(billing_acct['service_request']['service_type']['hourly_rate']), 2)
+        billing_acct['amt_to_be_paid'] = str(total_bill - float(billing_acct['amt_paid']))
 
         return Response(billing_acct)
+
+    # PUT /api/billing_accounts/<id>/make_payment
+    @action(methods=['PUT'], detail=True)
+    def make_payment(self, request, pk):
+        billing_acct = self.get_queryset().get(id=pk)
+        billing_acct.amt_paid = float(billing_acct.amt_paid) + request.data['amount']
+        billing_acct.save()
+
+        return Response(status=status.HTTP_200_OK)
 
 class ServiceEntryViewSet(viewsets.ViewSet):
     permission_classes = [CustomModelPermissions]
