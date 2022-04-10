@@ -47,6 +47,7 @@ const loadHPServs = () => {
             { loadHPServs()}
             <hr />
             <HealthProInfo healthPro={ healthPro } />
+            
         </div>
     );
 
