@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { baseUrl } from './config';
 
-export const saveServiceEntry = async (token, serviceRequestId, dateOfService, startTime, endTime, hpId = null) => {
+export const saveServiceEntry = async (token, serviceRequestId, dateOfService, startTime, endTime, hpUsername=null) => {
     const url = baseUrl + 'api/service_entry';
 
     const body = {
@@ -11,8 +11,8 @@ export const saveServiceEntry = async (token, serviceRequestId, dateOfService, s
         end_time: endTime
     }
 
-    if(hpId) {
-        body.healthcare_professional = hpId;
+    if(hpUsername) {
+        body.healthcare_professional = hpUsername;
     }
 
     const config = {

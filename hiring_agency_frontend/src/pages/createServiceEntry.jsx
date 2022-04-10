@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { getUser } from "../api/authRequests";
 import { saveServiceEntry } from "../api/serviceEntry";
 import { getHoursRemaining } from "../api/serviceRequests";
 import CancelButton from "../components/cancelButton";
@@ -9,12 +10,18 @@ function CreateServiceEntry() {
     const { id } = useParams();
     const navigate = useNavigate();
 
+    const [roles, setRoles] = useState([]);
     const [dateOfService, setDateOfService] = useState();
     const [startTime, setStartTime] = useState();
     const [endTime, setEndTime] = useState();
-    const [hpId, setHpId] = useState(); // only used if an admin is creating the service entry for an HP
+    const [hpUsername, setHpUsername] = useState(); // only used if an admin is creating the service entry for an HP
     const [hoursRemaining, setHoursRemaining] = useState({});
     const [message, setMessage] = useState({});
+
+    useEffect(() => {
+        getUser(getAuthToken())
+            .then(res => setRoles(res.groups));
+    }, []);
 
     useEffect(() => {
         getHoursRemaining(getAuthToken(), id)
@@ -30,7 +37,8 @@ function CreateServiceEntry() {
             id,
             dateOfService,
             startTime,
-            endTime
+            endTime,
+            hpUsername ? hpUsername : null
         )
         .then(res => navigate(`/enter_service/${id}/success`))
         .catch(err => setMessage(err.response.data));        
@@ -57,20 +65,20 @@ function CreateServiceEntry() {
 
             <form onSubmit={handleFormSubmit} className="basic-form">
                 {/* only admin is required to enter the username of the care taker */}
-                {/* { roles.includes('admin') ?
+                { roles.includes('admin') ?
                     <div>
-                        <label><span className="text-danger">*</span>Care taker username</label>
+                        <label><span className="text-danger">*</span>Healthcare Professional</label>
                         <input 
                             required 
                             className="form-control mt-2" 
-                            value = { careTakerUsername }
-                            onChange={ event => setCareTakerUsername(event.target.value) }
+                            value = { hpUsername }
+                            onChange={ event => setHpUsername(event.target.value) }
                         />
                     </div>
                     : <div></div>
-                } */}
+                }
 
-                <label><span className="text-danger">*</span>Date of service</label>
+                <label className="mt-3"><span className="text-danger">*</span>Date of service</label>
                 <input type="date" onChange={ (event) => setDateOfService(event.target.value) } className="form-control mt-2" required />
 
                 <label className="mt-3"><span className="text-danger">*</span>Start time</label>

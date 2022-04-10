@@ -552,7 +552,7 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
         elif user.groups.filter(name='healthcareprofessional'):
             hp_id = HealthCareProfessional.objects.get(user_id=user.id)
             assignments = ServiceAssignment.objects.filter(healthcare_professional=hp_id).values_list('service_request_id', flat=True)
-            queryset = self.get_queryset().filter(id__in=assignments, is_assigned=True)
+            queryset = self.get_queryset().filter(id__in=assignments, is_completed=False)
         else:
             queryset = self.get_queryset()
 
@@ -1269,6 +1269,12 @@ class ServiceEntryViewSet(viewsets.ViewSet):
 
         if not request.user.is_superuser:
             data['healthcare_professional'] = HealthCareProfessional.objects.get(user_id=request.user.id).id
+        else:
+            # if an admin makes this request, they need to provide the health pro's username
+            try:
+                data['healthcare_professional'] = HealthCareProfessional.objects.get(user__username=data['healthcare_professional']).id
+            except:
+                return Response({'error': 'Healthcare professional username not found'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = ServiceEntrySerializer(data=data)
         serializer.is_valid(raise_exception=True)
