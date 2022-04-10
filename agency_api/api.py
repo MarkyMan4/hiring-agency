@@ -495,7 +495,6 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
         return ServiceRequest.objects.all()
 
     # check if a healthcare professional has access to a service request
-    # TODO: implement a check for care takers
     def user_has_access(self, user, serv_req):
         if user.groups.filter(name='healthcareprofessional'):
             hp_id = HealthCareProfessional.objects.get(user_id=user.id)

@@ -31,7 +31,6 @@ function CreateServiceEntry() {
     const handleFormSubmit = (event) => {
         event.preventDefault(); // don't refresh page on form submit
 
-        // todo: use end point to save form data
         saveServiceEntry(
             getAuthToken(),
             id,
