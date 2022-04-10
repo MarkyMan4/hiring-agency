@@ -55,7 +55,7 @@ import HealthProRoute from './routes/healthProRoute';
 import HealthProAssignedReqs from './pages/healthProAssignedReqs';
 import CreateServiceEntry from './pages/createServiceEntry';
 import ServiceEntrySuccess from './pages/serviceEntrySuccess';
-
+import HealthcareProPersonalDetail from './pages/healthcareProfessionalPersonalDetail'
 
 function App() {
   const [accountLocked, setAccountLocked] = useState(false);
@@ -105,6 +105,10 @@ function App() {
           <Route path="/service_requests" element={ <StaffRoute roles={ roles }><ServiceRequests /></StaffRoute> } />
           <Route path="/service_requests/:id" element={ <StaffRoute roles={ roles }><ServiceRequestDetail /></StaffRoute> } />
           <Route path="/ct_service_requests/:id" element={ <CareTakerRoute roles={ roles }><CTServiceRequestDetail /></CareTakerRoute> } /> 
+          <Route path="/hp_service_requests/:id" element={ <HealthProRoute roles={ roles }><CTServiceRequestDetail /></HealthProRoute> } /> 
+         
+          <Route path="/healthcare_professional_personal" element={<HealthProRoute roles={ roles }> <HealthcareProPersonalDetail /></HealthProRoute>} /> 
+         
           <Route path="/hp_job_application" element={<StaffRoute roles={ roles }><JobRequestList /> </StaffRoute>} /> 
           <Route path="/hp_job_application/:id" element={<StaffRoute roles={ roles }><JobRequesDetail /></StaffRoute>} /> 
           <Route path="/hp_job_application/:id/approve" element={<StaffRoute roles={ roles }><JobRequesApproved /></StaffRoute>} /> 
