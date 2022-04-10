@@ -841,6 +841,8 @@ class HPViewSet(viewsets.ModelViewSet):
     #   ],
     #   <date 2>: ...
     # }
+
+
     @action(methods=['GET'], detail=True)
     def schedule(self, request, pk):
         assignments = ServiceAssignment.objects.filter(
@@ -907,8 +909,16 @@ class HPViewSet(viewsets.ModelViewSet):
 
     # GET /api/hp_requests/
     def list(self, request):
+        
         health_pros = self.get_queryset()
 
+        if request.user.groups.filter(name='healthcareprofessional'):
+            health_pros = self.get_queryset().get(user_id=request.user.id)
+            print(health_pros)
+            serializer=self.serializer_class(health_pros, many=False)
+            return Response(serializer.data)
+        
+        
         if request.query_params.get('gender'):
             health_pros = health_pros.filter(gender__iexact=request.query_params.get('gender'))
 
