@@ -495,13 +495,17 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
         return ServiceRequest.objects.all()
 
     # check if a healthcare professional has access to a service request
-    # TODO: implement a check for care takers
     def user_has_access(self, user, serv_req):
         if user.groups.filter(name='healthcareprofessional'):
             hp_id = HealthCareProfessional.objects.get(user_id=user.id)
             assignments = ServiceAssignment.objects.filter(healthcare_professional=hp_id).values_list('service_request_id', flat=True)
             
             if not assignments.filter(service_request=serv_req.id).exists():
+                return False
+        elif user.groups.filter(name='caretaker'):
+            care_taker_id = CareTaker.objects.get(user_id=user.id).id
+
+            if serv_req.care_taker_id != care_taker_id:
                 return False
 
         return True
@@ -547,7 +551,7 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
         elif user.groups.filter(name='healthcareprofessional'):
             hp_id = HealthCareProfessional.objects.get(user_id=user.id)
             assignments = ServiceAssignment.objects.filter(healthcare_professional=hp_id).values_list('service_request_id', flat=True)
-            queryset = self.get_queryset().filter(id__in=assignments, is_assigned=True)
+            queryset = self.get_queryset().filter(id__in=assignments, is_completed=False)
         else:
             queryset = self.get_queryset()
 
@@ -1223,12 +1227,18 @@ class BillingAccountViewSet(viewsets.ViewSet):
 
         if user.groups.filter(name='caretaker'):
             care_taker = CareTaker.objects.get(user_id=user.id)
-            print(care_taker)
             requests_by_user = ServiceRequest.objects.filter(care_taker_id=care_taker.id).values_list('id', flat=True)
-            print(requests_by_user)
             data = data.filter(service_request_id__in=requests_by_user)
 
         serializer = self.serializer_class(data, many=True)
+        billing_accts = serializer.data
+
+        for ba in billing_accts:
+            # calculate amount to be paid based on service entries
+            serv_req = ServiceRequest.objects.get(id=ba['service_request']['id'])
+            total_hours_requested, hours_worked, hours_remaining = get_hours_of_service_remaining(serv_req)
+            total_bill = round(hours_worked * float(ba['service_request']['service_type']['hourly_rate']), 2)
+            ba['amt_to_be_paid'] = str(total_bill - float(ba['amt_paid']))
 
         return Response(serializer.data)
 
@@ -1238,21 +1248,23 @@ class BillingAccountViewSet(viewsets.ViewSet):
         serializer = self.serializer_class(queryset)
         billing_acct = serializer.data
 
-        # TODO: calculate amount to be paid based on service entries
-        # calculate the total amount to be paid based on hourly rate, hours per day
-        # and total days of service requested
-        # hourly_rate = float(service_request.service_type.hourly_rate)
-        # hours_per_day = 0
+        # calculate amount to be paid based on service entries
+        serv_req = ServiceRequest.objects.get(id=billing_acct['service_request']['id'])
+        total_hours_requested, hours_worked, hours_remaining = get_hours_of_service_remaining(serv_req)
 
-        # if service_request.flexible_hours:
-        #     hours_per_day = service_request.hours_of_service_daily
-        # else:
-        #     hours_per_day = time_diff(service_request.service_start_time, service_request.service_end_time)
-        
-        # total_days = service_request.days_of_service
-        # amt_to_be_paid = hours_per_day * total_days * hourly_rate
+        total_bill = round(hours_worked * float(billing_acct['service_request']['service_type']['hourly_rate']), 2)
+        billing_acct['amt_to_be_paid'] = str(round(total_bill - float(billing_acct['amt_paid']), 2))
 
         return Response(billing_acct)
+
+    # PUT /api/billing_accounts/<id>/make_payment
+    @action(methods=['PUT'], detail=True)
+    def make_payment(self, request, pk):
+        billing_acct = self.get_queryset().get(id=pk)
+        billing_acct.amt_paid = float(billing_acct.amt_paid) + float(request.data['amount'])
+        billing_acct.save()
+
+        return Response(status=status.HTTP_200_OK)
 
 class ServiceEntryViewSet(viewsets.ViewSet):
     permission_classes = [CustomModelPermissions]
@@ -1274,10 +1286,24 @@ class ServiceEntryViewSet(viewsets.ViewSet):
 
         if not request.user.is_superuser:
             data['healthcare_professional'] = HealthCareProfessional.objects.get(user_id=request.user.id).id
+        else:
+            # if an admin makes this request, they need to provide the health pro's username
+            try:
+                data['healthcare_professional'] = HealthCareProfessional.objects.get(user__username=data['healthcare_professional']).id
+            except:
+                return Response({'error': 'Healthcare professional username not found'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = ServiceEntrySerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        serv_req = ServiceRequest.objects.get(id=data['service_request'])
+        total_hours_requested, hours_worked, hours_remaining = get_hours_of_service_remaining(serv_req)
+
+        if hours_worked >= total_hours_requested:
+            serv_req.is_completed = True
+            serv_req.save()
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     # GET /api/service_entry

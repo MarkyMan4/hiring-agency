@@ -28,3 +28,20 @@ export const getBillingAccountById = async (token, billingAccountId) => {
         .then(res => res.data)
         .catch(err => 'Failed to retrieve billing account');
 }
+
+export const makePayment = async (token, billingAccountId, amt) => {
+    const url = `${baseUrl}api/billing_accounts/${billingAccountId}/make_payment`;
+
+    const body = {
+        amount: amt
+    };
+
+    const config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.put(url, body, config)
+        .then(res => res.data);
+}

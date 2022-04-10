@@ -10,7 +10,7 @@ function ServiceEntrySuccess() {
             <h1>Hours of service successfully updated!</h1>
             <hr/>
             
-            <button onClick={ () => navigate(`/enter_service/${id}`) } className="btn btn-outline-primary mt-5">Done</button>
+            <button onClick={ () => navigate(`/enter_service`) } className="btn btn-outline-primary mt-5">Done</button>
 
         </div>
     )
