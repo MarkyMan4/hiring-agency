@@ -1243,7 +1243,7 @@ class BillingAccountViewSet(viewsets.ViewSet):
         total_hours_requested, hours_worked, hours_remaining = get_hours_of_service_remaining(serv_req)
 
         total_bill = round(hours_worked * float(billing_acct['service_request']['service_type']['hourly_rate']), 2)
-        billing_acct['amt_to_be_paid'] = str(total_bill - float(billing_acct['amt_paid']))
+        billing_acct['amt_to_be_paid'] = str(round(total_bill - float(billing_acct['amt_paid']), 2))
 
         return Response(billing_acct)
 
@@ -1251,7 +1251,7 @@ class BillingAccountViewSet(viewsets.ViewSet):
     @action(methods=['PUT'], detail=True)
     def make_payment(self, request, pk):
         billing_acct = self.get_queryset().get(id=pk)
-        billing_acct.amt_paid = float(billing_acct.amt_paid) + request.data['amount']
+        billing_acct.amt_paid = float(billing_acct.amt_paid) + float(request.data['amount'])
         billing_acct.save()
 
         return Response(status=status.HTTP_200_OK)
