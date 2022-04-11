@@ -22,7 +22,7 @@ function BillingAccountDetail() {
     }
 
     const goToServReqDetails = () => {
-        navigate('/service_requests/' + billingAccount.service_request.id);
+        navigate('/ct_service_requests/' + billingAccount.service_request.id);
     }
 
     const handleFormSubmit = (event) => {

@@ -24,7 +24,7 @@ function Home() {
                     <div class="col-lg-6">
                         <h1 class="display-5 fw-bold lh-1 mb-3">Nurse service</h1>
                         <h1 class="card-title pricing-card-title">$40<small class="text-muted fw-light">/hour</small></h1>
-                        <p class="lead">some info of nurse</p>
+                        <p class="lead">Health services for your patient</p>
                     </div>
                 </div>
             </div>
@@ -38,7 +38,7 @@ function Home() {
                     <div class="col-lg-6">
                         <h1 class="display-5 fw-bold lh-1 mb-3">Physiotherapist</h1>
                         <h1 class="card-title pricing-card-title">$50<small class="text-muted fw-light">/hour</small></h1>
-                        <p class="lead">some info of nurse</p>
+                        <p class="lead">Physical therapy services</p>
                     </div>
                 </div>
             </div>
@@ -51,7 +51,7 @@ function Home() {
                     <div class="col-lg-6">
                         <h1 class="display-5 fw-bold lh-1 mb-3">Psychiatrists</h1>
                         <h1 class="card-title pricing-card-title">$60<small class="text-muted fw-light">/hour</small></h1>
-                        <p class="lead">some info of nurse</p>
+                        <p class="lead">Mental health services</p>
                     </div>
                 </div>
             </div>
@@ -63,7 +63,7 @@ function Home() {
                 <br/>
                 <br/>
                 <h1>Our features</h1>
-                <p class="fs-5 text-muted">We provide customized service to make sure give anything you want</p>
+                <p class="fs-5 text-muted">We provide customized services to fit your needs</p>
             </div>
             <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
                 <div class="col">
@@ -73,10 +73,10 @@ function Home() {
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled mt-3 mb-4">
-                        <li>Any day of a week</li>
-                        <li>6:00 am - 8:00 pm</li>
-                        <li>Choose how many hours you need</li>
+                        <li>Any day of the week</li>
+                        <li>Choose start and end times of service</li>
                         <li>Healthcare professional will arrive on time</li>
+                        <br />
                         </ul>
                     </div>
                     </div>
@@ -88,10 +88,10 @@ function Home() {
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled mt-3 mb-4">
-                        <li>Any day of a week</li>
-                        <li>6:00 am - 8:00 pm</li>
-                        <li>Choose how many hours you need</li>
+                        <li>Any day of the week</li>
+                        <li>Choose how many hours of service are needed</li>
                         <li>We can help at anytime</li>
+                        <br />
                         </ul>
                     </div>
                     </div>
@@ -104,9 +104,9 @@ function Home() {
                     <div class="card-body">
                         <ul class="list-unstyled mt-3 mb-4">
                         <li></li>
-                        <li>I want healthcare professional has same gender as patient</li>
+                        <li>Specify required gender of healthcare professional</li>
                         <li></li><br />
-                        <li>I need younger or older professionals</li>
+                        <li>Specify minimum and maximum ages of healthcare professionals</li>
                         <br/>
                         </ul>
                     </div>
@@ -117,8 +117,8 @@ function Home() {
                 <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
                 <h1>Want to join us?</h1>
                 <br/>
-                <p class="fs-5 text-muted">Check our job advertisements on the website, apply a suitable job for you and start working now !</p>
-                <p class="fs-5 text-muted">We are looking forward to work with you !</p>
+                <p class="fs-5 text-muted">Check our job advertisements on the website, apply to a suitable job for you and start working now!</p>
+                <p class="fs-5 text-muted">We are looking forward to working with you!</p>
                 <br/>
                 <br/>
                 <br/>
