@@ -62,6 +62,13 @@ class HealthCareProfessional(models.Model):
     email = models.CharField(null=False, max_length=200)
     hourly_rate = models.DecimalField(null=False, max_digits=5, decimal_places=2)
     
+class Payment(models.Model):
+    healthcare_professional = models.ForeignKey(HealthCareProfessional, on_delete=models.CASCADE)
+    date_of_payment = models.DateField(null=False)
+    amount = models.DecimalField(null=False, max_digits=10, decimal_places=2)
+
+    class Meta:
+        ordering = ['-date_of_payment']
     
 class ServiceRequest(models.Model):
     care_taker = models.ForeignKey(CareTaker, on_delete=models.CASCADE)

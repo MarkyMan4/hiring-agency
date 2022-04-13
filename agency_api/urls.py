@@ -5,7 +5,8 @@ from .auth.auth_api import RegisterStaffViewSet, LoginAPI, UserAPI, ChangePasswo
 from .api import (
     BillingAccountViewSet,
     CreateServiceAssignmentViewSet,
-    EducationTypeViewSet, 
+    EducationTypeViewSet,
+    PaymentViewSet, 
     SecurityQuestionViewSet, 
     SecurityQuestionAnswerViewSet, 
     JobPostingViewSet,
@@ -44,6 +45,7 @@ router.register('api/view_staff_list',StaffManageViewSet, 'staff-list')
 router.register('api/view_caretaker_list',CareTakerManageViewSet, 'care-taker-list')
 router.register('api/billing_accounts', BillingAccountViewSet, 'billing-accounts')
 router.register('api/service_entry', ServiceEntryViewSet, 'service-entry')
+router.register('api/hp_payments', PaymentViewSet, 'payment')
 
 
 # put non-viewset urls here

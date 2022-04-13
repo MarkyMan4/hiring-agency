@@ -7,6 +7,7 @@ from .models import (
     HPJobApplication, 
     HealthCareProfessional, 
     EducationType,
+    Payment,
     ServiceEntry, 
     ServiceType, 
     StaffMember, 
@@ -173,4 +174,9 @@ class ServiceEntryDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ServiceEntry
+        fields = ('__all__')
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
         fields = ('__all__')
