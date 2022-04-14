@@ -69,6 +69,20 @@ class Payment(models.Model):
 
     class Meta:
         ordering = ['-date_of_payment']
+
+class PendingPayment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    healthcare_professional = models.ForeignKey(HealthCareProfessional, on_delete=models.CASCADE)
+    full_name = models.CharField(null=False, max_length=200)
+    username = models.CharField(null=False, max_length=200)
+    hourly_rate = models.DecimalField(null=False, max_digits=5, decimal_places=2)
+    hours_worked = models.DecimalField(null=False, max_digits=5, decimal_places=2)
+    amt_paid = models.DecimalField(null=False, max_digits=12, decimal_places=2)
+    amt_owed = models.DecimalField(null=False, max_digits=12, decimal_places=2)
+
+    class Meta:
+        managed = False
+        db_table = 'agency_api_pendingpayment'
     
 class ServiceRequest(models.Model):
     care_taker = models.ForeignKey(CareTaker, on_delete=models.CASCADE)

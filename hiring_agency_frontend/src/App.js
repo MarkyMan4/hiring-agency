@@ -56,6 +56,8 @@ import HealthProAssignedReqs from './pages/healthProAssignedReqs';
 import CreateServiceEntry from './pages/createServiceEntry';
 import ServiceEntrySuccess from './pages/serviceEntrySuccess';
 import HealthcareProPersonalDetail from './pages/healthcareProfessionalPersonalDetail'
+import Payroll from './pages/payroll';
+import PayHealthPro from './pages/payHealthPro';
 
 function App() {
   const [accountLocked, setAccountLocked] = useState(false);
@@ -127,6 +129,8 @@ function App() {
           <Route path="/enter_service" element={<HealthProRoute roles={ roles }> <HealthProAssignedReqs /></HealthProRoute>} />
           <Route path="/enter_service/:id" element={<HealthProRoute roles={ roles }> <CreateServiceEntry /></HealthProRoute>} />
           <Route path="/enter_service/:id/success" element={<HealthProRoute roles={ roles }> <ServiceEntrySuccess /></HealthProRoute>} />
+          <Route path="/payroll" element={<StaffRoute roles={ roles }> <Payroll /></StaffRoute>} />
+          <Route path="/payroll/:id" element={<StaffRoute roles={ roles }> <PayHealthPro /></StaffRoute>} />
         </Routes>
       );
     }

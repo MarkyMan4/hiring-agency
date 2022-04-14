@@ -19,6 +19,7 @@ from .serializers import (
     HPJobApplicationSerializer,
     JobPostingSerializer,
     PaymentSerializer,
+    PendingPaymentSerializer,
     RetrieveServiceRequestSerializer,
     SecurityQuestionSerializer,
     SecurityQuestionAnswerSerializer,
@@ -39,7 +40,8 @@ from .models import (
     HPJobApplication, 
     EducationType,
     HealthCareProfessional,
-    Payment, 
+    Payment,
+    PendingPayment, 
     SecurityQuestion, 
     SecurityQuestionAnswer, 
     JobPosting,
@@ -1366,3 +1368,24 @@ class PaymentViewSet(viewsets.ViewSet):
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class PendingPaymentViewSet(viewsets.ModelViewSet):
+    permission_classes = [CustomModelPermissions]
+
+    def get_queryset(self):
+        return PendingPayment.objects.all()
+
+    # GET /api/pending_payments
+    def list(self, request):
+        pending = self.get_queryset()
+        serializer = PendingPaymentSerializer(pending, many=True)
+
+        return Response(serializer.data)
+
+    # GET /api/pending_payments/<id>
+    # pk for this end point should be a healthcare professional ID
+    def retrieve(self, request, pk):
+        pending = self.get_queryset().get(healthcare_professional=pk)
+        serializer = PendingPaymentSerializer(pending)
+
+        return Response(serializer.data)

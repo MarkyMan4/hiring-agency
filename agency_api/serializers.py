@@ -8,6 +8,7 @@ from .models import (
     HealthCareProfessional, 
     EducationType,
     Payment,
+    PendingPayment,
     ServiceEntry, 
     ServiceType, 
     StaffMember, 
@@ -179,4 +180,9 @@ class ServiceEntryDetailSerializer(serializers.ModelSerializer):
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
+        fields = ('__all__')
+
+class PendingPaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PendingPayment
         fields = ('__all__')
