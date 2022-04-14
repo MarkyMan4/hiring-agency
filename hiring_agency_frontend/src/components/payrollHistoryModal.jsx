@@ -49,7 +49,7 @@ function PayrollHistoryModal({ hpId }) {
                                     { 
                                         payrollHistory.map(ph => (
                                             <tr>
-                                                <td>{ ph.date_of_payment }</td>
+                                                <td>{ ph.date_of_payment.substring(0, 10) }</td>
                                                 <td>${ ph.amount }</td>
                                             </tr>
                                         )) 

@@ -1362,7 +1362,7 @@ class PaymentViewSet(viewsets.ViewSet):
     # POST /api/hp_payments
     def create(self, request):
         data = request.data
-        data['date_of_payment'] = datetime.datetime.now().strftime('%Y-%m-%d')
+        data['date_of_payment'] = datetime.datetime.now()
         serializer = PaymentSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()

@@ -64,7 +64,7 @@ class HealthCareProfessional(models.Model):
     
 class Payment(models.Model):
     healthcare_professional = models.ForeignKey(HealthCareProfessional, on_delete=models.CASCADE)
-    date_of_payment = models.DateField(null=False)
+    date_of_payment = models.DateTimeField(null=False)
     amount = models.DecimalField(null=False, max_digits=10, decimal_places=2)
 
     class Meta:
