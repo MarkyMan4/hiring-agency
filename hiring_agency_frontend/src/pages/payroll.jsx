@@ -17,7 +17,7 @@ function Payroll() {
             <div className="row">
                 <div className="col-md-3"></div>
                 <div className="col-md-6">
-                    { pendingPayments.map(p => <PendingPaymentCard pendingPayment={ p } />) }
+                    { pendingPayments.map(p => <PendingPaymentCard key={ p.id } pendingPayment={ p } />) }
                 </div>
             </div>
         </div>

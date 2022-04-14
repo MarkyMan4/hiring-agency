@@ -47,7 +47,7 @@ function PayHealthPro() {
             
             <div>
                 <div><b>Name: </b>{ pendingPayment?.full_name }</div>
-                <div><b>Amount owed: </b>${ pendingPayment?.amt_owed }</div>
+                <div><b>Amount owed: </b>${ parseFloat(pendingPayment?.amt_owed).toFixed(2) }</div>
             </div>
 
             <form onSubmit={handleFormSubmit} className="basic-form">

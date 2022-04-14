@@ -47,3 +47,21 @@ export const payHealthPro = async (token, hpId, amount) => {
         .then(res => res.data)
         .catch(err => 'Failed to pay health pro');
 }
+
+export const getPayrollHistory = async (token, hpId=null) => {
+    let url = `${baseUrl}api/hp_payments`;
+
+    if(hpId) {
+        url += `?hp=${hpId}`;
+    }
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.get(url, config)
+        .then(res => res.data)
+        .catch(err => 'Failed to payroll history');
+}

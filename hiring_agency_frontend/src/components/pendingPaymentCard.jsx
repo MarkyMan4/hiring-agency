@@ -7,7 +7,7 @@ function PendingPaymentCard({ pendingPayment }) {
             <Link to={ '/payroll/' + pendingPayment.healthcare_professional }><h4>{ pendingPayment.full_name }</h4></Link>
             <hr />
             <p><b>Hourly rate:  </b>${ pendingPayment.hourly_rate }</p>
-            <p><b>Amount owed:  </b>${ pendingPayment.amt_owed }</p>
+            <p><b>Amount owed:  </b>${ parseFloat(pendingPayment.amt_owed).toFixed(2) }</p>
         </div>
     );
 }
