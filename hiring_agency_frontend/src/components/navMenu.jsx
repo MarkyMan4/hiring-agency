@@ -81,6 +81,12 @@ function NavMenu({ roles }) {
         }
     }
 
+    const getPayroll = () => {
+        if(roles.includes('admin') || roles.includes('staff')) { 
+            return <NavDropdown.Item className="nav-link" href="#/payroll">Payroll</NavDropdown.Item>
+        }
+    }
+
     const getUserManagement = () => {
         if(roles.includes('admin') || roles.includes('staff')) { 
             return (
@@ -94,6 +100,7 @@ function NavMenu({ roles }) {
                     { viewCareTakerList() }
                     { getCareTakerAccountRequest() }
                     { getHealthCareProfessionals() }
+                    { getPayroll() }
                 </NavDropdown>
             );
         }
