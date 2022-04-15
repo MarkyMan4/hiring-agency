@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from django.contrib.auth.models import update_last_login, Group
 from django.contrib.auth import authenticate
 from knox.models import AuthToken
-from ..serializers import CareTakerSerializer, HealthCareProfessionalSerializer, StaffMemberSerializer
+from ..serializers import StaffMemberSerializer
 from .auth_serializers import UserSerializer, RegisterUserSerializer, LoginSerializer
 from ..models import AccountStatus
 from ..utils.validation import is_password_valid

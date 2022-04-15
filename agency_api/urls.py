@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework import routers
 from knox import views as knox_views
-from .auth.auth_api import EasyRegisterViewSet, RegisterStaffViewSet, LoginAPI, UserAPI, ChangePasswordAPI, LockUserAPI
+from .auth.auth_api import RegisterStaffViewSet, LoginAPI, UserAPI, ChangePasswordAPI, LockUserAPI
 from .api import (
     BillingAccountViewSet,
     CreateServiceAssignmentViewSet,
