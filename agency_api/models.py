@@ -71,8 +71,8 @@ class Payment(models.Model):
         ordering = ['-date_of_payment']
 
 class PendingPayment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    healthcare_professional = models.ForeignKey(HealthCareProfessional, on_delete=models.CASCADE)
+    user_id = models.IntegerField(null=False)
+    healthcare_professional_id = models.IntegerField(null=False)
     full_name = models.CharField(null=False, max_length=200)
     username = models.CharField(null=False, max_length=200)
     hourly_rate = models.DecimalField(null=False, max_digits=5, decimal_places=2)
