@@ -2176,7 +2176,7 @@
         "hp_gender_required": true,
         "hp_min_age": 30,
         "hp_max_age": null,
-        "is_assigned": false,
+        "is_assigned": true,
         "is_completed": false
     }
 },
@@ -2209,7 +2209,7 @@
         "hp_gender_required": false,
         "hp_min_age": 30,
         "hp_max_age": null,
-        "is_assigned": false,
+        "is_assigned": true,
         "is_completed": false
     }
 },
@@ -2242,7 +2242,7 @@
         "hp_gender_required": true,
         "hp_min_age": null,
         "hp_max_age": null,
-        "is_assigned": false,
+        "is_assigned": true,
         "is_completed": false
     }
 },
@@ -2308,7 +2308,7 @@
         "hp_gender_required": false,
         "hp_min_age": null,
         "hp_max_age": null,
-        "is_assigned": false,
+        "is_assigned": true,
         "is_completed": false
     }
 },
@@ -2407,7 +2407,7 @@
         "hp_gender_required": true,
         "hp_min_age": null,
         "hp_max_age": null,
-        "is_assigned": false,
+        "is_assigned": true,
         "is_completed": false
     }
 },
@@ -2440,7 +2440,7 @@
         "hp_gender_required": true,
         "hp_min_age": null,
         "hp_max_age": null,
-        "is_assigned": false,
+        "is_assigned": true,
         "is_completed": false
     }
 },
@@ -2473,7 +2473,7 @@
         "hp_gender_required": false,
         "hp_min_age": null,
         "hp_max_age": null,
-        "is_assigned": false,
+        "is_assigned": true,
         "is_completed": false
     }
 },
