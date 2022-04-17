@@ -3,7 +3,7 @@ import { baseUrl } from './config';
 
 export const requestNewService = async (
     token, careTakerUsername, patientFirstName, patientLastName, patientGender, patientDob, patientPhone, patientEmail, serviceLocation,
-    flexibleHours, serviceStartTime, serviceEndTime, hoursOfService, serviceType, serviceSunday, serviceMonday,
+    startDate, flexibleHours, serviceStartTime, serviceEndTime, hoursOfService, serviceType, serviceSunday, serviceMonday,
     serviceTuesday, serviceWednesday, serviceThursday, serviceFriday, serviceSaturday, daysOfService, hpGenderRequired, hpMinAge, hpMaxAge) => {
     let url = baseUrl + 'api/create_service_requests';
 
@@ -16,6 +16,7 @@ export const requestNewService = async (
         patient_phone_number: patientPhone,
         patient_email: patientEmail,
         service_location: serviceLocation,
+        start_date: startDate,
         flexible_hours: flexibleHours,
         service_start_time: serviceStartTime,
         service_end_time: serviceEndTime,
@@ -44,7 +45,7 @@ export const requestNewService = async (
         .then(res => res.data);
 }
 
-export const getAllServiceRequests = async (token, onlyGetAssigned=null, onlyGetCompleted=null) => {
+export const getAllServiceRequests = async (token, onlyGetAssigned=null, onlyGetCompleted=null, hpId=null) => {
     let url = baseUrl + 'api/retrieve_service_requests';
 
     let query_params = [];
@@ -55,6 +56,10 @@ export const getAllServiceRequests = async (token, onlyGetAssigned=null, onlyGet
 
     if(onlyGetCompleted !== null) {
         query_params.push('is_completed=' + (onlyGetCompleted ? 'true' : 'false'));
+    }
+
+    if(hpId){
+        query_params.push('hp='+ hpId)
     }
 
     if(query_params.length > 0) {
@@ -84,4 +89,32 @@ export const retrieveServiceRequest = async (token, requestId) => {
     return axios.get(url, config)
         .then(res => res.data)
         .catch(err => `Failed to retrieve service request with ID ${requestId}`);
+}
+
+export const getAssignedTimes = async (token, requestId) => {
+    let url = `${baseUrl}api/retrieve_service_requests/${requestId}/assigned_times`;
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.get(url, config)
+        .then(res => res.data)
+        .catch(err => `Failed to retrieve assigned times for request ID ${requestId}`);
+}
+
+export const getHoursRemaining = async (token, requestId) => {
+    let url = `${baseUrl}api/retrieve_service_requests/${requestId}/hours_remaining`;
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.get(url, config)
+        .then(res => res.data)
+        .catch(err => `Failed to retrieve hours remaining for request ID ${requestId}`);
 }

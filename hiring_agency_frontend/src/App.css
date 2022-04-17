@@ -11,6 +11,15 @@
   
 }
 
+.assigned-HP-servicecard{
+  border: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  border-color: rgb(206, 206, 206);
+  padding: 10px;
+  margin-bottom: 30px;
+}
+
 .login-form {
   border: 1px;
   border-style: solid;
@@ -26,6 +35,11 @@
   width: 400px;
 }
 
+.service-request-hp-row{
+  width: 20%;
+  height: 35px;
+}
+
 .care-taker-request-card {
   border: 1px;
   border-style: solid;
@@ -33,6 +47,14 @@
   border-color: rgb(206, 206, 206);
   padding: 10px;
   margin-bottom: 30px;
+}
+.staff-card {
+  border: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  border-color: rgb(206, 206, 206);
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
 .advertisement-job-card {
@@ -59,6 +81,80 @@
 .day-of-week-box {
   border: 1px solid rgb(206, 206, 206);
   border-radius: 5px;
-  padding: 5px;
+  width: 40px;
+  text-align: center;
   margin-right: 5px;
+  display: inline-block;
+}
+
+.modal {
+  z-index: 1; 
+  overflow: auto;
+  background-color: rgb(0,0,0); 
+  background-color: rgba(0,0,0,0.4); 
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 50px;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 70%;
+  overflow: scroll;
+}
+
+
+
+.b-example-divider {
+  height: 3rem;
+  background-color: rgba(0, 0, 0, .1);
+  border: solid rgba(0, 0, 0, .15);
+  border-width: 1px 0;
+  box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+}
+
+.bi {
+  vertical-align: -.125em;
+  fill: currentColor;
+}
+
+.icon-link > .bi {
+  margin-top: .125rem;
+  margin-left: .125rem;
+  transition: transform .25s ease-in-out;
+  fill: currentColor;
+}
+.icon-link:hover > .bi {
+  transform: translate(.25rem);
+}
+
+.icon-square {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.5rem;
+  border-radius: .75rem;
+}
+
+.rounded-4 { border-radius: .5rem; }
+.rounded-5 { border-radius: 1rem; }
+
+.text-shadow-1 { text-shadow: 0 .125rem .25rem rgba(0, 0, 0, .25); }
+.text-shadow-2 { text-shadow: 0 .25rem .5rem rgba(0, 0, 0, .25); }
+.text-shadow-3 { text-shadow: 0 .5rem 1.5rem rgba(0, 0, 0, .25); }
+
+.card-cover {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
+.b-example-divider {
+  height: 10px;
+  background-color: rgba(220, 218, 218, 0.1);
+  border: solid rgba(0, 0, 0, .15);
+  border-width: 1px 0;
+  box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
 }

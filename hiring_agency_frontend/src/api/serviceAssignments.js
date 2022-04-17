@@ -1,12 +1,44 @@
 import axios from 'axios';
 import { baseUrl } from './config';
 
-export const assignHpToServiceRequest = async (token, serviceRequestId, hpId) => {
+
+export const getAssignmentsForRequest = async (token, servReqId) => {
+    let url = `${baseUrl}api/retrieve_service_requests/${servReqId}/get_assign_by_request`;
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.get(url, config)
+        .then(res => res.data)
+        .catch(err => `Failed to retrieve service assignments for request ID ${servReqId}`);
+}
+
+
+export const unassignHpToServiceRequest = async(token, serviceAssignmentID) => {
+    let url = `${baseUrl}api/service_assignments/${serviceAssignmentID}`;
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.delete(url, config)
+        .then(res => res.data)
+        .catch(err => `Failed to delete service request with ID ${serviceAssignmentID}`);
+}
+
+
+export const assignHpToServiceRequest = async (token, serviceRequestId, hpId, timeSlots) => {
     const url = baseUrl + 'api/create_service_assignment';
 
     const body = {
         healthcare_professional: hpId,
-        service_request: serviceRequestId
+        service_request: serviceRequestId,
+        time_slots: timeSlots
     }
 
     const config = {

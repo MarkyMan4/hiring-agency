@@ -8,6 +8,103 @@ from .auth_serializers import UserSerializer, RegisterUserSerializer, LoginSeria
 from ..models import AccountStatus
 from ..utils.validation import is_password_valid
 from ..utils.account import gen_rand_pass
+from ..utils.templates import email_template
+from django.core.mail import send_mail
+from django.conf import settings
+
+# class EasyRegisterViewSet(generics.GenericAPIView):
+#     def post(self, request):
+#         user_data = {
+#             'first_name': request.data['first_name'],
+#             'last_name': request.data['last_name'],
+#             'username': f"{request.data['last_name']}",
+#             'password': request.data['password'],
+#             'email': request.data['email'],
+#         }
+
+#         group = request.data['group']
+
+#         # create the user object
+#         user_serializer = RegisterUserSerializer(data=user_data)
+#         user_serializer.is_valid(raise_exception=True)
+#         user = user_serializer.save()
+        
+#         # update username to have sequence number
+#         user.username = user.username + str(user.id).zfill(2)
+#         user.save()
+
+#         if group == 'staff':
+#             # use the user object to create the staff member
+#             staff_member_data = {
+#                 'user': user.id,
+#                 'address': request.data['address'],
+#                 'phone_number': request.data['phone_number'],
+#                 'email': request.data['email'],
+#             }
+
+#             staff_member_serializer = StaffMemberSerializer(data=staff_member_data)
+#             staff_member_serializer.is_valid(raise_exception=True)
+#             staff_member_serializer.save()
+
+#             # add the user to the staff group
+#             staff_group = Group.objects.get(name='staff')
+#             staff_group.user_set.add(user)
+
+#             return Response({
+#                 'user': UserSerializer(user, context=self.get_serializer_context()).data,
+#                 'token': AuthToken.objects.create(user)[1]
+#             })
+#         elif group == 'caretaker':
+#             # use the user object to create the staff member
+#             caretaker_data = {
+#                 'user': user.id,
+#                 'address': request.data['address'],
+#                 'phone_number': request.data['phone_number'],
+#                 'email': request.data['email'],
+#             }
+
+#             caretaker_serializer = CareTakerSerializer(data=caretaker_data)
+#             caretaker_serializer.is_valid(raise_exception=True)
+#             caretaker_serializer.save()
+
+#             # add the user to the staff group
+#             caretaker_group = Group.objects.get(name='caretaker')
+#             caretaker_group.user_set.add(user)
+
+#             return Response({
+#                 'user': UserSerializer(user, context=self.get_serializer_context()).data,
+#                 'token': AuthToken.objects.create(user)[1]
+#             })
+#         elif group == 'healthcareprofessional':
+#             hp_data ={
+#                 'user':user.id,
+#                 'gender': request.data['gender'],
+#                 'date_of_birth':request.data['date_of_birth'],
+#                 'ssn':request.data['ssn'],
+#                 'service_type':request.data['service_type'],
+#                 'education_type':request.data['education_type'],
+#                 'education_institution':request.data['education_institution'],
+#                 'graduation_year':request.data['graduation_year'],
+#                 'graduation_month':request.data['graduation_month'],
+#                 'years_of_experience':request.data['years_of_experience'],
+#                 'address':request.data['address'],
+#                 'phone_number':request.data['phone_number'],
+#                 'email':request.data['email'],
+#                 'hourly_rate':request.data['hourly_rate']
+#             }
+
+#             HCP_serializer = HealthCareProfessionalSerializer(data=hp_data)
+#             HCP_serializer.is_valid(raise_exception=True)
+#             HCP_serializer.save()
+
+#             heathCareProfessional_group = Group.objects.get(name='healthcareprofessional')
+#             heathCareProfessional_group.user_set.add(user)
+
+#             return Response({
+#                 'user': UserSerializer(user, context=self.get_serializer_context()).data,
+#                 'token': AuthToken.objects.create(user)[1]
+#             })
+
 
 # registering staff member, this can only be done by an administrator
 class RegisterStaffViewSet(generics.GenericAPIView):
@@ -47,13 +144,21 @@ class RegisterStaffViewSet(generics.GenericAPIView):
         staff_member_serializer.is_valid(raise_exception=True)
         staff_member_serializer.save()
 
-        # finally, add the user to the staff group
+        # add the user to the staff group
         staff_group = Group.objects.get(name='staff')
         staff_group.user_set.add(user)
 
+        # send an email with the first time login credentials
+        send_mail(
+            'New staff account',
+            email_template.format(username=user.username, password=generated_password),
+            settings.EMAIL_HOST_USER,
+            [user.email],
+            fail_silently=False,
+        )
+
         return Response({
             'user': UserSerializer(user, context=self.get_serializer_context()).data,
-            'initialPassword': generated_password,
             'token': AuthToken.objects.create(user)[1]
         })
 
@@ -132,6 +237,7 @@ class ChangePasswordAPI(generics.GenericAPIView):
         username = self.request.user.username
         old_pass = request.data['old_pass']
         new_pass = request.data['new_pass']
+        con_pass = request.data['con_pass']
 
         user = authenticate(username=username, password=old_pass)
 
@@ -140,6 +246,11 @@ class ChangePasswordAPI(generics.GenericAPIView):
             if old_pass == new_pass:
                 return Response({
                     'error': 'new password cannot be the same as old password'
+                })
+
+            if con_pass != new_pass:
+                return Response({
+                    'error': 'confirm password should same as new password'
                 })
 
             # make sure the password meets minimum requirements

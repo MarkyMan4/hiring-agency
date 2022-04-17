@@ -157,3 +157,10 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'hiring_agency_frontend', 'build', 's
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = secrets['email_host_user']
+EMAIL_HOST_PASSWORD = secrets['email_host_password']

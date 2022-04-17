@@ -1,12 +1,15 @@
-from pickle import FALSE
 from rest_framework import serializers
 
 from agency_api.auth.auth_serializers import UserSerializer
 from .models import (
+    BillingAccount,
     CareTaker, 
     HPJobApplication, 
     HealthCareProfessional, 
-    EducationType, 
+    EducationType,
+    Payment,
+    PendingPayment,
+    ServiceEntry, 
     ServiceType, 
     StaffMember, 
     SecurityQuestion, 
@@ -14,7 +17,8 @@ from .models import (
     JobPosting, 
     CareTakerRequest, 
     ServiceRequest,
-    ServiceAssignment
+    ServiceAssignment,
+    TimeSlot,
 )
 
 class HPJobApplicationSerializer(serializers.ModelSerializer):
@@ -43,10 +47,22 @@ class JobPostingSerializerRetrieval(serializers.ModelSerializer):
     class Meta:
         model = JobPosting
         fields = ("service_type" ,"education_type", "id", "years_experience_required", "description")
-        
+
 class StaffMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = StaffMember
+        fields = ('__all__')
+
+class ViewStaffMemberSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False)
+    class Meta:
+        model = StaffMember
+        fields = ('__all__')
+
+class ViewCareTakerMemberSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False)
+    class Meta:
+        model = CareTaker
         fields = ('__all__')
 
 class SecurityQuestionSerializer(serializers.ModelSerializer):
@@ -134,3 +150,39 @@ class HPJobApplicationRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('__all__')
         model = HPJobApplication
+
+class BillingAccountDetailSerializer(serializers.ModelSerializer):
+    service_request = RetrieveServiceRequestSerializer(many=False)
+
+    class Meta:
+        fields = ('__all__')
+        model = BillingAccount
+
+
+class TimeSlotSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TimeSlot
+        fields = ('__all__')
+
+class ServiceEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServiceEntry
+        fields = ('__all__')
+
+class ServiceEntryDetailSerializer(serializers.ModelSerializer):
+    billing_account = BillingAccountDetailSerializer(many=False)
+    healthcare_professional = HealthCareProfessionalDetailSerializer(many=False)
+
+    class Meta:
+        model = ServiceEntry
+        fields = ('__all__')
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ('__all__')
+
+class PendingPaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PendingPayment
+        fields = ('__all__')

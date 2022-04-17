@@ -8,3 +8,15 @@ export const getSecurityQuestionOptions = async () => {
         .then(res => res.data)
         .catch(err => console.log(err));
 }
+
+export const getServiceTypes = async (id = null) => {
+    let url = baseUrl + 'api/service_types';
+
+    if(id) {
+        url = `${url}/${id}`;
+    }
+
+    return axios.get(url)
+        .then(res => res.data)
+        .catch(err => console.log(err));
+}

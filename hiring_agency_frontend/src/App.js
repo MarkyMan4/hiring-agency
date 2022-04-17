@@ -1,42 +1,63 @@
 import './App.css';
 import 'animate.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import Login from './components/login';
-import Home from './components/home';
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import Login from './pages/login';
+import Home from './pages/home';
 import NavMenu from './components/navMenu';
-import ChangePassword from './components/changePassword';
-import SetSecurityQuestions from './components/setSecurityQuestions';
-import AddStaff from './components/addStaff';
+import ChangePassword from './pages/changePassword';
+import SetSecurityQuestions from './pages/setSecurityQuestions';
+import AddStaff from './pages/addStaff';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
-import AccountLocked from './components/accountLocked';
+import AccountLocked from './pages/accountLocked';
 import { useEffect, useState } from 'react';
 import { getAuthToken, isUserLoggedIn } from './utils/storage';
 import { getUser } from './api/authRequests';
-import CreateAdvertisement from './components/createAdvertisement';
+import CreateAdvertisement from './pages/createAdvertisement';
 
-import ViewAdvertisement from './components/viewAdvertisement';
-import CareTakerAccountRequest from './components/careTakerAccountRequest';
-import CareTakerAccountRequestSuccess from './components/careTakerAccountRequestSuccess';
-import CreateApplication from './components/createApplication.jsx';
-import CreateApplicationSuccess from './components/createApplicationSuccess';
-import PendingCareTakerRequests from './components/pendingCareTakerRequests';
-import CareTakerAccountRequestDetail from './components/careTakerAccountRequestDetail';
-import CareTakerAccountRequestApproved from './components/careTakerAccountRequestApproved';
-import CareTakerAccountRequestRejected from './components/careTakerAccountRequestRejected';
+import ViewAdvertisement from './pages/viewAdvertisement';
+import CareTakerAccountRequest from './pages/careTakerAccountRequest';
+import CareTakerAccountRequestSuccess from './pages/careTakerAccountRequestSuccess';
+import CreateApplication from './pages/createApplication.jsx';
+import CreateApplicationSuccess from './pages/createApplicationSuccess';
+import PendingCareTakerRequests from './pages/pendingCareTakerRequests';
+import CareTakerAccountRequestDetail from './pages/careTakerAccountRequestDetail';
+import CareTakerAccountRequestApproved from './pages/careTakerAccountRequestApproved';
+import CareTakerAccountRequestRejected from './pages/careTakerAccountRequestRejected';
 import StaffRoute from './routes/staffRoute';
 import AdminRoute from './routes/adminRoute';
 import UnauthenticatedRoute from './routes/unauthenticatedRoute';
 import CareTakerRoute from './routes/careTakerRoute';
-import CreateServiceRequest from './components/createServiceRequest';
-import CreateServiceRequestSuccess from './components/createServiceRequestSuccess';
-import ServiceRequests from './components/serviceRequests';
-import CreateJobSuccess from './components/createAdvertisementSuccess';
-import ServiceRequestDetail from './components/serviceRequestDetail';
-import JobRequestList from './components/jobRequestList';
-import JobRequesDetail from './components/jobRequestDetail';
+import CareOrStaffRoute from './routes/careOrStaffRoute';
+import CreateServiceRequest from './pages/createServiceRequest';
+import CreateServiceRequestSuccess from './pages/createServiceRequestSuccess';
+import ServiceRequests from './pages/serviceRequests';
+import CreateJobSuccess from './pages/createAdvertisementSuccess';
+import ServiceRequestDetail from './pages/serviceRequestDetail';
+import JobRequestList from './pages/jobRequestList';
+import JobRequesDetail from './pages/jobRequestDetail';
 import JobRequesReject from './components/jobRequestRejected';
-import JobRequesApproved from './components/jobRequestApproved';
-
+import JobRequesApproved from './pages/jobRequestApproved';
+import StaffList from './pages/staffList';
+import StaffDetail from './pages/staffDetail';
+import StaffStatusChanged from './pages/staffStatusChanged';
+import CareTakerList from './pages/careTakerList';
+import CareTakerDetail from './pages/careTakerDetail';
+import CareTakerStatusChanged from './pages/careTakerStatusChanged';
+import MyMenu from './pages/myMenu';
+import BillingAccounts from './pages/billingAccounts';
+import BillingAccountDetail from './pages/billingAccountDetail';
+import CTServiceRequests from './pages/careTakerViewServiceRequests.jsx';
+import CTServiceRequestDetail from './pages/cTServiceRequestDetail';
+import HealthcareProfessionals from './pages/healthcareProfessionals';
+import HealthcareProDetail from './pages/healthcareProfessionalDetail';
+import HealthProRoute from './routes/healthProRoute';
+import HealthProAssignedReqs from './pages/healthProAssignedReqs';
+import CreateServiceEntry from './pages/createServiceEntry';
+import ServiceEntrySuccess from './pages/serviceEntrySuccess';
+import HealthcareProPersonalDetail from './pages/healthcareProfessionalPersonalDetail'
+import Payroll from './pages/payroll';
+import PayHealthPro from './pages/payHealthPro';
 
 function App() {
   const [accountLocked, setAccountLocked] = useState(false);
@@ -82,12 +103,34 @@ function App() {
           <Route path="/pending_caretaker_requests/:id/reject" element={ <StaffRoute roles={ roles }><CareTakerAccountRequestRejected /></StaffRoute> } />
           <Route path="/create_service_request" element={ <CareTakerRoute roles={ roles }><CreateServiceRequest roles={ roles } /></CareTakerRoute> } />
           <Route path="/create_service_request_success" element={ <CareTakerRoute roles={ roles }><CreateServiceRequestSuccess /></CareTakerRoute> } />
+          <Route path="/caretaker_view_service_request" element={ <CareTakerRoute roles={ roles }><CTServiceRequests roles={ roles } /></CareTakerRoute> } />
           <Route path="/service_requests" element={ <StaffRoute roles={ roles }><ServiceRequests /></StaffRoute> } />
           <Route path="/service_requests/:id" element={ <StaffRoute roles={ roles }><ServiceRequestDetail /></StaffRoute> } />
+          <Route path="/ct_service_requests/:id" element={ <CareTakerRoute roles={ roles }><CTServiceRequestDetail /></CareTakerRoute> } /> 
+          <Route path="/hp_service_requests/:id" element={ <HealthProRoute roles={ roles }><CTServiceRequestDetail /></HealthProRoute> } /> 
+         
+          <Route path="/healthcare_professional_personal" element={<HealthProRoute roles={ roles }> <HealthcareProPersonalDetail /></HealthProRoute>} /> 
+         
           <Route path="/hp_job_application" element={<StaffRoute roles={ roles }><JobRequestList /> </StaffRoute>} /> 
           <Route path="/hp_job_application/:id" element={<StaffRoute roles={ roles }><JobRequesDetail /></StaffRoute>} /> 
           <Route path="/hp_job_application/:id/approve" element={<StaffRoute roles={ roles }><JobRequesApproved /></StaffRoute>} /> 
           <Route path="/hp_job_application/:id/reject" element={<StaffRoute roles={ roles }> <JobRequesReject /></StaffRoute>} /> 
+          <Route path="/view_staff_list" element={ <AdminRoute roles={ roles }><StaffList/></AdminRoute> } />
+          <Route path="/view_staff_list/:id" element={ <AdminRoute roles={ roles }><StaffDetail/></AdminRoute> } />
+          <Route path="/view_staff_list/:id/status" element={ <AdminRoute roles={ roles }><StaffStatusChanged/></AdminRoute> } />
+          <Route path="/view_caretaker_list" element={ <StaffRoute roles={ roles }><CareTakerList/></StaffRoute> } />
+          <Route path="/view_caretaker_list/:id" element={ <StaffRoute roles={ roles }><CareTakerDetail/></StaffRoute> } />
+          <Route path="/view_caretaker_list/:id/status" element={ <StaffRoute roles={ roles }><CareTakerStatusChanged/></StaffRoute> } />
+          <Route path="/user_menu" element={ <MyMenu /> } />
+          <Route path="/billing_accounts" element={<CareOrStaffRoute roles={ roles }> <BillingAccounts /></CareOrStaffRoute>} /> 
+          <Route path="/billing_accounts/:id" element={<CareOrStaffRoute roles={ roles }> <BillingAccountDetail /></CareOrStaffRoute>} /> 
+          <Route path="/healthcare_professionals" element={<StaffRoute roles={ roles }> <HealthcareProfessionals /></StaffRoute>} /> 
+          <Route path="/healthcare_professionals/:id" element={<StaffRoute roles={ roles }> <HealthcareProDetail /></StaffRoute>} />
+          <Route path="/enter_service" element={<HealthProRoute roles={ roles }> <HealthProAssignedReqs /></HealthProRoute>} />
+          <Route path="/enter_service/:id" element={<HealthProRoute roles={ roles }> <CreateServiceEntry /></HealthProRoute>} />
+          <Route path="/enter_service/:id/success" element={<HealthProRoute roles={ roles }> <ServiceEntrySuccess /></HealthProRoute>} />
+          <Route path="/payroll" element={<StaffRoute roles={ roles }> <Payroll /></StaffRoute>} />
+          <Route path="/payroll/:id" element={<StaffRoute roles={ roles }> <PayHealthPro /></StaffRoute>} />
         </Routes>
       );
     }

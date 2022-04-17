@@ -14,7 +14,10 @@ class SecurityQuestion(models.Model):
 
 class ServiceType(models.Model):
     name = models.CharField(null=False, max_length=30)
-
+    hourly_rate = models.DecimalField(null=False, max_digits=5, decimal_places=2)
+    earliest_work_time = models.TimeField(null=False)
+    latest_work_time = models.TimeField(null=False)
+    
 # other tables
 class SecurityQuestionAnswer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -57,17 +60,40 @@ class HealthCareProfessional(models.Model):
     address = models.CharField(null=False, max_length=500)
     phone_number = models.BigIntegerField(null=False)
     email = models.CharField(null=False, max_length=200)
+    hourly_rate = models.DecimalField(null=False, max_digits=5, decimal_places=2)
     
+class Payment(models.Model):
+    healthcare_professional = models.ForeignKey(HealthCareProfessional, on_delete=models.CASCADE)
+    date_of_payment = models.DateTimeField(null=False)
+    amount = models.DecimalField(null=False, max_digits=10, decimal_places=2)
+
+    class Meta:
+        ordering = ['-date_of_payment']
+
+class PendingPayment(models.Model):
+    user_id = models.IntegerField(null=False)
+    healthcare_professional_id = models.IntegerField(null=False)
+    full_name = models.CharField(null=False, max_length=200)
+    username = models.CharField(null=False, max_length=200)
+    hourly_rate = models.DecimalField(null=False, max_digits=5, decimal_places=2)
+    hours_worked = models.DecimalField(null=False, max_digits=5, decimal_places=2)
+    amt_paid = models.DecimalField(null=False, max_digits=12, decimal_places=2)
+    amt_owed = models.DecimalField(null=False, max_digits=12, decimal_places=2)
+
+    class Meta:
+        managed = False
+        db_table = 'agency_api_pendingpayment'
     
 class ServiceRequest(models.Model):
     care_taker = models.ForeignKey(CareTaker, on_delete=models.CASCADE)
     patient_first_name = models.CharField(null=False, max_length=50)
     patient_last_name = models.CharField(null=False, max_length=50)
-    patient_gender = models.CharField(null=False, max_length=1)
+    patient_gender = models.CharField(null=False, max_length=10)
     patient_date_of_birth = models.DateField(null=False)
     patient_phone_number = models.BigIntegerField(null=True, validators=[validate_phone])
     patient_email = models.EmailField(null=True, max_length=200)
     service_location = models.CharField(null=False, max_length=500)
+    start_date = models.DateField(null=False)
     flexible_hours = models.BooleanField(null=False)
     service_start_time = models.TimeField(null=True) # start and end time only specified if not using flexible hours
     service_end_time = models.TimeField(null=True)
@@ -116,16 +142,25 @@ class ServiceAssignment(models.Model):
     healthcare_professional = models.ForeignKey(HealthCareProfessional, on_delete=models.CASCADE)
     service_request = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE)
 
+class TimeSlot(models.Model):
+    service_assignment = models.ForeignKey(ServiceAssignment, on_delete=models.CASCADE)
+    day = models.IntegerField(null=False)
+    start_time = models.TimeField(null=False)
+    end_time = models.TimeField(null=False)
+
 class BillingAccount(models.Model):
     service_request = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE)
-    hourly_rate = models.DecimalField(null=False, max_digits=5, decimal_places=2)
     amt_paid = models.DecimalField(null=False, max_digits=20, decimal_places=2)
-    amt_to_be_paid = models.DecimalField(null=False, max_digits=20, decimal_places=2)
 
 class ServiceEntry(models.Model):
     billing_account = models.ForeignKey(BillingAccount, on_delete=models.CASCADE)
+    healthcare_professional = models.ForeignKey(HealthCareProfessional, on_delete=models.CASCADE)
+    date_of_service = models.DateField(null=False)
     start_time = models.TimeField(null=False)
     end_time = models.TimeField(null=False)
+
+    class Meta:
+        ordering = ['-date_of_service', '-start_time']
 
 class AccountStatus(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

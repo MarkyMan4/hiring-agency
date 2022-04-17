@@ -178,3 +178,4 @@ cython_debug/
 #.idea/
 
 secrets.json
+test.py
