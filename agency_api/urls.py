@@ -23,7 +23,8 @@ from .api import (
     HPJobApplicationViewSet,
     HPViewSet,
     StaffManageViewSet,
-    CareTakerManageViewSet
+    CareTakerManageViewSet,
+    UnlockUserViewSet
 )
 
 # viewsets can be registered here
@@ -46,6 +47,7 @@ router.register('api/view_staff_list',StaffManageViewSet, 'staff-list')
 router.register('api/view_caretaker_list',CareTakerManageViewSet, 'care-taker-list')
 router.register('api/billing_accounts', BillingAccountViewSet, 'billing-accounts')
 router.register('api/service_entry', ServiceEntryViewSet, 'service-entry')
+router.register('api/unlock_user', UnlockUserViewSet, 'unlock_user')
 router.register('api/hp_payments', PaymentViewSet, 'payment')
 router.register('api/pending_payments', PendingPaymentViewSet, 'pending-payments')
 
