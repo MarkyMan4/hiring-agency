@@ -824,7 +824,7 @@ class HPViewSet(viewsets.ModelViewSet):
     serializer_class = HealthCareProfessionalDetailSerializer
 
     def get_queryset(self):
-        return HealthCareProfessional.objects.all()
+        return HealthCareProfessional.objects.filter(user__is_active=True)
 
     # GET /api/hp_requests/<id>
     def retrieve(self, request, pk):
@@ -832,6 +832,19 @@ class HPViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(queryset)
 
         return Response(serializer.data)
+
+    # PUT /api/hp_requests/<id>/soft_delete
+    @action(methods=['PUT'], detail=True)
+    def soft_delete(self, request, pk):
+        # if there are pending payments, don't allow the hp to be deleted
+        if PendingPayment.objects.filter(healthcare_professional_id=pk).exists():
+            return Response({'error': 'this healthcare professional is owed payment'})
+
+        hp = HealthCareProfessional.objects.get(id=pk)
+        hp.user.is_active = False
+        hp.save()
+
+        return Response({'result': 'healthcare professional deleted'})
 
     # GET /api/hp_requests/<id>/schedule
     # retrieves the full schedule of a healthcare professionals for any active
@@ -964,6 +977,8 @@ class HPViewSet(viewsets.ModelViewSet):
         if serv_req.hp_max_age:
             min_dob = self.get_date_of_birth_from_age(serv_req.hp_max_age)
             health_pros = health_pros.filter(date_of_birth__gte=min_dob)
+
+        # TODO: check if patient is 60 or older and needs psychiatry service, if they are, assigned HP must have PHD
 
         eligible_hp_ids = []
 
