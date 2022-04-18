@@ -44,7 +44,6 @@ function Login() {
         login(username, password)
             .then(res => {
                 let tkn = res.token;
-
                 if(res.isFirstLogin) {
                     setAuthToken(res.token);
                     navigate('/change_password?info=firstlogin');
@@ -68,7 +67,7 @@ function Login() {
                         .catch(err => console.log(err));
                 }
             })
-            .catch(err => setLoginMessage('Incorrect credentials'));
+            .catch(err => setLoginMessage((err.response.data.non_field_errors[0])));
     }
 
     const usernameChanged = (event) => {

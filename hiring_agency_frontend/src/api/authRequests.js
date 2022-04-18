@@ -9,8 +9,8 @@ export const login = async (username, password) => {
     };
 
     return axios.post(url, body)
-        .then(res => res.data)
-        .catch(err => console.log('Failed to authentiate user'));
+        .then(res => res.data);
+        
 }
 
 export const getUser = async (token) => {

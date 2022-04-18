@@ -1,3 +1,4 @@
+from operator import is_
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from django.contrib.auth.models import update_last_login, Group
@@ -81,10 +82,10 @@ class LoginAPI(generics.GenericAPIView):
         # front end needs to know if it's the first login so they can prompt user to
         # change password and enter security questions
         is_first_login = False
-
         if not user.last_login:
             is_first_login = True
 
+        
         # update last log in for next time
         update_last_login(None, user)
 
