@@ -31,7 +31,8 @@ from .serializers import (
     ViewCareTakerMemberSerializer,
     CreateServiceRequestSerializer,
     ServiceAssignmentDetailSerializer,
-    ServiceAssignmentSerializer
+    ServiceAssignmentSerializer,
+    UnlockUserSerializer
 )
 from .models import (
     BillingAccount,
@@ -52,7 +53,8 @@ from .models import (
     ServiceRequest, 
     ServiceAssignment,
     TimeSlot,
-    User
+    User,
+    AccountStatus
 )
 from .utils.account import gen_rand_pass
 from .utils.utils import time_diff
@@ -1336,6 +1338,40 @@ class ServiceEntryViewSet(viewsets.ViewSet):
 
         return Response(serializer.data)
 
+class UnlockUserViewSet(viewsets.ModelViewSet):
+    #permission_classes = [permissions.IsAdminUser]
+    serializer_class = UnlockUserSerializer
+
+    def get_queryset(self):
+        return AccountStatus.objects.all()
+
+    def list(self, request):
+        queryset = self.get_queryset()
+
+        queryset = queryset.filter(is_locked = True)
+
+        serializer = self.serializer_class(queryset, many=True)
+
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk):
+        queryset = self.get_queryset().get(id=pk)
+        serializer = self.serializer_class(queryset)
+
+        return Response(serializer.data) 
+
+    @action(methods=['PUT'], detail=True)
+    def unlock(self, request, pk):
+        queryset = self.get_queryset()
+
+        if not queryset.filter(id=pk).exists():
+            return Response({'error':'User is not exist'})
+        
+        user = queryset.get(id=pk)
+        
+        user.is_locked = False
+        user.save()
+        return Response()
 class PaymentViewSet(viewsets.ViewSet):
     permission_classes = [CustomModelPermissions]
 

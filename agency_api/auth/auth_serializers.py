@@ -30,8 +30,11 @@ class LoginSerializer(serializers.Serializer):
 
     def validate(self, data):
         user = authenticate(**data)
-
+        print(data)
         if user and user.is_active:
             return user
-        
+        elif User.objects.filter(username = data['username']).exists():
+            if User.objects.get(username = data['username']).is_active == False:
+                raise serializers.ValidationError('This account has been deleted') 
+            
         raise serializers.ValidationError('Incorrect Credentials')

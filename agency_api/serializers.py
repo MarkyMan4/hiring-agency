@@ -19,6 +19,7 @@ from .models import (
     ServiceRequest,
     ServiceAssignment,
     TimeSlot,
+    AccountStatus
 )
 
 class HPJobApplicationSerializer(serializers.ModelSerializer):
@@ -177,6 +178,11 @@ class ServiceEntryDetailSerializer(serializers.ModelSerializer):
         model = ServiceEntry
         fields = ('__all__')
 
+class UnlockUserSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False)
+    class Meta:
+        model = AccountStatus
+        fields = ('__all__')
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment

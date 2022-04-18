@@ -75,6 +75,12 @@ function NavMenu({ roles }) {
         }
     }
 
+    const getLockedUser = () => {
+        if(roles.includes('admin')) {
+            return <NavDropdown.Item className="nav-link" href="#/locked_user_list" >Locked Users</NavDropdown.Item>
+        }
+    }
+
     const getHealthCareProfessionals = () => {
         if(roles.includes('admin') || roles.includes('staff')) { 
             return <NavDropdown.Item className="nav-link" href="#/healthcare_professionals">Healthcare Professionals</NavDropdown.Item>
@@ -100,6 +106,7 @@ function NavMenu({ roles }) {
                     { viewCareTakerList() }
                     { getCareTakerAccountRequest() }
                     { getHealthCareProfessionals() }
+                    { getLockedUser() }
                     { getPayroll() }
                 </NavDropdown>
             );
