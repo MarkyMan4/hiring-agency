@@ -1385,7 +1385,7 @@ class PendingPaymentViewSet(viewsets.ModelViewSet):
     # GET /api/pending_payments/<id>
     # pk for this end point should be a healthcare professional ID
     def retrieve(self, request, pk):
-        pending = self.get_queryset().get(healthcare_professional=pk)
+        pending = self.get_queryset().get(healthcare_professional_id=pk)
         serializer = PendingPaymentSerializer(pending)
 
         return Response(serializer.data)
