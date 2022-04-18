@@ -7,6 +7,8 @@ from .models import (
     HPJobApplication, 
     HealthCareProfessional, 
     EducationType,
+    Payment,
+    PendingPayment,
     ServiceEntry, 
     ServiceType, 
     StaffMember, 
@@ -180,4 +182,13 @@ class UnlockUserSerializer(serializers.ModelSerializer):
     user = UserSerializer(many=False)
     class Meta:
         model = AccountStatus
+        fields = ('__all__')
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ('__all__')
+
+class PendingPaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PendingPayment
         fields = ('__all__')

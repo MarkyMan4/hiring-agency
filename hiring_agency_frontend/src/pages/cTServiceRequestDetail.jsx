@@ -161,6 +161,8 @@ function CTServiceRequestDetail() {
                             <p>{serviceRequest.service_type.name}</p>
                             <b>Service location</b>
                             <p>{serviceRequest.service_location}</p>
+                            <b>Start date</b>
+                            <p>{serviceRequest.start_date}</p>
                             {getHoursOrTimes()}
                             <b>Days service needed</b>
                             <div className="mt-2 mb-3">
@@ -215,8 +217,10 @@ function CTServiceRequestDetail() {
                         <h3> Currently Assigned Healthcare Professional </h3>
                         {hp.map(h => (
                             <div>
-                                <p> Name: {h.healthcare_professional.user.first_name} {h.healthcare_professional.user.last_name} </p>
-                                <p> Gender: {h.healthcare_professional.gender}</p>
+                                <p> <b>Name</b>: {h.healthcare_professional.user.first_name} {h.healthcare_professional.user.last_name} </p>
+                                <p> <b>Gender</b>: {h.healthcare_professional.gender}</p>
+                                <p> <b>Date of birth</b>: {h.healthcare_professional.date_of_birth}</p>
+                                <p> <b>Years of experience</b>: {h.healthcare_professional.years_of_experience}</p>
                                 <hr />
                             </div>
                         ))}
@@ -225,11 +229,6 @@ function CTServiceRequestDetail() {
             </div>
         )
     }
-
-
-
-
-
 
     return (
         <div className="row animate__animated animate__fadeIn">

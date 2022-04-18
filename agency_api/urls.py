@@ -5,7 +5,9 @@ from .auth.auth_api import RegisterStaffViewSet, LoginAPI, UserAPI, ChangePasswo
 from .api import (
     BillingAccountViewSet,
     CreateServiceAssignmentViewSet,
-    EducationTypeViewSet, 
+    EducationTypeViewSet,
+    PaymentViewSet,
+    PendingPaymentViewSet, 
     SecurityQuestionViewSet, 
     SecurityQuestionAnswerViewSet, 
     JobPostingViewSet,
@@ -46,6 +48,8 @@ router.register('api/view_caretaker_list',CareTakerManageViewSet, 'care-taker-li
 router.register('api/billing_accounts', BillingAccountViewSet, 'billing-accounts')
 router.register('api/service_entry', ServiceEntryViewSet, 'service-entry')
 router.register('api/unlock_user', UnlockUserViewSet, 'unlock_user')
+router.register('api/hp_payments', PaymentViewSet, 'payment')
+router.register('api/pending_payments', PendingPaymentViewSet, 'pending-payments')
 
 
 # put non-viewset urls here
@@ -53,6 +57,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api/auth', include('knox.urls')),
     path('api/auth/register_staff', RegisterStaffViewSet.as_view()),
+    # path('api/auth/easy_reg', EasyRegisterViewSet.as_view()),
     path('api/auth/login', LoginAPI.as_view()),
     path('api/auth/user', UserAPI.as_view()),
     path('api/auth/change_password', ChangePasswordAPI.as_view()),

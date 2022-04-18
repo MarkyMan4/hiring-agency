@@ -18,6 +18,8 @@ from .serializers import (
     EducationTypeSerializer,
     HPJobApplicationSerializer,
     JobPostingSerializer,
+    PaymentSerializer,
+    PendingPaymentSerializer,
     RetrieveServiceRequestSerializer,
     SecurityQuestionSerializer,
     SecurityQuestionAnswerSerializer,
@@ -38,7 +40,9 @@ from .models import (
     CareTakerRequest,
     HPJobApplication, 
     EducationType,
-    HealthCareProfessional, 
+    HealthCareProfessional,
+    Payment,
+    PendingPayment, 
     SecurityQuestion, 
     SecurityQuestionAnswer, 
     JobPosting,
@@ -1368,3 +1372,56 @@ class UnlockUserViewSet(viewsets.ModelViewSet):
         user.is_locked = False
         user.save()
         return Response()
+class PaymentViewSet(viewsets.ViewSet):
+    permission_classes = [CustomModelPermissions]
+
+    def get_queryset(self):
+        return Payment.objects.all()
+
+    # GET /api/hp_payments
+    def list(self, request):
+        if request.user.groups.filter(name='healthcareprofessional'):
+            payments = self.get_queryset().filter(healthcare_professional__user_id=request.user.id)
+            serializer = PaymentSerializer(payments, many=True)
+
+            return Response(serializer.data)
+
+        payments = self.get_queryset()
+
+        if request.query_params.get('hp'):
+            payments = payments.filter(healthcare_professional=request.query_params.get('hp'))
+
+        serializer = PaymentSerializer(payments, many=True)
+
+        return Response(serializer.data)
+
+    # POST /api/hp_payments
+    def create(self, request):
+        data = request.data
+        data['date_of_payment'] = datetime.datetime.now()
+        serializer = PaymentSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class PendingPaymentViewSet(viewsets.ModelViewSet):
+    permission_classes = [CustomModelPermissions]
+
+    def get_queryset(self):
+        return PendingPayment.objects.all()
+
+    # GET /api/pending_payments
+    def list(self, request):
+        pending = self.get_queryset()
+        serializer = PendingPaymentSerializer(pending, many=True)
+
+        return Response(serializer.data)
+
+    # GET /api/pending_payments/<id>
+    # pk for this end point should be a healthcare professional ID
+    def retrieve(self, request, pk):
+        pending = self.get_queryset().get(healthcare_professional=pk)
+        serializer = PendingPaymentSerializer(pending)
+
+        return Response(serializer.data)
