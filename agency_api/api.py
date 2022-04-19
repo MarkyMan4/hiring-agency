@@ -577,6 +577,27 @@ class RetrieveServiceRequestViewSet(viewsets.ViewSet):
         
         return Response(serializer.data)
 
+    # DELETE /api/retrieve_service_requests/<id>  //TODOO
+    def destroy(self, request, pk):
+        queryset = self.get_queryset()
+        if not queryset.filter(id=pk).exists():
+           return Response({'error':'Service request is not exist'})
+        
+        #delete service assignemnts tied to this service request
+        serv_assigns = ServiceAssignment.objects.filter(service_request_id=pk)
+        print(serv_assigns)
+        serv_assigns.delete()
+
+        #set this service request to completed
+        serv_request = ServiceRequest.objects.get(id=pk)
+        print (serv_request)
+        serv_request.is_completed=True
+        serv_request.is_assigned=False 
+        serv_request.save()
+        return Response() 
+
+
+
     # GET /api/retrieve_service_requests/<id>
     def retrieve(self, request, pk):
         service_request = self.get_queryset().get(id=pk)

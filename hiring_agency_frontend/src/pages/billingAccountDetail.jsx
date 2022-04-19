@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getBillingAccountById, makePayment } from "../api/billingAccounts";
 import { getAuthToken } from "../utils/storage";
+import {terminateServiceRequest} from "../api/serviceRequests";
 import CancelButton from "../components/cancelButton";
 
 function BillingAccountDetail() {
@@ -36,6 +37,29 @@ function BillingAccountDetail() {
             })
             .catch(err => setMessage('Failed to make payment'));
     }
+
+
+    
+const getTerminateButton=()=>{
+
+    if(parseFloat(billingAccount.amt_to_be_paid).toFixed(2) == 0){
+      return <button className="btn btn-danger" onClick={terminateServReq}>Terminate</button>    
+    }else{
+        return <div ><button className="btn btn-danger disabled" >Terminate</button> <p style={{fontSize: "7px"}}> "Please pay amount owed before terminating service"</p> </div>
+    }
+
+}
+
+const terminateServReq=()=>{
+    console.log(id);
+    console.log(billingAccount);
+    terminateServiceRequest(getAuthToken(), billingAccount.service_request.id)
+
+            .then(navigate('/ct_service_requests/' + billingAccount.service_request.id));  //navigate('/ct_service_requests/' + billingAccount.service_request.id)
+}
+
+
+
 
     const getHtmlOrNone = () => {
         if(isDataLoaded()) {
@@ -98,6 +122,9 @@ function BillingAccountDetail() {
                 <h1>Billing account</h1>
             </div>
             <div className="col-md-6">
+                {
+                  getTerminateButton()
+                }
                 <CancelButton returnUrl="/billing_accounts" style={ {float: 'right'} } />
             </div>
             <hr />
