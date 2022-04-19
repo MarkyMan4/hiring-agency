@@ -835,16 +835,18 @@ class HPViewSet(viewsets.ModelViewSet):
 
     # PUT /api/hp_requests/<id>/soft_delete
     @action(methods=['PUT'], detail=True)
-    def soft_delete(self, request, pk):
+    def flip_active_status(self, request, pk):
         # if there are pending payments, don't allow the hp to be deleted
         if PendingPayment.objects.filter(healthcare_professional_id=pk).exists():
             return Response({'error': 'this healthcare professional is owed payment'})
 
         hp = HealthCareProfessional.objects.get(id=pk)
-        hp.user.is_active = False
+        hp.user.is_active = not hp.user.is_active
         hp.user.save()
 
-        return Response({'result': 'healthcare professional deleted'})
+        serializer = self.serializer_class(hp)
+
+        return Response(serializer.data)
 
     # GET /api/hp_requests/<id>/schedule
     # retrieves the full schedule of a healthcare professionals for any active

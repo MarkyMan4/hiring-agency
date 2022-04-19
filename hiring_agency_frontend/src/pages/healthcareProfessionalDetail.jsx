@@ -5,6 +5,7 @@ import HpCalendar from "../components/hpCalendar";
 import { getAuthToken } from "../utils/storage";
 import  {getAllServiceRequests} from "../api/serviceRequests";
 import HealthProInfo from "../components/healthProInfo";
+import CancelButton from "../components/cancelButton";
 
 function HealthcareProDetail() {
     const { id } = useParams();
@@ -19,28 +20,30 @@ function HealthcareProDetail() {
             .then(res => {console.log("test"); console.log(res);setServRequests(res)} );
     }, [id]);
 
-    // TODO: useEffect to retrieve schedule of HP
+    const loadHPServs = () => {
+        if(servRequests){
+            console.log("running");
+            return servRequests.map(srv => {
+                return <div>
+                        <h4 >{srv.patient_first_name + " " + srv.patient_last_name} </h4>
+                        <a className="btn btn-primary mb-3" href={"#/service_requests/" + srv.id}>See Details</a>
 
-    
-const loadHPServs = () => {
-    if(servRequests){
-        console.log("running");
-        return servRequests.map(srv => {
-            return <div>
-                    <h4 >{srv.patient_first_name + " " + srv.patient_last_name} </h4>
-                    <a className="btn btn-primary mb-3" href={"#/service_requests/" + srv.id}>See Details</a>
-
-                </div>
-            }
-        )
-    }
-};
-
-
+                    </div>
+                }
+            )
+        }
+    };
 
     return (
         <div>
-            <h1>{ healthPro?.user?.first_name } { healthPro?.user?.last_name }</h1>
+            <div className="row">
+                <div className="col-md-6">
+                    <h1>{ healthPro?.user?.first_name } { healthPro?.user?.last_name }</h1>
+                </div>
+                <div className="col-md-6">
+                    <CancelButton returnUrl="/healthcare_professionals" style={ {float: 'right'} } />
+                </div>
+            </div>
             <hr />
             <HpCalendar hpId={ id } />
             <h1> Assigned Service Requests </h1>
