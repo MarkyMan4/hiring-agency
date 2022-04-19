@@ -5,13 +5,17 @@ import { baseUrl } from './config';
 
 
 
-export const getHPList = async (token, eligibleForRequest=null) => {
+export const getHPList = async (token, eligibleForRequest=null, onlyGetActive=null) => {
     let url = `${baseUrl}api/hp_requests`;
 
     let query_params = [];
 
     if(eligibleForRequest !== null) {
         query_params.push('eligibleForRequest=' + eligibleForRequest);
+    }
+
+    if(onlyGetActive !== null) {
+        query_params.push('active=' + (onlyGetActive ? 'true' : 'false'));
     }
 
     if(query_params.length > 0) {

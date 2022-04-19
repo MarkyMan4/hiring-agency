@@ -824,7 +824,7 @@ class HPViewSet(viewsets.ModelViewSet):
     serializer_class = HealthCareProfessionalDetailSerializer
 
     def get_queryset(self):
-        return HealthCareProfessional.objects.filter(user__is_active=True)
+        return HealthCareProfessional.objects.all()
 
     # GET /api/hp_requests/<id>
     def retrieve(self, request, pk):
@@ -842,7 +842,7 @@ class HPViewSet(viewsets.ModelViewSet):
 
         hp = HealthCareProfessional.objects.get(id=pk)
         hp.user.is_active = False
-        hp.save()
+        hp.user.save()
 
         return Response({'result': 'healthcare professional deleted'})
 
@@ -933,10 +933,12 @@ class HPViewSet(viewsets.ModelViewSet):
 
         if request.user.groups.filter(name='healthcareprofessional'):
             health_pros = self.get_queryset().get(user_id=request.user.id)
-            print(health_pros)
             serializer=self.serializer_class(health_pros, many=False)
             return Response(serializer.data)
         
+        if request.query_params.get('active'):
+            value = request.query_params.get('active')
+            health_pros = health_pros.filter(user__is_active=True if value.lower() == 'true' else False)
         
         if request.query_params.get('gender'):
             health_pros = health_pros.filter(gender__iexact=request.query_params.get('gender'))
