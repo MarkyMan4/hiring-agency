@@ -978,7 +978,9 @@ class HPViewSet(viewsets.ModelViewSet):
             min_dob = self.get_date_of_birth_from_age(serv_req.hp_max_age)
             health_pros = health_pros.filter(date_of_birth__gte=min_dob)
 
-        # TODO: check if patient is 60 or older and needs psychiatry service, if they are, assigned HP must have PHD
+        # if patient is 60 or older and needs psychiatric service, HP must have PHD
+        if self.get_age_from_dob(serv_req.patient_date_of_birth) >= 60 and serv_req.service_type == 3:
+            health_pros = health_pros.filter(education_type_id=3)
 
         eligible_hp_ids = []
 
@@ -1160,6 +1162,9 @@ class HPViewSet(viewsets.ModelViewSet):
         dob = dob.date()
 
         return dob
+
+    def get_age_from_dob(self, dob):
+        return relativedelta(datetime.datetime.now(), dob).years
 
 class StaffManageViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminUser]
