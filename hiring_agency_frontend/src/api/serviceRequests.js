@@ -91,6 +91,20 @@ export const retrieveServiceRequest = async (token, requestId) => {
         .catch(err => `Failed to retrieve service request with ID ${requestId}`);
 }
 
+export const terminateServiceRequest = async (token, requestId) => {
+    let url = `${baseUrl}api/retrieve_service_requests/${requestId}`;
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.delete(url, config)
+        .then(res => res.data)
+        .catch(err => `Failed to retrieve service request with ID ${requestId}`);
+}
+
 export const getAssignedTimes = async (token, requestId) => {
     let url = `${baseUrl}api/retrieve_service_requests/${requestId}/assigned_times`;
 

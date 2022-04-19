@@ -44,13 +44,7 @@ function ServiceRequests() {
                     <label class="form-check-label">Show assigned</label>
                     <input 
                         value={ showAssigned } 
-                        onChange={ event => {
-                            if(showAssigned) {
-                                setShowCompleted(false);
-                            }
-
-                            setShowAssinged(!showAssigned);
-                        }} 
+                        onChange={ event => setShowAssinged(!showAssigned)} 
                         className="form-check-input" 
                         type="checkbox" 
                         role="switch" 
@@ -61,10 +55,7 @@ function ServiceRequests() {
                     <label class="form-check-label">Show completed</label>
                     <input 
                         value={ showCompleted } 
-                        onChange={ event => {
-                            setShowCompleted(!showCompleted);
-                            setShowAssinged(true);
-                        }}
+                        onChange={ event => setShowCompleted(!showCompleted)}
                         className="form-check-input" 
                         type="checkbox" 
                         role="switch" 
