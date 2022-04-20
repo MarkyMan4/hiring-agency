@@ -139,11 +139,12 @@ function ServiceRequestDetail() {
 
     const getAvailableHP = () => {
         return (<div className="mb-5">
-            {
+            { 
                 hpList?.map(goodHP => {            
                     return(
                         <div class="row mt-2" key={ goodHP.id } >
                             <div class="col ">
+                                
                                 <ServAssignModal 
                                     buttonText={ `Name: ${goodHP.user.first_name}  ${goodHP.user.last_name}   |   Gender: ${goodHP.gender}` }
                                     healthProId={ goodHP.id }
@@ -282,9 +283,14 @@ function ServiceRequestDetail() {
             { getAssignedOrNull() }
 
             <div>
+                {
+                    serviceRequest?.is_completed ? null : 
+                <div>
                 <h3>Assign a Health Care Professional to this Request from the list below</h3>
                 <h5>Available Health Care Professionals that meet the requirements</h5>
-                { getAvailableHP() }
+                 {getAvailableHP() }
+                 </div>
+                }
             </div>
         </div>
     );

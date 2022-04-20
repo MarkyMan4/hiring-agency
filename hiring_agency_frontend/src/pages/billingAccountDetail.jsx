@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getBillingAccountById, makePayment } from "../api/billingAccounts";
 import { getAuthToken } from "../utils/storage";
+import {terminateServiceRequest} from "../api/serviceRequests";
 import CancelButton from "../components/cancelButton";
 
 function BillingAccountDetail() {
@@ -11,11 +12,12 @@ function BillingAccountDetail() {
     const [paymentTrigger, setPaymentTrigger] = useState(false); // flips whenever a payment is made so we can retrieve the updated amt to be paid
     const [paymentAmt, setPaymentAmt] = useState();
     const [message, setMessage] = useState('');
-
+    const [terminateClicked, setTerminateClicked] = useState(false);
     useEffect(() => {
         getBillingAccountById(getAuthToken(), id)
             .then(res => setBillingAccount(res));
-    }, [id, paymentTrigger]);
+    }, [id, paymentTrigger, terminateClicked]);
+
 
     const isDataLoaded = () => {
         return Object.keys(billingAccount).length > 0;
@@ -27,7 +29,10 @@ function BillingAccountDetail() {
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
-
+        if(paymentAmt > parseFloat(billingAccount.amt_to_be_paid).toFixed(2) ){
+           setMessage("Please dont overpay, although we appreciate the gesture");
+            return;
+        }
         makePayment(getAuthToken(), id, paymentAmt)
             .then(res => {
                 setMessage(`Payment made for $${paymentAmt}`);
@@ -36,6 +41,29 @@ function BillingAccountDetail() {
             })
             .catch(err => setMessage('Failed to make payment'));
     }
+
+
+    
+const getTerminateButton=()=>{
+    if(billingAccount.service_request?.is_completed){
+    return <div ><button className="btn btn-danger disabled" >Terminate</button> <p style={{fontSize: "10px"}}> "This account has already been completed or terminated"</p> </div>
+    }else if(parseFloat(billingAccount.amt_to_be_paid).toFixed(2) == 0){
+      return <button className="btn btn-danger" onClick={terminateServReq}>Terminate</button>    
+    }else{
+        return <div ><button className="btn btn-danger disabled" >Terminate</button> <p style={{fontSize: "10px"}}> "Please pay amount owed before terminating service"</p> </div>
+    }
+
+}
+
+const terminateServReq=()=>{
+    console.log(id);
+    console.log(billingAccount);
+    terminateServiceRequest(getAuthToken(), billingAccount.service_request.id)
+        .then(res => setTerminateClicked(true));  //navigate('/ct_service_requests/' + billingAccount.service_request.id)
+}
+
+
+
 
     const getHtmlOrNone = () => {
         if(isDataLoaded()) {
@@ -98,6 +126,9 @@ function BillingAccountDetail() {
                 <h1>Billing account</h1>
             </div>
             <div className="col-md-6">
+                {
+                  getTerminateButton()
+                }
                 <CancelButton returnUrl="/billing_accounts" style={ {float: 'right'} } />
             </div>
             <hr />

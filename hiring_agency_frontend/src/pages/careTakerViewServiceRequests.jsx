@@ -45,10 +45,7 @@ function CTServiceRequests() {
                     <input 
                         value={ showAssigned } 
                         onChange={ event => {
-                            if(showAssigned) {
-                                setShowCompleted(false);
-                            }
-
+                           
                             setShowAssinged(!showAssigned);
                         }} 
                         className="form-check-input" 
@@ -63,7 +60,7 @@ function CTServiceRequests() {
                         value={ showCompleted } 
                         onChange={ event => {
                             setShowCompleted(!showCompleted);
-                            setShowAssinged(true);
+                         
                         }}
                         className="form-check-input" 
                         type="checkbox" 
