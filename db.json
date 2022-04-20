@@ -2511,6 +2511,39 @@
     }
 },
 {
+    "model": "agency_api.servicerequest",
+    "pk": 12,
+    "fields": {
+        "care_taker": 5,
+        "patient_first_name": "Yang ",
+        "patient_last_name": "Zhang",
+        "patient_gender": "Female",
+        "patient_date_of_birth": "1951-11-21",
+        "patient_phone_number": 5517771414,
+        "patient_email": "hutnik.markus@uwlax.edu",
+        "service_location": "70 Mountain View St., Hoboken, NJ 07030",
+        "start_date": "2022-04-09",
+        "flexible_hours": false,
+        "service_start_time": "10:00:00",
+        "service_end_time": "10:30:00",
+        "hours_of_service_daily": null,
+        "service_type": 2,
+        "service_needed_sunday": true,
+        "service_needed_monday": false,
+        "service_needed_tuesday": false,
+        "service_needed_wednesday": false,
+        "service_needed_thursday": false,
+        "service_needed_friday": false,
+        "service_needed_saturday": false,
+        "days_of_service": 30,
+        "hp_gender_required": false,
+        "hp_min_age": null,
+        "hp_max_age": null,
+        "is_assigned": false,
+        "is_completed": false
+    }
+},
+{
     "model": "agency_api.jobposting",
     "pk": 1,
     "fields": {

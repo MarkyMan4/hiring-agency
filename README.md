@@ -11,3 +11,8 @@ Reset your database \
 
 Load the data \
 <code>\$ python manage.py loaddata db.json</code>
+
+You can also active your virtual environment, then run the <code>resetdb</code> script at the root of this repo.
+
+<code>\$ . venv/bin/activate</code> \
+<code>\$ ./resetdb.sh</code>

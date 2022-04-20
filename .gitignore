@@ -179,3 +179,5 @@ cython_debug/
 
 secrets.json
 test.py
+
+dummy_db.json
