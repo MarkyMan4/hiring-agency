@@ -61,3 +61,16 @@ export const getHpSchedule = async (token, hpId) => {
         .then(res => res.data)
         .catch(err => `Failed to retrieve schedule for HP with ID ${hpId}`);
 }
+
+export const flipActiveStatus = async (token, hpId) => {
+    let url = `${baseUrl}api/hp_requests/${hpId}/flip_active_status`;
+
+    let config = {
+        headers: {
+            'Authorization': 'Token ' + token
+        }
+    };
+
+    return axios.put(url, {}, config)
+        .then(res => res.data);
+}

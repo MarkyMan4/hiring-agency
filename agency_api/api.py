@@ -862,6 +862,11 @@ class HPViewSet(viewsets.ModelViewSet):
             return Response({'error': 'this healthcare professional is owed payment'})
 
         hp = HealthCareProfessional.objects.get(id=pk)
+
+        # if the user is active, delete all their service assignments
+        if hp.user.is_active:
+            ServiceAssignment.objects.filter(healthcare_professional_id=hp.id).delete()
+
         hp.user.is_active = not hp.user.is_active
         hp.user.save()
 

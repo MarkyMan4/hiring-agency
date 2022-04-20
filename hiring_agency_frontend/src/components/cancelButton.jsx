@@ -12,7 +12,7 @@ function CancelButton({ returnUrl, style={} }) {
     }
 
     return (
-        <button onClick={ cancel } className="btn btn-outline-primary" style={ style }>Cancel</button>
+        <button onClick={ cancel } className="btn btn-outline-primary m-1" style={ style }>Cancel</button>
     );
 }
 
