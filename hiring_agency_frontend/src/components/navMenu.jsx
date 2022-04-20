@@ -59,13 +59,13 @@ function NavMenu({ roles }) {
 
     const viewStaffList = () => {
         if(roles.includes('admin') ) { 
-            return <NavDropdown.Item className="nav-link" href="#/view_staff_list">Staff List</NavDropdown.Item>
+            return <NavDropdown.Item className="nav-link" href="#/view_staff_list">Staff</NavDropdown.Item>
         }
     }
 
     const viewCareTakerList = () => {
         if(roles.includes('admin') || roles.includes('staff')) { 
-            return <NavDropdown.Item className="nav-link" href="#/view_caretaker_list">Care taker List</NavDropdown.Item>
+            return <NavDropdown.Item className="nav-link" href="#/view_caretaker_list">Care takers</NavDropdown.Item>
         }
     }
 

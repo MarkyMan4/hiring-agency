@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { payHealthPro, retrievePendingPayment } from "../api/paymentRequests";
 import { getAuthToken } from "../utils/storage";
 import CancelButton from "../components/cancelButton";
 
 function PayHealthPro() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [pendingPayment, setPendingPayment] = useState();
     const [paymentAmt, setPaymentAmt] = useState();
     const [message, setMessage] = useState('');
@@ -24,11 +25,16 @@ function PayHealthPro() {
             return;
         }
 
-        payHealthPro(getAuthToken(), pendingPayment.healthcare_professional, paymentAmt)
+        payHealthPro(getAuthToken(), pendingPayment.healthcare_professional_id, paymentAmt)
             .then(res => {
                 setPaymentAmt('');
                 setPaidTrigger(!paidTrigger);
                 setMessage(`Payment for ${paymentAmt} made`);
+
+                // if full amount paid, navigate back to payroll screen
+                if(parseFloat(paymentAmt).toFixed(2) === parseFloat(pendingPayment.amt_owed).toFixed(2)) {
+                    navigate('/payroll');
+                }
             })
             .catch(err => setMessage('Failed to pay healthcare professional, please try again later'));
     }

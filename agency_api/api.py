@@ -854,6 +854,26 @@ class HPViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
+    # PUT /api/hp_requests/<id>/soft_delete
+    @action(methods=['PUT'], detail=True)
+    def flip_active_status(self, request, pk):
+        # if there are pending payments, don't allow the hp to be deleted
+        if PendingPayment.objects.filter(healthcare_professional_id=pk).exists():
+            return Response({'error': 'this healthcare professional is owed payment'})
+
+        hp = HealthCareProfessional.objects.get(id=pk)
+
+        # if the user is active, delete all their service assignments
+        if hp.user.is_active:
+            ServiceAssignment.objects.filter(healthcare_professional_id=hp.id).delete()
+
+        hp.user.is_active = not hp.user.is_active
+        hp.user.save()
+
+        serializer = self.serializer_class(hp)
+
+        return Response(serializer.data)
+
     # GET /api/hp_requests/<id>/schedule
     # retrieves the full schedule of a healthcare professionals for any active
     # requests they are assigned to
@@ -941,10 +961,12 @@ class HPViewSet(viewsets.ModelViewSet):
 
         if request.user.groups.filter(name='healthcareprofessional'):
             health_pros = self.get_queryset().get(user_id=request.user.id)
-            print(health_pros)
             serializer=self.serializer_class(health_pros, many=False)
             return Response(serializer.data)
         
+        if request.query_params.get('active'):
+            value = request.query_params.get('active')
+            health_pros = health_pros.filter(user__is_active=True if value.lower() == 'true' else False)
         
         if request.query_params.get('gender'):
             health_pros = health_pros.filter(gender__iexact=request.query_params.get('gender'))
@@ -985,6 +1007,10 @@ class HPViewSet(viewsets.ModelViewSet):
         if serv_req.hp_max_age:
             min_dob = self.get_date_of_birth_from_age(serv_req.hp_max_age)
             health_pros = health_pros.filter(date_of_birth__gte=min_dob)
+
+        # if patient is 60 or older and needs psychiatric service, HP must have PHD
+        if self.get_age_from_dob(serv_req.patient_date_of_birth) >= 60 and serv_req.service_type == 3:
+            health_pros = health_pros.filter(education_type_id=3)
 
         eligible_hp_ids = []
 
@@ -1166,6 +1192,9 @@ class HPViewSet(viewsets.ModelViewSet):
         dob = dob.date()
 
         return dob
+
+    def get_age_from_dob(self, dob):
+        return relativedelta(datetime.datetime.now(), dob).years
 
 class StaffManageViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminUser]

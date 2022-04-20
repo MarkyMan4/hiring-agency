@@ -56,12 +56,9 @@ import HealthProAssignedReqs from './pages/healthProAssignedReqs';
 import CreateServiceEntry from './pages/createServiceEntry';
 import ServiceEntrySuccess from './pages/serviceEntrySuccess';
 import HealthcareProPersonalDetail from './pages/healthcareProfessionalPersonalDetail'
-<<<<<<< HEAD
 import UnlockUserList from './pages/unlockUser';
-=======
 import Payroll from './pages/payroll';
 import PayHealthPro from './pages/payHealthPro';
->>>>>>> 0d223f4eda2f0dd7cda87dee1431643146e37db1
 
 function App() {
   const [accountLocked, setAccountLocked] = useState(false);
