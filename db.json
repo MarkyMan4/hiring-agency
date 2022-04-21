@@ -169,12 +169,55 @@
     }
 },
 {
+    "model": "admin.logentry",
+    "pk": 14,
+    "fields": {
+        "action_time": "2022-04-21T03:39:47.472",
+        "user": 1,
+        "content_type": 3,
+        "object_id": "2",
+        "object_repr": "caretaker",
+        "action_flag": 2,
+        "change_message": "[]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 15,
+    "fields": {
+        "action_time": "2022-04-21T03:40:02.830",
+        "user": 1,
+        "content_type": 3,
+        "object_id": "1",
+        "object_repr": "staff",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 16,
+    "fields": {
+        "action_time": "2022-04-21T03:41:11.700",
+        "user": 1,
+        "content_type": 3,
+        "object_id": "1",
+        "object_repr": "staff",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+    }
+},
+{
     "model": "auth.group",
     "pk": 1,
     "fields": {
         "name": "staff",
         "permissions": [
             96,
+            85,
+            86,
+            87,
+            88,
             41,
             42,
             44,
@@ -191,6 +234,9 @@
             69,
             70,
             72,
+            57,
+            58,
+            60,
             61,
             62,
             63,
@@ -264,7 +310,7 @@
     "pk": 1,
     "fields": {
         "password": "pbkdf2_sha256$320000$15c2P7lBeo7hGxuSk5Cqgu$yPalkZP9tpgZsRt+tb5LlEj1SgbFf+YDINIpQT2ro1s=",
-        "last_login": "2022-04-21T03:34:24.321",
+        "last_login": "2022-04-21T03:39:44.331",
         "is_superuser": true,
         "username": "admin00",
         "first_name": "",
@@ -282,7 +328,7 @@
     "pk": 2,
     "fields": {
         "password": "pbkdf2_sha256$320000$WMZ2trtkRWqAyvajzfHmIa$huu/WUxdKxxQWZBw6/W2mr0h8KKAJvjhdtBy0iFXiQk=",
-        "last_login": "2022-04-21T03:33:53.639",
+        "last_login": "2022-04-21T03:38:58.660",
         "is_superuser": false,
         "username": "Monroe02",
         "first_name": "Lisbeth",
@@ -851,6 +897,14 @@
     "fields": {
         "session_data": ".eJxVjDsOwjAQBe_iGllr4i8lPWewvN41DiBHipMKcXcSKQW0b2beW8S0LjWunec4krgIJU6_G6b85LYDeqR2n2Se2jKPKHdFHrTL20T8uh7u30FNvW41oIMygAYC4401iqBo5z2FYIN1aM9qQ8BsC1LwQ9KMnEEThcKIKD5fvAQ4BQ:1nf96N:drLh6bZnyk_1LyWzDovezgeLdwLFWXrHwhQvF08pPZw",
         "expire_date": "2022-04-28T23:42:15.221"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "tedncnugjf3bkhbv2y0ex9vyfhsnrn71",
+    "fields": {
+        "session_data": ".eJxVjDsOwjAQBe_iGllr4i8lPWewvN41DiBHipMKcXcSKQW0b2beW8S0LjWunec4krgIJU6_G6b85LYDeqR2n2Se2jKPKHdFHrTL20T8uh7u30FNvW41oIMygAYC4401iqBo5z2FYIN1aM9qQ8BsC1LwQ9KMnEEThcKIKD5fvAQ4BQ:1nhNfU:u1eYL03n_HdtxTmCUSDul3iY6ifxbO5gWOoE5TzONic",
+        "expire_date": "2022-05-05T03:39:44.339"
     }
 },
 {
@@ -3743,6 +3797,16 @@
         "user": 26,
         "created": "2022-04-15T01:04:56.758",
         "expiry": "2022-04-15T11:04:56.758"
+    }
+},
+{
+    "model": "knox.authtoken",
+    "pk": "92e5e3cb3e67f1a5807f3810f7600b9e39c8c0ac093d2b28ede80a999911beacb0ef6fa6e535e1112680c284d6b26635cbf2561508fe572f88ab8d7fa84a7f42",
+    "fields": {
+        "token_key": "f0643695",
+        "user": 2,
+        "created": "2022-04-21T03:38:58.696",
+        "expiry": "2022-04-21T13:38:58.695"
     }
 },
 {
