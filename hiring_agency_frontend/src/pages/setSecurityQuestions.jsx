@@ -46,18 +46,54 @@ function SetSecurityQuestions() {
         setAnswer3(event.target.value);
     }
 
+    const isAlphaNumeric = (str) => {
+        const regex = /[0-9a-zA-Z]/;
+        
+        for(let i = 0; i < str.length; i++) {
+            if(!str.charAt(i).match(regex)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // security question must be at least 4 characters, no spaces, only alphanumeric
+    const isAnswerValid = (answer) => {
+        const hasNoWhiteSpace = !(answer.indexOf(' ') >= 0);
+        const isLongEnough = answer.length >= 4;
+
+        return hasNoWhiteSpace && isLongEnough && isAlphaNumeric(answer);
+    }
+
     const handleSubmitClicked = () => {
         // do some validation
         if(parseInt(question1) === parseInt(question2) || parseInt(question1) === parseInt(question3) || parseInt(question2) === parseInt(question3)) {
             setMessage('please select three distinct questions');
         }
+        else if(!isAnswerValid(answer1) || !isAnswerValid(answer2) || !isAnswerValid(answer3)) {
+            setMessage('answer must be at least four characters, contain no whitespace and only contain alphanumeric characters');
+        }
         else {
             setMessage('');
 
+            const data = [
+                {
+                    question: question1,
+                    answer: answer1
+                },
+                {
+                    question: question2,
+                    answer: answer2
+                },
+                {
+                    question: question3,
+                    answer: answer3
+                }
+            ];
+
             // save each question
-            setSecurityQuestion(getAuthToken(), question1, answer1);
-            setSecurityQuestion(getAuthToken(), question2, answer2);
-            setSecurityQuestion(getAuthToken(), question3, answer3);
+            setSecurityQuestion(getAuthToken(), data);
 
             // then redirect user to home page
             navigate('/');
@@ -68,7 +104,7 @@ function SetSecurityQuestions() {
         <div>
             <h4>Please select your security questions and answers.</h4>
             <div>
-                Password must be at least four characters, please choose three question and answer them all.
+                Answer must be at least four characters, contain no whitespace and only contain alphanumeric characters.
             </div>
             <hr />
 

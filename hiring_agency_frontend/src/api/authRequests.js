@@ -59,13 +59,10 @@ export const changePassword = async (token, oldPassword, newPassword, confirmPas
         .catch(err => console.log('Failed to change password'));
 }
 
-export const setSecurityQuestion = async (token, questionId, answer) => {
+export const setSecurityQuestion = async (token, answers) => {
     let url = baseUrl + 'api/securityquestionanswers';
 
-    let body = {
-        question: questionId,
-        answer: answer
-    };
+    let body = answers;
 
     let config = {
         headers: {

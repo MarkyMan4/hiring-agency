@@ -160,18 +160,17 @@ class SecurityQuestionAnswerViewSet(viewsets.ModelViewSet):
     # POST /api/securityquestionanswers
     def create(self, request):
         data = request.data
-        data['user'] = self.request.user.id 
+        user = self.request.user.id 
 
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        headers = self.get_success_headers(serializer.data)
+        # delete existing security questions
+        SecurityQuestionAnswer.objects.filter(user_id=self.request.user.id).delete()
 
-        count = SecurityQuestionAnswer.objects.filter(user_id=self.request.user.id).count()
-        while count > 3:
-            old_question = SecurityQuestionAnswer.objects.filter(user_id=request.user.id).order_by('id').first()
-            old_question.delete()
-            count = SecurityQuestionAnswer.objects.filter(user_id=self.request.user.id).count()
+        for answer in data:
+            answer['user'] = user
+            serializer = self.get_serializer(data=answer)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            headers = self.get_success_headers(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
