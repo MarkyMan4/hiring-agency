@@ -16,3 +16,5 @@ You can also active your virtual environment, then run the <code>resetdb</code> 
 
 <code>\$ . venv/bin/activate</code> \
 <code>\$ ./resetdb.sh</code>
+
+After resetting the database, you need to recreate a view in the database. DDL found here: https://raw.githubusercontent.com/MarkyMan4/hiring-agency-sql/main/views.sql

@@ -117,20 +117,64 @@
     }
 },
 {
+    "model": "admin.logentry",
+    "pk": 10,
+    "fields": {
+        "action_time": "2022-04-21T03:11:09.364",
+        "user": 1,
+        "content_type": 3,
+        "object_id": "2",
+        "object_repr": "caretaker",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 11,
+    "fields": {
+        "action_time": "2022-04-21T03:11:19.321",
+        "user": 1,
+        "content_type": 3,
+        "object_id": "1",
+        "object_repr": "staff",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 12,
+    "fields": {
+        "action_time": "2022-04-21T03:12:03.029",
+        "user": 1,
+        "content_type": 3,
+        "object_id": "3",
+        "object_repr": "healthcareprofessional",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+    }
+},
+{
     "model": "auth.group",
     "pk": 1,
     "fields": {
         "name": "staff",
         "permissions": [
+            96,
+            53,
+            54,
+            56,
+            69,
+            70,
+            72,
+            61,
+            62,
+            63,
+            64,
             29,
             30,
             32,
-            33,
-            34,
-            36,
-            81,
-            82,
-            84,
             37,
             38,
             39,
@@ -139,19 +183,18 @@
             78,
             79,
             80,
-            69,
-            70,
-            72,
             89,
             92,
-            96,
-            61,
-            62,
-            63,
-            64,
-            53,
-            54,
-            56
+            65,
+            66,
+            67,
+            68,
+            33,
+            34,
+            36,
+            81,
+            82,
+            84
         ]
     }
 },
@@ -161,10 +204,15 @@
     "fields": {
         "name": "caretaker",
         "permissions": [
+            86,
+            88,
+            53,
+            56,
             30,
             32,
-            53,
-            56
+            65,
+            66,
+            68
         ]
     }
 },
@@ -174,13 +222,17 @@
     "fields": {
         "name": "healthcareprofessional",
         "permissions": [
-            40,
-            92,
+            56,
             57,
             58,
             59,
             60,
-            56
+            37,
+            38,
+            39,
+            40,
+            92,
+            68
         ]
     }
 },
