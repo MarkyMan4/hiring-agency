@@ -156,15 +156,38 @@
     }
 },
 {
+    "model": "admin.logentry",
+    "pk": 13,
+    "fields": {
+        "action_time": "2022-04-21T03:35:37.453",
+        "user": 1,
+        "content_type": 3,
+        "object_id": "1",
+        "object_repr": "staff",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+    }
+},
+{
     "model": "auth.group",
     "pk": 1,
     "fields": {
         "name": "staff",
         "permissions": [
             96,
+            41,
+            42,
+            44,
+            45,
+            46,
+            48,
             53,
             54,
             56,
+            73,
+            74,
+            75,
+            76,
             69,
             70,
             72,
@@ -241,7 +264,7 @@
     "pk": 1,
     "fields": {
         "password": "pbkdf2_sha256$320000$15c2P7lBeo7hGxuSk5Cqgu$yPalkZP9tpgZsRt+tb5LlEj1SgbFf+YDINIpQT2ro1s=",
-        "last_login": "2022-04-15T05:05:25.205",
+        "last_login": "2022-04-21T03:34:24.321",
         "is_superuser": true,
         "username": "admin00",
         "first_name": "",
@@ -259,7 +282,7 @@
     "pk": 2,
     "fields": {
         "password": "pbkdf2_sha256$320000$WMZ2trtkRWqAyvajzfHmIa$huu/WUxdKxxQWZBw6/W2mr0h8KKAJvjhdtBy0iFXiQk=",
-        "last_login": "2022-04-15T05:03:15.760",
+        "last_login": "2022-04-21T03:33:53.639",
         "is_superuser": false,
         "username": "Monroe02",
         "first_name": "Lisbeth",
@@ -3594,26 +3617,6 @@
 },
 {
     "model": "knox.authtoken",
-    "pk": "0734decde7f40a6f810d00a929e0efefe2ff2a0f90da9aacd54c858fbc4dba78ced444d5e3bafeb8873979c00350137a8fd11aa1a07d4ba04960df9f9a20ba5e",
-    "fields": {
-        "token_key": "d45d5edc",
-        "user": 2,
-        "created": "2022-04-15T05:03:15.832",
-        "expiry": "2022-04-15T15:03:15.831"
-    }
-},
-{
-    "model": "knox.authtoken",
-    "pk": "0d33e311eed7e3ae148fab417fb4e7e399c93d01d16017298aeae3fdc58cf637830d53570380224777e9f05dae44920c51ea365eb635751073582704b12d1cde",
-    "fields": {
-        "token_key": "cd4c82e7",
-        "user": 2,
-        "created": "2022-04-15T01:04:38.406",
-        "expiry": "2022-04-15T11:04:38.405"
-    }
-},
-{
-    "model": "knox.authtoken",
     "pk": "16c8b29ad3484b9d5241bb7c6602950a2ddbebd5407355f37b21caab298eee53b2a8dceaf725a485f35bdd86ecfa3a23ec1aa805a4312ee13e1cf69661cc1ba6",
     "fields": {
         "token_key": "34e96f41",
@@ -3750,6 +3753,16 @@
         "user": 29,
         "created": "2022-04-15T01:04:57.253",
         "expiry": "2022-04-15T11:04:57.253"
+    }
+},
+{
+    "model": "knox.authtoken",
+    "pk": "9b54ebe338a9b36cd1d78a7c1e39fb02153bfac10b4b5ca120388f2bdc05ea10cf7110f3f1959f55140d7fa6abec4f5873a7d1f5f131cabd5d1b7cee460f243b",
+    "fields": {
+        "token_key": "13584083",
+        "user": 2,
+        "created": "2022-04-21T03:33:53.674",
+        "expiry": "2022-04-21T13:33:53.674"
     }
 },
 {
