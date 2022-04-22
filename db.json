@@ -328,7 +328,7 @@
     "pk": 2,
     "fields": {
         "password": "pbkdf2_sha256$320000$WMZ2trtkRWqAyvajzfHmIa$huu/WUxdKxxQWZBw6/W2mr0h8KKAJvjhdtBy0iFXiQk=",
-        "last_login": "2022-04-21T03:38:58.660",
+        "last_login": "2022-04-22T02:30:38.110",
         "is_superuser": false,
         "username": "Monroe02",
         "first_name": "Lisbeth",
@@ -2779,6 +2779,276 @@
     }
 },
 {
+    "model": "agency_api.timeslot",
+    "pk": 1,
+    "fields": {
+        "service_assignment": 1,
+        "day": 0,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 2,
+    "fields": {
+        "service_assignment": 1,
+        "day": 1,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 3,
+    "fields": {
+        "service_assignment": 1,
+        "day": 2,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 4,
+    "fields": {
+        "service_assignment": 1,
+        "day": 3,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 5,
+    "fields": {
+        "service_assignment": 1,
+        "day": 4,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 6,
+    "fields": {
+        "service_assignment": 1,
+        "day": 5,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 7,
+    "fields": {
+        "service_assignment": 1,
+        "day": 6,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 8,
+    "fields": {
+        "service_assignment": 2,
+        "day": 0,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 9,
+    "fields": {
+        "service_assignment": 2,
+        "day": 1,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 10,
+    "fields": {
+        "service_assignment": 2,
+        "day": 2,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 11,
+    "fields": {
+        "service_assignment": 2,
+        "day": 3,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 12,
+    "fields": {
+        "service_assignment": 2,
+        "day": 4,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 13,
+    "fields": {
+        "service_assignment": 2,
+        "day": 5,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 14,
+    "fields": {
+        "service_assignment": 2,
+        "day": 6,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 15,
+    "fields": {
+        "service_assignment": 3,
+        "day": 1,
+        "start_time": "06:00:00",
+        "end_time": "12:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 16,
+    "fields": {
+        "service_assignment": 3,
+        "day": 3,
+        "start_time": "06:00:00",
+        "end_time": "12:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 17,
+    "fields": {
+        "service_assignment": 3,
+        "day": 5,
+        "start_time": "06:00:00",
+        "end_time": "12:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 18,
+    "fields": {
+        "service_assignment": 4,
+        "day": 1,
+        "start_time": "13:00:00",
+        "end_time": "17:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 19,
+    "fields": {
+        "service_assignment": 4,
+        "day": 3,
+        "start_time": "13:00:00",
+        "end_time": "17:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 20,
+    "fields": {
+        "service_assignment": 4,
+        "day": 5,
+        "start_time": "13:00:00",
+        "end_time": "17:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 21,
+    "fields": {
+        "service_assignment": 5,
+        "day": 0,
+        "start_time": "10:00:00",
+        "end_time": "11:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 22,
+    "fields": {
+        "service_assignment": 5,
+        "day": 2,
+        "start_time": "10:00:00",
+        "end_time": "11:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 23,
+    "fields": {
+        "service_assignment": 5,
+        "day": 4,
+        "start_time": "10:00:00",
+        "end_time": "11:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 24,
+    "fields": {
+        "service_assignment": 6,
+        "day": 2,
+        "start_time": "16:00:00",
+        "end_time": "17:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 25,
+    "fields": {
+        "service_assignment": 6,
+        "day": 4,
+        "start_time": "16:00:00",
+        "end_time": "17:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 26,
+    "fields": {
+        "service_assignment": 7,
+        "day": 1,
+        "start_time": "10:00:00",
+        "end_time": "11:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 27,
+    "fields": {
+        "service_assignment": 7,
+        "day": 5,
+        "start_time": "10:00:00",
+        "end_time": "11:00:00"
+    }
+},
+{
     "model": "agency_api.billingaccount",
     "pk": 1,
     "fields": {
@@ -3801,32 +4071,12 @@
 },
 {
     "model": "knox.authtoken",
-    "pk": "92e5e3cb3e67f1a5807f3810f7600b9e39c8c0ac093d2b28ede80a999911beacb0ef6fa6e535e1112680c284d6b26635cbf2561508fe572f88ab8d7fa84a7f42",
-    "fields": {
-        "token_key": "f0643695",
-        "user": 2,
-        "created": "2022-04-21T03:38:58.696",
-        "expiry": "2022-04-21T13:38:58.695"
-    }
-},
-{
-    "model": "knox.authtoken",
     "pk": "961041d6bc2c428b01a1a0f04f4f76adf28f40303af77f5bb4ec672a996b673a467b5c30d777281cc91a2496a47069de3e46ff8bfef0417fcdf3dd5acdc43c0a",
     "fields": {
         "token_key": "633ea21b",
         "user": 29,
         "created": "2022-04-15T01:04:57.253",
         "expiry": "2022-04-15T11:04:57.253"
-    }
-},
-{
-    "model": "knox.authtoken",
-    "pk": "9b54ebe338a9b36cd1d78a7c1e39fb02153bfac10b4b5ca120388f2bdc05ea10cf7110f3f1959f55140d7fa6abec4f5873a7d1f5f131cabd5d1b7cee460f243b",
-    "fields": {
-        "token_key": "13584083",
-        "user": 2,
-        "created": "2022-04-21T03:33:53.674",
-        "expiry": "2022-04-21T13:33:53.674"
     }
 },
 {
@@ -3887,6 +4137,16 @@
         "user": 3,
         "created": "2022-04-15T01:04:38.559",
         "expiry": "2022-04-15T11:04:38.558"
+    }
+},
+{
+    "model": "knox.authtoken",
+    "pk": "cd239671edb459156f25ed0e591d0a7f3dd4d0fa4e49c208534f370f898166ae596646b98845b3c0288f89fc424492be08d01cb7decc522fa3c8104ca624d504",
+    "fields": {
+        "token_key": "a2dd0963",
+        "user": 2,
+        "created": "2022-04-22T02:30:38.180",
+        "expiry": "2022-04-22T12:30:38.180"
     }
 },
 {
