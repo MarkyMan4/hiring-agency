@@ -19,7 +19,11 @@ function UnlockUser({userId, name }) {
                 <h4>{ name } <button onClick={ unlock } style={{float: 'right'}} className="btn btn-outline-danger">Unlock</button> </h4>
                 
             </div>
-        ):null     
+        ):
+            <div className="staff-card shadow animate__animated animate__fadeInUp">
+                <h4>{ name }  <button disabled onClick={ unlock } style={{float: 'right'}} className="btn btn-outline-successs">User Unlocked</button> </h4>
+                
+            </div>     
     );
 }
 
