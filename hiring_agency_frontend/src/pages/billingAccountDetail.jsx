@@ -4,6 +4,7 @@ import { getBillingAccountById, makePayment } from "../api/billingAccounts";
 import { getAuthToken } from "../utils/storage";
 import {terminateServiceRequest} from "../api/serviceRequests";
 import CancelButton from "../components/cancelButton";
+import { getUser } from "../api/authRequests";
 
 function BillingAccountDetail() {
     const { id } = useParams();
@@ -24,13 +25,23 @@ function BillingAccountDetail() {
     }
 
     const goToServReqDetails = () => {
-        navigate('/ct_service_requests/' + billingAccount.service_request.id);
+        getUser(getAuthToken())
+            .then(res => {
+                if(res.groups.includes('staff') || res.groups.includes('admin')) {
+                    navigate('/service_requests/' + billingAccount.service_request.id);
+                    return;
+                }
+                else {
+                    navigate('/ct_service_requests/' + billingAccount.service_request.id);
+                    return;
+                }
+            })
     }
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
-        if(paymentAmt > parseFloat(billingAccount.amt_to_be_paid).toFixed(2) ){
-           setMessage("Please dont overpay, although we appreciate the gesture");
+        if(paymentAmt > parseFloat(billingAccount.amt_to_be_paid)) {
+            setMessage("Please dont overpay, although we appreciate the gesture");
             return;
         }
         makePayment(getAuthToken(), id, paymentAmt)

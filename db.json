@@ -117,20 +117,133 @@
     }
 },
 {
+    "model": "admin.logentry",
+    "pk": 10,
+    "fields": {
+        "action_time": "2022-04-21T03:11:09.364",
+        "user": 1,
+        "content_type": 3,
+        "object_id": "2",
+        "object_repr": "caretaker",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 11,
+    "fields": {
+        "action_time": "2022-04-21T03:11:19.321",
+        "user": 1,
+        "content_type": 3,
+        "object_id": "1",
+        "object_repr": "staff",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 12,
+    "fields": {
+        "action_time": "2022-04-21T03:12:03.029",
+        "user": 1,
+        "content_type": 3,
+        "object_id": "3",
+        "object_repr": "healthcareprofessional",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 13,
+    "fields": {
+        "action_time": "2022-04-21T03:35:37.453",
+        "user": 1,
+        "content_type": 3,
+        "object_id": "1",
+        "object_repr": "staff",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 14,
+    "fields": {
+        "action_time": "2022-04-21T03:39:47.472",
+        "user": 1,
+        "content_type": 3,
+        "object_id": "2",
+        "object_repr": "caretaker",
+        "action_flag": 2,
+        "change_message": "[]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 15,
+    "fields": {
+        "action_time": "2022-04-21T03:40:02.830",
+        "user": 1,
+        "content_type": 3,
+        "object_id": "1",
+        "object_repr": "staff",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 16,
+    "fields": {
+        "action_time": "2022-04-21T03:41:11.700",
+        "user": 1,
+        "content_type": 3,
+        "object_id": "1",
+        "object_repr": "staff",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+    }
+},
+{
     "model": "auth.group",
     "pk": 1,
     "fields": {
         "name": "staff",
         "permissions": [
+            96,
+            85,
+            86,
+            87,
+            88,
+            41,
+            42,
+            44,
+            45,
+            46,
+            48,
+            53,
+            54,
+            56,
+            73,
+            74,
+            75,
+            76,
+            69,
+            70,
+            72,
+            57,
+            58,
+            60,
+            61,
+            62,
+            63,
+            64,
             29,
             30,
             32,
-            33,
-            34,
-            36,
-            81,
-            82,
-            84,
             37,
             38,
             39,
@@ -139,19 +252,18 @@
             78,
             79,
             80,
-            69,
-            70,
-            72,
             89,
             92,
-            96,
-            61,
-            62,
-            63,
-            64,
-            53,
-            54,
-            56
+            65,
+            66,
+            67,
+            68,
+            33,
+            34,
+            36,
+            81,
+            82,
+            84
         ]
     }
 },
@@ -161,10 +273,15 @@
     "fields": {
         "name": "caretaker",
         "permissions": [
+            86,
+            88,
+            53,
+            56,
             30,
             32,
-            53,
-            56
+            65,
+            66,
+            68
         ]
     }
 },
@@ -174,13 +291,17 @@
     "fields": {
         "name": "healthcareprofessional",
         "permissions": [
-            40,
-            92,
+            56,
             57,
             58,
             59,
             60,
-            56
+            37,
+            38,
+            39,
+            40,
+            92,
+            68
         ]
     }
 },
@@ -189,7 +310,7 @@
     "pk": 1,
     "fields": {
         "password": "pbkdf2_sha256$320000$15c2P7lBeo7hGxuSk5Cqgu$yPalkZP9tpgZsRt+tb5LlEj1SgbFf+YDINIpQT2ro1s=",
-        "last_login": "2022-04-15T05:05:25.205",
+        "last_login": "2022-04-21T03:39:44.331",
         "is_superuser": true,
         "username": "admin00",
         "first_name": "",
@@ -207,7 +328,7 @@
     "pk": 2,
     "fields": {
         "password": "pbkdf2_sha256$320000$WMZ2trtkRWqAyvajzfHmIa$huu/WUxdKxxQWZBw6/W2mr0h8KKAJvjhdtBy0iFXiQk=",
-        "last_login": "2022-04-15T05:03:15.760",
+        "last_login": "2022-04-22T02:30:38.110",
         "is_superuser": false,
         "username": "Monroe02",
         "first_name": "Lisbeth",
@@ -776,6 +897,14 @@
     "fields": {
         "session_data": ".eJxVjDsOwjAQBe_iGllr4i8lPWewvN41DiBHipMKcXcSKQW0b2beW8S0LjWunec4krgIJU6_G6b85LYDeqR2n2Se2jKPKHdFHrTL20T8uh7u30FNvW41oIMygAYC4401iqBo5z2FYIN1aM9qQ8BsC1LwQ9KMnEEThcKIKD5fvAQ4BQ:1nf96N:drLh6bZnyk_1LyWzDovezgeLdwLFWXrHwhQvF08pPZw",
         "expire_date": "2022-04-28T23:42:15.221"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "tedncnugjf3bkhbv2y0ex9vyfhsnrn71",
+    "fields": {
+        "session_data": ".eJxVjDsOwjAQBe_iGllr4i8lPWewvN41DiBHipMKcXcSKQW0b2beW8S0LjWunec4krgIJU6_G6b85LYDeqR2n2Se2jKPKHdFHrTL20T8uh7u30FNvW41oIMygAYC4401iqBo5z2FYIN1aM9qQ8BsC1LwQ9KMnEEThcKIKD5fvAQ4BQ:1nhNfU:u1eYL03n_HdtxTmCUSDul3iY6ifxbO5gWOoE5TzONic",
+        "expire_date": "2022-05-05T03:39:44.339"
     }
 },
 {
@@ -2650,6 +2779,276 @@
     }
 },
 {
+    "model": "agency_api.timeslot",
+    "pk": 1,
+    "fields": {
+        "service_assignment": 1,
+        "day": 0,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 2,
+    "fields": {
+        "service_assignment": 1,
+        "day": 1,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 3,
+    "fields": {
+        "service_assignment": 1,
+        "day": 2,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 4,
+    "fields": {
+        "service_assignment": 1,
+        "day": 3,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 5,
+    "fields": {
+        "service_assignment": 1,
+        "day": 4,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 6,
+    "fields": {
+        "service_assignment": 1,
+        "day": 5,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 7,
+    "fields": {
+        "service_assignment": 1,
+        "day": 6,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 8,
+    "fields": {
+        "service_assignment": 2,
+        "day": 0,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 9,
+    "fields": {
+        "service_assignment": 2,
+        "day": 1,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 10,
+    "fields": {
+        "service_assignment": 2,
+        "day": 2,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 11,
+    "fields": {
+        "service_assignment": 2,
+        "day": 3,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 12,
+    "fields": {
+        "service_assignment": 2,
+        "day": 4,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 13,
+    "fields": {
+        "service_assignment": 2,
+        "day": 5,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 14,
+    "fields": {
+        "service_assignment": 2,
+        "day": 6,
+        "start_time": "06:00:00",
+        "end_time": "18:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 15,
+    "fields": {
+        "service_assignment": 3,
+        "day": 1,
+        "start_time": "06:00:00",
+        "end_time": "12:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 16,
+    "fields": {
+        "service_assignment": 3,
+        "day": 3,
+        "start_time": "06:00:00",
+        "end_time": "12:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 17,
+    "fields": {
+        "service_assignment": 3,
+        "day": 5,
+        "start_time": "06:00:00",
+        "end_time": "12:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 18,
+    "fields": {
+        "service_assignment": 4,
+        "day": 1,
+        "start_time": "13:00:00",
+        "end_time": "17:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 19,
+    "fields": {
+        "service_assignment": 4,
+        "day": 3,
+        "start_time": "13:00:00",
+        "end_time": "17:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 20,
+    "fields": {
+        "service_assignment": 4,
+        "day": 5,
+        "start_time": "13:00:00",
+        "end_time": "17:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 21,
+    "fields": {
+        "service_assignment": 5,
+        "day": 0,
+        "start_time": "10:00:00",
+        "end_time": "11:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 22,
+    "fields": {
+        "service_assignment": 5,
+        "day": 2,
+        "start_time": "10:00:00",
+        "end_time": "11:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 23,
+    "fields": {
+        "service_assignment": 5,
+        "day": 4,
+        "start_time": "10:00:00",
+        "end_time": "11:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 24,
+    "fields": {
+        "service_assignment": 6,
+        "day": 2,
+        "start_time": "16:00:00",
+        "end_time": "17:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 25,
+    "fields": {
+        "service_assignment": 6,
+        "day": 4,
+        "start_time": "16:00:00",
+        "end_time": "17:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 26,
+    "fields": {
+        "service_assignment": 7,
+        "day": 1,
+        "start_time": "10:00:00",
+        "end_time": "11:00:00"
+    }
+},
+{
+    "model": "agency_api.timeslot",
+    "pk": 27,
+    "fields": {
+        "service_assignment": 7,
+        "day": 5,
+        "start_time": "10:00:00",
+        "end_time": "11:00:00"
+    }
+},
+{
     "model": "agency_api.billingaccount",
     "pk": 1,
     "fields": {
@@ -3542,26 +3941,6 @@
 },
 {
     "model": "knox.authtoken",
-    "pk": "0734decde7f40a6f810d00a929e0efefe2ff2a0f90da9aacd54c858fbc4dba78ced444d5e3bafeb8873979c00350137a8fd11aa1a07d4ba04960df9f9a20ba5e",
-    "fields": {
-        "token_key": "d45d5edc",
-        "user": 2,
-        "created": "2022-04-15T05:03:15.832",
-        "expiry": "2022-04-15T15:03:15.831"
-    }
-},
-{
-    "model": "knox.authtoken",
-    "pk": "0d33e311eed7e3ae148fab417fb4e7e399c93d01d16017298aeae3fdc58cf637830d53570380224777e9f05dae44920c51ea365eb635751073582704b12d1cde",
-    "fields": {
-        "token_key": "cd4c82e7",
-        "user": 2,
-        "created": "2022-04-15T01:04:38.406",
-        "expiry": "2022-04-15T11:04:38.405"
-    }
-},
-{
-    "model": "knox.authtoken",
     "pk": "16c8b29ad3484b9d5241bb7c6602950a2ddbebd5407355f37b21caab298eee53b2a8dceaf725a485f35bdd86ecfa3a23ec1aa805a4312ee13e1cf69661cc1ba6",
     "fields": {
         "token_key": "34e96f41",
@@ -3758,6 +4137,16 @@
         "user": 3,
         "created": "2022-04-15T01:04:38.559",
         "expiry": "2022-04-15T11:04:38.558"
+    }
+},
+{
+    "model": "knox.authtoken",
+    "pk": "cd239671edb459156f25ed0e591d0a7f3dd4d0fa4e49c208534f370f898166ae596646b98845b3c0288f89fc424492be08d01cb7decc522fa3c8104ca624d504",
+    "fields": {
+        "token_key": "a2dd0963",
+        "user": 2,
+        "created": "2022-04-22T02:30:38.180",
+        "expiry": "2022-04-22T12:30:38.180"
     }
 },
 {
