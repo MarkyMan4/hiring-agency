@@ -5,6 +5,7 @@ import { getSecurityQuestionOptions } from '../api/staticDataRequests';
 import { getAuthToken } from '../utils/storage';
 
 // when a user first logs in, they must select security questions and enter their answers
+
 function SetSecurityQuestions() {
     let navigate = useNavigate();
     const [options, setOptions] = useState([]);
@@ -93,10 +94,20 @@ function SetSecurityQuestions() {
             ];
 
             // save each question
-            setSecurityQuestion(getAuthToken(), data);
+            setSecurityQuestion(getAuthToken(), data)
 
-            // then redirect user to home page
-            navigate('/');
+                .then(res =>{
+                    if (res.jump){
+                        navigate('/');
+                    }
+                    else{
+                        setAnswer1('')
+                        setAnswer2('')
+                        setAnswer3('')
+                        setMessage('Security question set successfully')
+                    }
+                })
+    
         }
     }
 
@@ -117,7 +128,7 @@ function SetSecurityQuestions() {
                 }
             </select>
 
-            <input placeholder="enter your answer here" onChange={ handleAnswer1Input } className="form-control w-25 mt-2"></input><br />
+            <input placeholder="enter your answer here" value ={answer1 } onChange={ handleAnswer1Input } className="form-control w-25 mt-2"></input><br />
 
             <select value={ question2 } onChange={ handleQuestion2Select } className="form-select w-25">
                 { 
@@ -127,7 +138,7 @@ function SetSecurityQuestions() {
                 }
             </select>
 
-            <input placeholder="enter your answer here" onChange={ handleAnswer2Input } className="form-control w-25 mt-2"></input><br />
+            <input placeholder="enter your answer here" value ={ answer2 } onChange={ handleAnswer2Input } className="form-control w-25 mt-2"></input><br />
 
             <select value={ question3 } onChange={ handleQuestion3Select } className="form-select w-25">
                 { 
@@ -137,7 +148,7 @@ function SetSecurityQuestions() {
                 }
             </select>
 
-            <input placeholder="enter your answer here" onChange={ handleAnswer3Input } className="form-control w-25 mt-2"></input><br />
+            <input placeholder="enter your answer here" value ={ answer3 } onChange={ handleAnswer3Input } className="form-control w-25 mt-2"></input><br />
 
             <button onClick={ handleSubmitClicked } className="btn btn-success mt-3">Submit</button>
 

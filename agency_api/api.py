@@ -1,3 +1,5 @@
+from contextlib import nullcontext
+from sre_constants import JUMP
 from urllib import request
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
@@ -161,9 +163,13 @@ class SecurityQuestionAnswerViewSet(viewsets.ModelViewSet):
     def create(self, request):
         data = request.data
         user = self.request.user.id 
-
+        jumpFlag = False
         # delete existing security questions
-        SecurityQuestionAnswer.objects.filter(user_id=self.request.user.id).delete()
+        
+        if(SecurityQuestionAnswer.objects.filter(user_id=self.request.user.id).exists()):
+            SecurityQuestionAnswer.objects.filter(user_id=self.request.user.id).delete()
+        else:
+            jumpFlag = True
 
         for answer in data:
             answer['user'] = user
@@ -172,7 +178,9 @@ class SecurityQuestionAnswerViewSet(viewsets.ModelViewSet):
             serializer.save()
             headers = self.get_success_headers(serializer.data)
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        response = serializer.data
+        response['jump'] = jumpFlag   
+        return Response(response, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class CreateHPJobApplicationViewSet(viewsets.ViewSet):
