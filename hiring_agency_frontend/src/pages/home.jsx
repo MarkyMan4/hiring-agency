@@ -23,7 +23,7 @@ function Home() {
                     </div>
                     <div class="col-lg-6">
                         <h1 class="display-5 fw-bold lh-1 mb-3">Nurse service</h1>
-                        <h1 class="card-title pricing-card-title">$40<small class="text-muted fw-light">/hour</small></h1>
+                        <h1 class="card-title pricing-card-title">$100<small class="text-muted fw-light">/hour</small></h1>
                         <p class="lead">Health services for your patient</p>
                     </div>
                 </div>
@@ -37,7 +37,7 @@ function Home() {
                     </div>
                     <div class="col-lg-6">
                         <h1 class="display-5 fw-bold lh-1 mb-3">Physiotherapist</h1>
-                        <h1 class="card-title pricing-card-title">$50<small class="text-muted fw-light">/hour</small></h1>
+                        <h1 class="card-title pricing-card-title">$150<small class="text-muted fw-light">/hour</small></h1>
                         <p class="lead">Physical therapy services</p>
                     </div>
                 </div>
@@ -50,7 +50,7 @@ function Home() {
                     </div>
                     <div class="col-lg-6">
                         <h1 class="display-5 fw-bold lh-1 mb-3">Psychiatrists</h1>
-                        <h1 class="card-title pricing-card-title">$60<small class="text-muted fw-light">/hour</small></h1>
+                        <h1 class="card-title pricing-card-title">$200<small class="text-muted fw-light">/hour</small></h1>
                         <p class="lead">Mental health services</p>
                     </div>
                 </div>
