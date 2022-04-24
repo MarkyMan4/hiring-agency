@@ -1013,7 +1013,7 @@ class HPViewSet(viewsets.ModelViewSet):
             health_pros = health_pros.filter(date_of_birth__gte=min_dob)
 
         # if patient is 60 or older and needs psychiatric service, HP must have PHD
-        if self.get_age_from_dob(serv_req.patient_date_of_birth) >= 60 and serv_req.service_type == 3:
+        if self.get_age_from_dob(serv_req.patient_date_of_birth) >= 60 and serv_req.service_type_id == 3:
             health_pros = health_pros.filter(education_type_id=3)
 
         eligible_hp_ids = []
