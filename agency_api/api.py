@@ -411,7 +411,8 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
             patient_gender=serv_req.patient_gender,
             patient_date_of_birth=serv_req.patient_date_of_birth,
             patient_phone_number=serv_req.patient_phone_number,
-            patient_email=serv_req.patient_email
+            patient_email=serv_req.patient_email,
+            is_completed=False # only check for active requests
         )
 
         new_req_start_date = serv_req.start_date

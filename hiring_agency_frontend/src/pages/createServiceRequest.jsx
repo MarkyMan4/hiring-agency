@@ -98,7 +98,7 @@ function CreateServiceRequest({ roles }) {
 
         // update selected times
         setServiceStartTime(timeOptions[0].twentyFourHourTime);
-        setServiceEndTime(timeOptions[0].twentyFourHourTime);
+        setServiceEndTime(timeOptions[1].twentyFourHourTime);
     }, [serviceType, serviceTypeInfo]);
 
     const removeMicroSecondsFromTime = (timeStr) => {
@@ -170,12 +170,18 @@ function CreateServiceRequest({ roles }) {
                 <div>
                     <label className="mt-3"><span className="text-danger">*</span>Service start time</label>
                     <select value={ serviceStartTime } onChange={ event => setServiceStartTime(event.target.value) } className="form-select">
-                        { serviceTimeOptions.map((time, indx) => <option value={ time.twentyFourHourTime } key={ indx }>{ time.twelveHourTime }</option>) }
+                        { serviceTimeOptions
+                            .filter(time => time.twentyFourHourTime < serviceEndTime)
+                            .map((time, indx) => <option value={ time.twentyFourHourTime } key={ indx }>{ time.twelveHourTime }</option>) 
+                        }
                     </select>
 
                     <label className="mt-3"><span className="text-danger">*</span>Service end time</label>
                     <select value={ serviceEndTime } onChange={ event => setServiceEndTime(event.target.value) } className="form-select">
-                        { serviceTimeOptions.map((time, indx) => <option value={ time.twentyFourHourTime } key={ indx }>{ time.twelveHourTime }</option>) }
+                        { serviceTimeOptions
+                            .filter(time => time.twentyFourHourTime > serviceStartTime)
+                            .map((time, indx) => <option value={ time.twentyFourHourTime } key={ indx }>{ time.twelveHourTime }</option>) 
+                        }
                     </select>
                 </div>
             );
