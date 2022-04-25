@@ -8,7 +8,7 @@ export const requestNewService = async (
     let url = baseUrl + 'api/create_service_requests';
 
     let body = {
-        care_taker_username: careTakerUsername,
+        care_taker: careTakerUsername,
         patient_first_name: patientFirstName,
         patient_last_name: patientLastName,
         patient_gender: patientGender,

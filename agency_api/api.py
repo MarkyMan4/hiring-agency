@@ -363,7 +363,7 @@ class CreateServiceRequestViewSet(viewsets.ViewSet):
         else:
             # if an admin makes this request, they need to provide the care takers username
             try:
-                data['care_taker'] = CareTaker.objects.get(user__username=data['care_taker_username']).id
+                data['care_taker'] = CareTaker.objects.get(user__username=data['care_taker']).id
             except:
                 return Response({'error': 'Care taker username not found'}, status=status.HTTP_400_BAD_REQUEST)
 
